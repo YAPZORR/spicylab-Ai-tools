@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Mobile views | Spicy Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+  /* ============ Tokens ============ */
+  :root{
+    --bg:#07061a;
+    --panel-top:rgba(22,18,56,.94);
+    --panel-bot:rgba(13,11,36,.97);
+    --field:#0b0922;
+    --line:rgba(160,136,255,.14);
+    --line-2:rgba(184,122,255,.32);
+    --line-hot:rgba(255,79,179,.65);
+    --text:#f6f4ff;
+    --muted:#aaa4d4;
+    --dim:#716b9e;
+    --pink:#ff4fb3;
+    --grad:linear-gradient(90deg,#7b5cff 0%,#c54cf3 52%,#ff4fb3 100%);
+    --grad-cta:linear-gradient(90deg,#ff5fae 0%,#e44ff0 55%,#9d5cff 100%);
+    --r-xl:24px; --r-lg:18px; --r-md:14px;
+    --display:'Sora',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --body:'Manrope',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --system:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',Roboto,sans-serif;
+    --page-bg:
+      radial-gradient(1100px 520px at 50% -160px,rgba(123,92,255,.30),transparent 70%),
+      radial-gradient(720px 420px at 8% 105%,rgba(255,79,179,.10),transparent 70%),
+      radial-gradient(720px 420px at 95% 90%,rgba(123,92,255,.12),transparent 70%),
+      var(--bg);
+    color-scheme:dark;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:inherit}
+  [hidden]{display:none!important}
+  html{background:#05040f}
+  body{
+    margin:0;min-height:100vh;font-family:var(--body);color:var(--text);-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1400px 700px at 50% -200px,rgba(123,92,255,.18),transparent 70%),
+      radial-gradient(900px 500px at 50% 110%,rgba(255,79,179,.08),transparent 70%),
+      #05040f;
+  }
+  button,input,textarea{font:inherit;color:inherit}
+  button{cursor:pointer}
+  :focus-visible{outline:2px solid var(--pink);outline-offset:3px;border-radius:10px}
+
+  .ico{width:18px;height:18px;flex:none;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .ico--fill{fill:currentColor;stroke:none}
+
+  /* ============ Page chrome ============ */
+  .page{max-width:1400px;margin:0 auto;padding:44px 24px 96px}
+  .page__head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;max-width:1322px;margin:0 auto 40px}
+  .page__head h1{margin:0;font:800 clamp(26px,3vw,36px)/1.15 var(--display);letter-spacing:-.02em}
+  .page__head p{margin:8px 0 0;color:var(--muted);font-size:14.5px;font-weight:500}
+  .seg{display:inline-flex;padding:4px;border-radius:999px;border:1px solid var(--line-2);background:rgba(20,16,52,.7)}
+  .seg__btn{height:36px;padding:0 16px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:700 13px var(--body)}
+  .seg__btn[aria-pressed="true"]{background:var(--grad);color:#fff;box-shadow:0 8px 22px -8px rgba(217,70,239,.7)}
+
+  .devices{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:56px 40px}
+  .device-wrap{display:flex;flex-direction:column;align-items:center;gap:18px}
+  .device__cap{display:inline-flex;align-items:center;gap:9px;height:38px;padding:0 16px 0 14px;border-radius:999px;border:1px solid var(--line-2);background:rgba(20,16,52,.7);font:700 13.5px var(--body)}
+  .device__cap .ico{width:16px;height:16px;color:var(--pink)}
+
+  /* ============ Phone frame (390 × 844 screen) ============ */
+  .device{
+    position:relative;padding:11px;border-radius:57px;
+    background:linear-gradient(145deg,#1e1b30,#0b0a14 60%);
+    box-shadow:inset 0 0 0 1.5px #35314c,0 0 0 1px #07060f,0 60px 100px -50px rgba(0,0,0,.95),0 0 100px -45px rgba(197,76,243,.6);
+  }
+  .device::before{content:"";position:absolute;left:-3px;top:180px;width:3px;height:62px;border-radius:2px 0 0 2px;background:#211d35;box-shadow:0 78px 0 #211d35}
+  .device::after{content:"";position:absolute;right:-3px;top:230px;width:3px;height:96px;border-radius:0 2px 2px 0;background:#211d35}
+  .island{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:124px;height:36px;border-radius:20px;background:#000;z-index:60;pointer-events:none}
+  .home{position:absolute;bottom:19px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:rgba(255,255,255,.85);z-index:60;pointer-events:none}
+  .screen{position:relative;width:390px;border-radius:46px;overflow:hidden;background:var(--page-bg)}
+  .devices.is-clipped .screen{height:844px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+  .devices.is-clipped .screen::-webkit-scrollbar{display:none}
+
+  .m-status{position:relative;z-index:50;display:grid;grid-template-columns:1fr 124px 1fr;align-items:center;height:54px;padding:11px 0 0;font:600 17px/1 var(--system);letter-spacing:-.01em}
+  .devices.is-clipped .m-status{position:sticky;top:0;background:linear-gradient(180deg,rgba(7,6,26,.95),rgba(7,6,26,.75));backdrop-filter:blur(12px)}
+  .m-time{justify-self:center;padding-left:6px}
+  .m-icons{justify-self:center;display:inline-flex;align-items:center;gap:6px;padding-right:4px}
+  .m-icons svg{display:block;fill:currentColor}
+
+  /* ============ Create page, mobile layout (390 px) ============ */
+  .studio{padding:22px 14px 64px}
+  .hero{text-align:center}
+  .hero h1{margin:0;font:800 30px/1.1 var(--display);letter-spacing:-.025em}
+  .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{margin:10px auto 0;color:var(--muted);font-size:14.5px;font-weight:500;line-height:1.5}
+
+  .composer{
+    position:relative;margin-top:28px;border-radius:var(--r-xl);
+    background:linear-gradient(180deg,var(--panel-top) 0%,var(--panel-bot) 100%);
+    box-shadow:0 40px 90px -40px rgba(0,0,0,.9),0 0 90px -34px rgba(197,76,243,.5);
+  }
+  .composer::before{
+    content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;
+    background:linear-gradient(135deg,rgba(123,92,255,.9),rgba(255,79,179,.6) 32%,rgba(123,92,255,.16) 62%,rgba(255,79,179,.55));
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;
+  }
+  .main{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;padding:14px}
+
+  .upload{display:flex;flex-direction:column;gap:10px;padding:12px;border-radius:var(--r-lg);border:1px solid var(--line-2);background:rgba(11,9,34,.55)}
+  .drop{position:relative;min-height:200px;border-radius:var(--r-md);border:1.5px dashed rgba(198,120,255,.45);display:grid;place-items:center;cursor:pointer;background:radial-gradient(circle at 50% 42%,rgba(139,92,246,.12),transparent 68%);transition:border-color .2s,background-color .2s,box-shadow .2s}
+  .drop:hover,.drop.is-drag{border-color:var(--line-hot);background-color:rgba(255,79,179,.05)}
+  .drop.is-filled{cursor:default;border-style:solid;border-color:var(--line)}
+  .drop__empty{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:16px}
+  .drop__plus{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#fff;background:rgba(139,92,246,.16);border:1px solid rgba(160,120,255,.4)}
+  .drop__plus .ico{width:22px;height:22px}
+  .drop__label{font:700 12px/1 var(--display);letter-spacing:.16em;text-transform:uppercase}
+  .drop__sub{font-size:11.5px;color:var(--dim);font-weight:600;max-width:190px;line-height:1.45}
+  .upload__note{margin:0;display:flex;align-items:center;justify-content:center;gap:5px;font-size:10.5px;color:var(--muted);font-weight:600;white-space:nowrap}
+  .upload__note .ico{width:13px;height:13px}
+
+  .previews{position:absolute;inset:8px;display:grid;gap:8px}
+  .previews[data-n="1"]{grid-template:1fr/1fr}
+  .previews[data-n="2"]{grid-template-columns:1fr 1fr}
+  .previews[data-n="3"]{grid-template-columns:1.35fr 1fr;grid-template-rows:1fr 1fr}
+  .previews[data-n="3"]>:first-child{grid-row:1/3}
+  .tile{position:relative;border-radius:10px;overflow:hidden;background:#1a163f;min-height:0}
+  .tile img{width:100%;height:100%;object-fit:cover;display:block}
+  .tile__n{position:absolute;left:6px;bottom:6px;font:700 10px/1 var(--display);padding:4px 6px;border-radius:6px;background:rgba(7,6,26,.72)}
+  .tile__x{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:0;display:grid;place-items:center;background:rgba(7,6,26,.75);backdrop-filter:blur(6px);color:#fff}
+  .tile__x:hover{background:var(--pink)}
+  .tile__x .ico{width:14px;height:14px}
+  .tile--add{border:1.5px dashed var(--line-2);background:rgba(139,92,246,.08);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--muted);font:700 11px var(--display)}
+  .tile--add:hover{border-color:var(--line-hot);color:#fff}
+
+  .prompt{display:flex;flex-direction:column;min-width:0}
+  .label{margin:0;display:block;font:700 11.5px/1.3 var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--text)}
+  .req{color:var(--pink)}
+  .helper{margin:5px 0 0;font-size:12.5px;line-height:1.45;color:var(--muted);font-weight:500}
+  .tag-new{font-weight:800;color:#ffb8e0}
+
+  .field{position:relative;display:flex;flex-direction:column;margin-top:12px;border-radius:16px;background:var(--field);border:1px solid rgba(186,120,255,.40);transition:border-color .2s,box-shadow .2s}
+  .field:focus-within{border-color:var(--line-hot);box-shadow:0 0 0 4px rgba(217,70,239,.12),0 0 32px -8px rgba(217,70,239,.5)}
+  .field textarea{min-height:148px;resize:none;border:0;outline:0;background:transparent;padding:16px 18px 6px;font:500 16px/1.55 var(--body);color:var(--text)}
+  .field textarea::placeholder{color:#6d6897;font-size:18px}
+  .field__foot{display:flex;align-items:center;justify-content:flex-end;padding:6px 12px 10px 18px;font-size:11.5px;font-weight:600;color:var(--dim)}
+  .field__foot-r{display:inline-flex;align-items:center;gap:12px}
+  .link{border:0;background:none;padding:2px 4px;font-weight:700;font-size:11.5px;color:var(--muted)}
+  .link:hover{color:#fff}
+
+  .effect-tag{align-self:flex-start;margin:12px 14px 0;display:inline-flex;align-items:center;gap:8px;padding:4px 4px 4px 10px;border-radius:999px;font-size:12px;font-weight:600;color:#f3e8ff;background:linear-gradient(90deg,rgba(123,92,255,.28),rgba(255,79,179,.24));border:1px solid rgba(255,79,179,.45)}
+  .effect-tag b{font-weight:800;color:#fff}
+  .effect-tag button{width:22px;height:22px;border-radius:50%;border:0;display:grid;place-items:center;background:rgba(7,6,26,.5);color:#fff}
+  .effect-tag button .ico{width:12px;height:12px}
+
+  .prompt__foot{display:flex;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+  .toggle{display:inline-flex;align-items:center;gap:10px;border:0;background:none;padding:0;font:700 12.5px var(--body);white-space:nowrap}
+  .switch{position:relative;width:44px;height:24px;border-radius:999px;background:#2a2552;border:1px solid var(--line-2);transition:background .2s,box-shadow .2s}
+  .switch::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s}
+  .toggle[aria-checked="true"] .switch{background:var(--grad);border-color:transparent;box-shadow:0 0 16px rgba(217,70,239,.5)}
+  .toggle[aria-checked="true"] .switch::after{transform:translateX(20px)}
+
+  .effects{margin:0 14px;padding:18px 0 20px;border-top:1px solid var(--line)}
+  .effects__head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px}
+  .ghost{flex:none;height:34px;padding:0 8px 0 14px;border-radius:999px;border:1px solid var(--line-2);background:rgba(20,16,52,.6);display:inline-flex;align-items:center;gap:8px;font:700 12.5px var(--body)}
+  .ghost:hover{border-color:var(--line-hot)}
+  .ghost .num{font-size:11px;padding:2px 8px;border-radius:999px;background:rgba(139,92,246,.22);color:#dccfff}
+
+  .chips{display:flex;gap:8px;overflow-x:auto;margin:14px 0;padding-bottom:2px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:none;height:32px;padding:0 14px;border-radius:10px;border:1px solid var(--line-2);background:rgba(20,16,52,.65);color:var(--muted);font:700 12.5px var(--body);display:inline-flex;align-items:center;gap:7px;transition:color .15s,border-color .15s}
+  .chip:hover{color:#fff;border-color:rgba(255,79,179,.5)}
+  .chip .n{font-size:10.5px;opacity:.7}
+  .chip[aria-pressed="true"]{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 8px 22px -8px rgba(217,70,239,.7)}
+  .chip[aria-pressed="true"] .n{opacity:.9}
+
+  .track{display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;scroll-behavior:smooth;scroll-padding:0 6px;margin:0 -6px;padding:8px 6px 12px;scrollbar-width:thin;scrollbar-color:#8b5cf6 rgba(139,92,246,.08)}
+  .track::-webkit-scrollbar{height:6px;width:6px}
+  .track::-webkit-scrollbar-thumb{background:linear-gradient(90deg,#7b5cff,#ff4fb3);border-radius:99px}
+  .track::-webkit-scrollbar-track{background:rgba(139,92,246,.08);border-radius:99px}
+  .effects.is-expanded .track{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));max-height:448px;overflow-x:hidden;overflow-y:auto;scroll-snap-type:none;padding-right:8px}
+  .track__empty{padding:28px 4px;color:var(--muted);font-size:13px;font-weight:600}
+
+  .fx{position:relative;flex:0 0 116px;aspect-ratio:2/3;border-radius:14px;overflow:hidden;padding:0;scroll-snap-align:start;border:1px solid rgba(186,120,255,.22);background:#141034;text-align:left;transition:transform .2s,box-shadow .2s,border-color .2s}
+  .effects.is-expanded .fx{width:auto}
+  .fx:hover{transform:translateY(-3px);border-color:rgba(255,79,179,.6);box-shadow:0 16px 30px -14px rgba(217,70,239,.6)}
+  .fx[aria-pressed="true"]{border-color:transparent;box-shadow:0 0 0 2px var(--pink),0 0 0 5px rgba(255,79,179,.22),0 16px 34px -12px rgba(217,70,239,.75)}
+  .fx__img{position:absolute;inset:0;background-size:cover;background-position:center}
+  .fx__img.is-art{background:radial-gradient(60% 38% at 50% 44%,var(--c3),transparent 70%),radial-gradient(95% 60% at 88% -4%,var(--c2),transparent 66%),linear-gradient(170deg,var(--c1) 0%,#0a0822 100%)}
+  .fx__sil{position:absolute;inset:0;width:100%;height:100%;fill:rgba(8,6,28,.58);stroke:var(--c2);stroke-width:.7}
+  .fx__scrim{position:absolute;inset:0;background:linear-gradient(180deg,transparent 46%,rgba(7,6,26,.94) 100%)}
+  .fx__badge{position:absolute;top:8px;left:8px;padding:4px 7px;border-radius:6px;font:800 9.5px/1 var(--display);letter-spacing:.08em;color:#fff;background:var(--grad)}
+  .fx__check{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--pink);color:#fff;transform:scale(0);transition:transform .2s}
+  .fx__check .ico{width:13px;height:13px}
+  .fx[aria-pressed="true"] .fx__check{transform:scale(1)}
+  .fx__meta{position:absolute;left:10px;right:10px;bottom:10px;display:flex;flex-direction:column;gap:3px}
+  .fx__title{font:700 12.5px/1.25 var(--display);color:#fff}
+  .fx__cat{font-size:10.5px;font-weight:700;color:var(--muted)}
+
+  .toolbar{position:relative;z-index:10;display:flex;flex-direction:column;align-items:stretch;gap:16px;padding:14px;border-top:1px solid var(--line);border-radius:0 0 var(--r-xl) var(--r-xl);background:linear-gradient(180deg,rgba(123,92,255,.08),rgba(255,79,179,.04))}
+  .pills{display:flex;flex-wrap:wrap;gap:10px;min-width:0}
+  .dd{position:relative;flex:1 1 auto}
+  .dd .pill{width:100%}
+  .pill__chev{margin-left:auto}
+  .pill{height:44px;padding:0 12px 0 14px;border-radius:999px;border:1px solid var(--line-2);background:rgba(12,10,34,.72);display:inline-flex;align-items:center;gap:8px;font:700 12.5px var(--body);white-space:nowrap;transition:border-color .15s,background-color .15s}
+  .pill:hover,.pill[aria-expanded="true"]{border-color:var(--line-hot);background:rgba(40,24,82,.6)}
+  .pill__icon{color:var(--pink);display:grid;place-items:center}
+  .pill__icon .ico{width:17px;height:17px}
+  .pill__pre{font:800 10.5px/1 var(--display);letter-spacing:.08em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .pill__chev{color:var(--muted);transition:transform .2s}
+  .pill__chev .ico{width:16px;height:16px}
+  .pill[aria-expanded="true"] .pill__chev{transform:rotate(180deg)}
+
+  .menu{position:absolute;bottom:calc(100% + 10px);left:0;min-width:100%;width:max-content;max-width:320px;padding:6px;border-radius:14px;background:#141134;border:1px solid var(--line-2);box-shadow:0 22px 50px -12px rgba(0,0,0,.75),0 0 34px -12px rgba(217,70,239,.45);display:none;z-index:30}
+  .dd.is-open .menu{display:block;animation:pop .16s ease-out}
+  .opt{display:flex;align-items:flex-start;gap:10px;width:100%;padding:10px 12px;border:0;border-radius:10px;background:transparent;text-align:left;font:700 13.5px var(--body)}
+  .opt:hover,.opt:focus-visible{background:rgba(139,92,246,.16);outline:none}
+  .opt[aria-selected="true"]{background:linear-gradient(90deg,rgba(123,92,255,.24),rgba(255,79,179,.14))}
+  .opt__icon{color:var(--pink);padding-top:1px}
+  .opt__icon .ico{width:16px;height:16px}
+  .opt__body{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+  .opt__sub{font-size:11.5px;font-weight:600;color:var(--muted)}
+  .opt__check{color:var(--pink);margin-left:8px}
+  .opt__check .ico{width:16px;height:16px}
+  .opt.is-locked .opt__name,.opt.is-locked .opt__sub{opacity:.5}
+  .lock-tag{margin-left:10px;display:inline-flex;align-items:center;gap:4px;padding:4px 7px;border-radius:6px;font:800 9.5px/1 var(--display);letter-spacing:.06em;color:#fff;background:var(--grad);align-self:center}
+  .lock-tag .ico{width:10px;height:10px}
+
+  .generate{position:relative;overflow:hidden;width:100%;height:64px;padding:0 12px 0 26px;border:0;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;gap:12px;color:#fff;background:var(--grad-cta);box-shadow:0 12px 32px -10px rgba(255,79,179,.7),inset 0 1px 0 rgba(255,255,255,.28);font:800 italic 18px/1 var(--display);letter-spacing:.02em;text-transform:uppercase;transition:transform .15s,box-shadow .2s,filter .2s}
+  .generate::before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.22) 50%,transparent 65%);background-size:250% 100%;animation:shine 4s ease-in-out infinite;pointer-events:none}
+  .generate:hover{transform:translateY(-1px)}
+  .generate[data-ready="false"]{filter:saturate(.8) brightness(.9)}
+  .generate[data-ready="false"]::before{animation:none}
+  .generate__icon{display:grid;place-items:center}
+  .generate__icon .ico{width:20px;height:20px}
+  .cost{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px 0 5px;border-radius:999px;background:rgba(255,255,255,.18);font:800 14px/1 var(--body);font-style:normal;letter-spacing:0;margin-left:4px}
+  .coin{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:900 13px/1 var(--display);font-style:normal;color:#8a4f00;background:radial-gradient(circle at 34% 30%,#ffe98a,#ffbf1a 58%,#e08c00);box-shadow:0 0 12px rgba(255,194,31,.6),inset 0 0 0 2px rgba(255,255,255,.35)}
+  .spin{width:20px;height:20px;border-radius:50%;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;animation:rot .8s linear infinite}
+
+  .is-shake{animation:shake .45s}
+  .drop.is-shake,.field.is-shake{border-color:var(--pink);box-shadow:0 0 0 4px rgba(255,79,179,.16)}
+  .field.is-flash{animation:flash .7s}
+
+  .toast{position:fixed;z-index:100;display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:999px;background:rgba(20,16,52,.95);border:1px solid var(--line-2);backdrop-filter:blur(10px);box-shadow:0 20px 40px -12px rgba(0,0,0,.7),0 0 30px -12px rgba(217,70,239,.6);font:600 13.5px/1.35 var(--body);opacity:0;pointer-events:none;transform:translate(-50%,16px);transition:opacity .25s,transform .25s}
+  .toast.is-show{opacity:1;transform:translate(-50%,0)}
+  .toast__dot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--pink);box-shadow:0 0 10px var(--pink)}
+  .toast.ok .toast__dot{background:#4ade80;box-shadow:0 0 10px #4ade80}
+
+  @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @keyframes shine{0%,55%{background-position:120% 0}100%{background-position:-120% 0}}
+  @keyframes rot{to{transform:rotate(360deg)}}
+  @keyframes shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+  @keyframes flash{0%{box-shadow:0 0 0 0 rgba(255,79,179,.5)}100%{box-shadow:0 0 0 10px rgba(255,79,179,0)}}
+
+  /* Small viewports: drop the bezel so each screen fits */
+  @media (max-width:460px){
+    .page{padding:28px 12px 64px}
+    .device{padding:0;border-radius:30px;background:none;box-shadow:0 0 0 1px var(--line-2),0 0 80px -40px rgba(197,76,243,.6)}
+    .device::before,.device::after,.island,.home{display:none}
+    .screen{width:calc(100vw - 24px);border-radius:30px}
+    .devices.is-clipped .screen{height:760px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- Icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="m21 15-4.5-4.5L6 21"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.6v14.8L19 12z"/></symbol>
+  <symbol id="i-text" viewBox="0 0 24 24"><path d="M4 7V5h16v2M12 5v14M9 19h6"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2.8 2.8 5.7 6.3.9-4.55 4.43 1.07 6.27L12 17.1l-5.62 2.97 1.07-6.27L2.9 9.4l6.3-.9z"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M10 3.5l1.6 4.3a4 4 0 0 0 2.35 2.35l4.3 1.6-4.3 1.6a4 4 0 0 0-2.35 2.35L10 20l-1.6-4.3a4 4 0 0 0-2.35-2.35l-4.3-1.6 4.3-1.6A4 4 0 0 0 8.4 7.8z"/><path d="M19 2l.7 1.8 1.8.7-1.8.7L19 7l-.7-1.8-1.8-.7 1.8-.7z"/></symbol>
+</svg>
+
+<main class="page">
+  <header class="page__head">
+    <div>
+      <h1>Mobile views</h1>
+      <p>The create page at 390 px wide, one screen for each mode. Every screen is live.</p>
+    </div>
+    <div class="seg" role="group" aria-label="Screen height">
+      <button type="button" class="seg__btn" data-view="full" aria-pressed="true">Full length</button>
+      <button type="button" class="seg__btn" data-view="clip" aria-pressed="false">Phone height</button>
+    </div>
+  </header>
+
+  <div class="devices" id="devices">
+    <div class="device-wrap" data-mode="edit">
+      <span class="device__cap"></span>
+      <div class="device"><span class="island"></span><div class="screen"></div><span class="home"></span></div>
+    </div>
+    <div class="device-wrap" data-mode="i2v">
+      <span class="device__cap"></span>
+      <div class="device"><span class="island"></span><div class="screen"></div><span class="home"></span></div>
+    </div>
+    <div class="device-wrap" data-mode="t2v">
+      <span class="device__cap"></span>
+      <div class="device"><span class="island"></span><div class="screen"></div><span class="home"></span></div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><span class="toast__dot"></span><span id="toastText"></span></div>
+
+<script>
+(() => {
+  /* ---------- Icons ---------- */
+  const FILLED = new Set(['play','star','sparkle']);
+  const svg = n => `<svg class="ico${FILLED.has(n) ? ' ico--fill' : ''}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+  const STATUS_ICONS =
+    '<svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>' +
+    '<svg width="16" height="12" viewBox="0 0 16 12" aria-hidden="true"><path d="M8 11.6 5.7 9.3a3.3 3.3 0 0 1 4.6 0z"/><path d="M3.5 7.1a6.4 6.4 0 0 1 9 0l-1.45 1.45a4.4 4.4 0 0 0-6.1 0z"/><path d="M1.3 4.9a9.5 9.5 0 0 1 13.4 0l-1.45 1.45a7.5 7.5 0 0 0-10.5 0z"/></svg>' +
+    '<svg width="27" height="13" viewBox="0 0 27 13" aria-hidden="true"><rect x=".5" y=".5" width="23" height="12" rx="3.8" fill="none" stroke="currentColor" stroke-opacity=".4"/><rect x="2" y="2" width="20" height="9" rx="2.4"/><path d="M25 4.4v4.2a2.2 2.2 0 0 0 0-4.2z" opacity=".45"/></svg>';
+
+  /* ---------- Config (same as the create page) ---------- */
+  const MODES = [
+    { id:'edit', label:'AI Image Edit', icon:'image', family:'image', sub:'Restyle or change a photo',
+      title:['Edit an','image'], labelText:'What should we change?',
+      helper:'Describe the edit: outfit, style, background or lighting.',
+      placeholder:'Type anything you want to change...', maxImages:3, controls:['resolution'] },
+    { id:'i2v', label:'Image to Video', icon:'play', family:'video', sub:'Bring a photo to life',
+      title:['Create a','video'], labelText:'What should happen in the video?',
+      helper:'Write a detailed prompt describing the action, motion, and camera style.',
+      placeholder:'Type anything you want to animate...', maxImages:1, controls:['duration','resolution'] },
+    { id:'t2v', label:'Text to Video', icon:'text', family:'video', sub:'Generate from a prompt only',
+      title:['Create a','video'], labelText:'Describe your video',
+      helper:'Set the scene, the subject, the motion and the camera. More detail gives better results.',
+      placeholder:'Type anything you want to see...', maxImages:0, controls:['ratio','duration','resolution'] }
+  ];
+  const MODELS = {
+    image:[
+      { id:'verse22', name:'Spicy Verse 2.2', sub:'Fast, faithful edits', cost:15 },
+      { id:'versepro', name:'Spicy Verse Pro', sub:'Sharper detail, multi-image blending', cost:25, tag:true, locked:true }
+    ],
+    video:[
+      { id:'pro', name:'Spicy Pro', sub:'New model', cost:30, tag:true },
+      { id:'ultra', name:'Spicy Ultra', sub:'Best pose · Voice', cost:50, tag:true, hot:true, locked:true },
+      { id:'ultimate', name:'Spicy Ultimate', sub:'Best pose · Voice · Less wait', cost:70, tag:true, hot:true, locked:true }
+    ]
+  };
+  const CONTROLS = {
+    resolution:{ values:['480P','720P','1080P'], locked:['1080P'],
+      pre:v => ({'480P':'SD','720P':'HD','1080P':'FHD'})[v], fmt:v => v.replace('P','p'),
+      subs:{'480P':'Fastest','720P':'Sharper result','1080P':'Highest resolution'} },
+    duration:{ values:['5s','10s'], pre:() => 'LENGTH', subs:{'5s':'Short clip','10s':'Uses 2× coins'} },
+    ratio:{ values:['9:16','1:1','16:9'], pre:() => 'RATIO', subs:{'9:16':'Stories and Reels','1:1':'Feed post','16:9':'Widescreen'} }
+  };
+  const RES_EXTRA = {'480P':0,'720P':5,'1080P':15};
+  const EFFECTS = [
+    { id:'neon-noir', title:'Neon Noir', cat:'Cinematic', badge:'HOT', image:'', c:['#2a1470','#ff3fa4cc','#00d4ff55'], prompt:'Rain-soaked city street at night, neon signs reflecting on wet pavement, moody cinematic lighting, teal and magenta color grade, shallow depth of field.' },
+    { id:'golden-hour', title:'Golden Hour', cat:'Portrait', badge:'HOT', image:'', c:['#4a2170','#ffb347cc','#ff6f6166'], prompt:'Warm golden hour sunlight, soft backlit rim light, glowing skin, dreamy bokeh, natural film photography look.' },
+    { id:'dance', title:'Dance Loop', cat:'Motion', badge:'HOT', image:'', c:['#2a1060','#e879f9cc','#22d3ee55'], prompt:'The subject performs a smooth, rhythmic dance move while the camera slowly orbits, soft studio lights pulsing to the beat.' },
+    { id:'cyber', title:'Cyber Street', cat:'Cinematic', badge:'NEW', image:'', c:['#140f3d','#7b5cffcc','#ff2e9766'], prompt:'Futuristic outfit with glowing LED accents, holographic billboards and flying cars in the background, rainy cyberpunk atmosphere.' },
+    { id:'anime', title:'Anime Glow', cat:'Anime & Art', image:'', c:['#3b1f7a','#ff8ad8bb','#7ee8fa55'], prompt:'Turn into a vibrant anime illustration, clean cel shading, soft glowing highlights, expressive eyes, pastel sky background.' },
+    { id:'studio', title:'Studio Portrait', cat:'Portrait', image:'', c:['#2b2358','#c9b8ffaa','#ffffff33'], prompt:'Professional studio headshot, seamless backdrop, large softbox lighting, crisp focus, magazine-quality retouching.' },
+    { id:'red-carpet', title:'Red Carpet', cat:'Fashion', badge:'HOT', image:'', c:['#3d0f2e','#ff4d6dcc','#ffd16655'], prompt:'Elegant red carpet look, designer evening wear, camera flashes in the background, luxury premiere event atmosphere.' },
+    { id:'elven', title:'Elven Realm', cat:'Fantasy', badge:'NEW', image:'', c:['#15304a','#6ee7b7aa','#a78bfa66'], prompt:'Transform into a fantasy elf with delicate pointed ears and flowing silver hair, enchanted glowing forest, floating fireflies.' },
+    { id:'push-in', title:'Slow Push-In', cat:'Motion', image:'', c:['#1a1446','#fbbf24aa','#f472b655'], prompt:'Slow cinematic push-in on the subject, gentle hair and fabric movement in the breeze, subtle parallax in the background.' },
+    { id:'vhs', title:'Retro VHS', cat:'Retro', image:'', c:['#2d1b4e','#ff9f43aa','#54a0ff55'], prompt:'1990s camcorder look, VHS grain and tracking lines, slight chromatic aberration, date stamp in the corner, warm faded colors.' },
+    { id:'watercolor', title:'Watercolor Dream', cat:'Anime & Art', image:'', c:['#3a2a6e','#f5a3c7bb','#a0e7e555'], prompt:'Soft watercolor painting, loose brush strokes, bleeding pastel pigments, visible paper texture, airy and light.' },
+    { id:'space', title:'Space Explorer', cat:'Fantasy', badge:'NEW', image:'', c:['#0d0b33','#8b5cf6cc','#38bdf855'], prompt:'Wearing a sleek white astronaut suit, floating in zero gravity, Earth glowing below, starfield and violet nebula behind.' },
+    { id:'snow', title:'Snow Cabin', cat:'Cinematic', image:'', c:['#1c2552','#dbe7ffaa','#ffb86b55'], prompt:'Cozy winter scene, gentle snowfall, warm cabin lights glowing behind, knitted sweater, breath visible in the cold air.' },
+    { id:'street', title:'Street Style', cat:'Fashion', image:'', c:['#26204a','#fca5a5aa','#a5b4fc55'], prompt:'Trendy streetwear outfit with an oversized jacket, city crosswalk, candid fashion editorial shot in natural daylight.' },
+    { id:'clay', title:'Clay 3D', cat:'Anime & Art', image:'', c:['#3b2b6b','#ffc6a8bb','#b8f2e655'], prompt:'Cute 3D clay figurine style, soft rounded shapes, handmade fingerprint texture, pastel studio lighting, tilt-shift look.' },
+    { id:'vintage', title:'Vintage Film', cat:'Retro', image:'', c:['#3a2340','#f4c095aa','#e76f5155'], prompt:'Shot on 35mm film, warm portrait film tones, soft light leaks, fine grain, candid vintage vibe.' }
+  ];
+  const CATS = ['All','Trending','Cinematic','Portrait','Fashion','Fantasy','Anime & Art','Retro','Motion'];
+  const inCat = (fx, cat) => cat === 'All' || (cat === 'Trending' ? !!fx.badge : fx.cat === cat);
+  const SIL = '<svg class="fx__sil" viewBox="0 0 100 150" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><circle cx="50" cy="80" r="16"/><path d="M16 150c1-29 15-44 34-44s33 15 34 44z"/></svg>';
+  const modelLabel = m => `${m.tag ? '<span class="tag-new">[NEW]</span> ' : ''}🌶️ ${m.name}${m.hot ? ' 🔥' : ''}`;
+  const plain = html => html.replace(/<[^>]+>/g, '').trim();
+
+  /* ---------- Shared toast, anchored to the phone that raised it ---------- */
+  const toastEl = document.getElementById('toast'), toastText = document.getElementById('toastText');
+  let toastTimer;
+  function toast(screen, msg, kind = ''){
+    const r = screen.getBoundingClientRect();
+    const visibleBottom = Math.min(r.bottom, window.innerHeight);
+    toastEl.style.left = `${r.left + r.width / 2}px`;
+    toastEl.style.bottom = `${window.innerHeight - visibleBottom + 40}px`;
+    toastEl.style.maxWidth = `${r.width - 32}px`;
+    toastText.innerHTML = msg;
+    toastEl.className = 'toast is-show ' + kind;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('is-show'), 2800);
+  }
+
+  /* ---------- Dropdowns ---------- */
+  function closeAll(){
+    document.querySelectorAll('.dd.is-open').forEach(d => {
+      d.classList.remove('is-open');
+      d.querySelector('.pill').setAttribute('aria-expanded', 'false');
+    });
+  }
+  document.addEventListener('click', closeAll);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+
+  /* ---------- Screen template ---------- */
+  const template = uid => `
+    <div class="m-status" aria-hidden="true"><span class="m-time">9:41</span><span></span><span class="m-icons">${STATUS_ICONS}</span></div>
+    <div class="studio">
+      <header class="hero">
+        <h1><span data-r="heroA"></span> <span class="grad-text" data-r="heroB"></span></h1>
+        <p>Transform your ideas into cinematic reality with a focused desktop creation workflow.</p>
+      </header>
+      <section class="composer" aria-label="Creation workspace">
+        <div class="main">
+          <div class="upload" data-r="upload">
+            <div class="drop" data-r="drop" tabindex="0" role="button" aria-label="Upload photo">
+              <div class="drop__empty" data-r="dropEmpty">
+                <span class="drop__plus">${svg('plus')}</span>
+                <span class="drop__label">Upload photo</span>
+                <span class="drop__sub" data-r="dropSub"></span>
+              </div>
+              <div class="previews" data-r="previews" hidden></div>
+            </div>
+            <p class="upload__note">${svg('lock')}Your image is deleted after generation.</p>
+            <input type="file" data-r="file" accept="image/*" hidden />
+          </div>
+          <div class="prompt">
+            <label class="label" for="prompt-${uid}"><span data-r="labelText"></span> <span class="req">*</span></label>
+            <p class="helper" data-r="helper"></p>
+            <div class="field" data-r="field">
+              <div class="effect-tag" data-r="effectTag" hidden>
+                <span>Effect: <b data-r="effectName"></b></span>
+                <button type="button" data-r="effectClear" aria-label="Remove effect">${svg('x')}</button>
+              </div>
+              <textarea id="prompt-${uid}" data-r="prompt" maxlength="1000"></textarea>
+              <div class="field__foot"><span class="field__foot-r"><button type="button" class="link" data-r="clear" hidden>Clear</button><span data-r="count">0 / 1000</span></span></div>
+            </div>
+            <div class="prompt__foot">
+              <button type="button" class="toggle" data-r="optimize" role="switch" aria-checked="true"><span>Optimize using AI</span><span class="switch" aria-hidden="true"></span></button>
+            </div>
+          </div>
+        </div>
+        <section class="effects" data-r="effects" aria-labelledby="fx-${uid}">
+          <div class="effects__head">
+            <div>
+              <h2 class="label" id="fx-${uid}">Or start from an effect</h2>
+              <p class="helper">Pick a card to load its prompt. You can still edit it.</p>
+            </div>
+            <button type="button" class="ghost" data-r="viewAll" aria-expanded="false"><span data-r="viewAllText">View all</span><span class="num" data-r="fxCount">0</span></button>
+          </div>
+          <div class="chips" data-r="chips" aria-label="Effect categories"></div>
+          <div class="track" data-r="track"></div>
+        </section>
+        <div class="toolbar">
+          <div class="pills" data-r="pills"></div>
+          <button type="button" class="generate" data-r="gen" data-ready="false">
+            <span class="generate__icon" data-r="genIcon">${svg('sparkle')}</span>
+            <span data-r="genLabel">Generate</span>
+            <span class="cost" aria-label="Cost in coins"><span class="coin">$</span><span data-r="cost"></span></span>
+          </button>
+        </div>
+      </section>
+    </div>`;
+
+  /* ---------- One live composer per phone ---------- */
+  let UID = 0;
+  function mount(wrap){
+    const uid = ++UID;
+    const screen = wrap.querySelector('.screen');
+    const cap = wrap.querySelector('.device__cap');
+    screen.innerHTML = template(uid);
+    const R = {};
+    screen.querySelectorAll('[data-r]').forEach(n => R[n.dataset.r] = n);
+
+    const state = {
+      mode:wrap.dataset.mode,
+      model:{ image:'verse22', video:'pro' },
+      res:{ image:'480P', video:'720P' },
+      duration:'5s', ratio:'9:16',
+      images:[], effect:null, cat:'All', expanded:false, optimize:true, loading:false
+    };
+    const MODE = () => MODES.find(m => m.id === state.mode);
+    const curModel = () => MODELS[MODE().family].find(m => m.id === state.model[MODE().family]);
+    const getVal = k => k === 'resolution' ? state.res[MODE().family] : state[k];
+    const setVal = (k, v) => { if (k === 'resolution') state.res[MODE().family] = v; else state[k] = v; };
+    const say = (msg, kind) => toast(screen, msg, kind);
+
+    function cost(){
+      const m = curModel(), mode = MODE();
+      let c = m.cost + RES_EXTRA[state.res[mode.family]];
+      if (mode.family === 'video' && state.duration === '10s') c *= 2;
+      return c;
+    }
+    const isReady = () => (MODE().maxImages === 0 || state.images.length > 0) && R.prompt.value.trim().length > 0;
+    const updateReady = () => { R.gen.dataset.ready = String(isReady()); };
+    const updateCost = () => { R.cost.textContent = cost(); };
+    function shake(node){
+      node.classList.remove('is-shake'); void node.offsetWidth; node.classList.add('is-shake');
+      node.addEventListener('animationend', () => node.classList.remove('is-shake'), { once:true });
+    }
+
+    /* Dropdown */
+    function makeDropdown({ name, icon, pre, label, options, value, onPick }){
+      const dd = document.createElement('div'); dd.className = 'dd';
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'pill';
+      btn.setAttribute('aria-haspopup', 'listbox'); btn.setAttribute('aria-expanded', 'false');
+      btn.setAttribute('aria-label', `${name}: ${plain(label)}`);
+      btn.innerHTML = `${icon ? `<span class="pill__icon">${icon}</span>` : ''}${pre ? `<span class="pill__pre">${pre}</span>` : ''}<span class="pill__val">${label}</span><span class="pill__chev">${svg('chev')}</span>`;
+      const menu = document.createElement('div');
+      menu.className = 'menu'; menu.setAttribute('role', 'listbox'); menu.setAttribute('aria-label', name);
+      menu.addEventListener('click', e => e.stopPropagation());
+      options.forEach(o => {
+        const sel = o.value === value;
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'opt' + (o.locked ? ' is-locked' : '');
+        b.setAttribute('role', 'option'); b.setAttribute('aria-selected', String(sel));
+        b.innerHTML = `${o.icon ? `<span class="opt__icon">${o.icon}</span>` : ''}<span class="opt__body"><span class="opt__name">${o.label}</span>${o.sub ? `<span class="opt__sub">${o.sub}</span>` : ''}</span>${o.locked ? `<span class="lock-tag">${svg('lock')}PRO</span>` : (sel ? `<span class="opt__check">${svg('check')}</span>` : '')}`;
+        b.addEventListener('click', () => {
+          if (o.locked){ say(`<b>${plain(o.label)}</b> is included in Pro plans.`); return; }
+          closeAll(); onPick(o.value);
+        });
+        menu.append(b);
+      });
+      menu.addEventListener('keydown', e => {
+        const items = [...menu.querySelectorAll('.opt')], i = items.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown'){ e.preventDefault(); items[(i + 1) % items.length].focus(); }
+        if (e.key === 'ArrowUp'){ e.preventDefault(); items[(i - 1 + items.length) % items.length].focus(); }
+        if (e.key === 'Escape'){ closeAll(); btn.focus(); }
+      });
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const wasOpen = dd.classList.contains('is-open');
+        closeAll();
+        if (wasOpen) return;
+        dd.classList.add('is-open'); btn.setAttribute('aria-expanded', 'true');
+        menu.style.left = ''; menu.style.right = '';
+        if (menu.getBoundingClientRect().right > screen.getBoundingClientRect().right - 12){ menu.style.left = 'auto'; menu.style.right = '0'; }
+        (menu.querySelector('[aria-selected="true"]') || menu.querySelector('.opt')).focus({ preventScroll:true });
+      });
+      dd.append(btn, menu);
+      return dd;
+    }
+
+    function renderPills(){
+      closeAll();
+      R.pills.innerHTML = '';
+      const mode = MODE(), model = curModel();
+      R.pills.append(makeDropdown({
+        name:'Mode', icon:svg(mode.icon), label:mode.label, value:mode.id,
+        options:MODES.map(m => ({ value:m.id, label:m.label, sub:m.sub, icon:svg(m.icon) })),
+        onPick:v => { state.mode = v; renderMode(); }
+      }));
+      R.pills.append(makeDropdown({
+        name:'Model', icon:svg('star'), label:modelLabel(model), value:model.id,
+        options:MODELS[mode.family].map(m => ({ value:m.id, label:modelLabel(m), sub:m.sub, locked:m.locked })),
+        onPick:v => { state.model[mode.family] = v; renderPills(); updateCost(); }
+      }));
+      mode.controls.forEach(key => {
+        const def = CONTROLS[key], val = getVal(key), fmt = def.fmt || (v => v);
+        R.pills.append(makeDropdown({
+          name:key[0].toUpperCase() + key.slice(1), pre:def.pre(val), label:fmt(val), value:val,
+          options:def.values.map(v => ({ value:v, label:fmt(v), sub:def.subs && def.subs[v], locked:def.locked && def.locked.includes(v) })),
+          onPick:v => { setVal(key, v); renderPills(); updateCost(); }
+        }));
+      });
+    }
+
+    /* Mode */
+    function renderMode(){
+      const m = MODE();
+      cap.innerHTML = `${svg(m.icon)}${m.label}`;
+      R.heroA.textContent = m.title[0];
+      R.heroB.textContent = m.title[1];
+      R.labelText.textContent = m.labelText;
+      R.helper.textContent = m.helper;
+      R.prompt.placeholder = m.placeholder;
+      R.upload.hidden = m.maxImages === 0;
+      if (state.images.length > m.maxImages) state.images.splice(m.maxImages).forEach(i => URL.revokeObjectURL(i.url));
+      R.file.multiple = m.maxImages > 1;
+      R.dropSub.textContent = m.maxImages > 1 ? `Up to ${m.maxImages} images, JPG, PNG or WEBP` : 'One image, JPG, PNG or WEBP';
+      renderUploads(); renderPills(); updateCost(); updateReady();
+    }
+
+    /* Uploads */
+    function addFiles(list){
+      const m = MODE();
+      if (!m.maxImages) return;
+      const files = [...list].filter(f => f.type.startsWith('image/'));
+      if (!files.length){ say('Only image files can be uploaded.'); return; }
+      const room = m.maxImages - state.images.length;
+      if (room <= 0){ say(`You can add up to ${m.maxImages} image${m.maxImages > 1 ? 's' : ''}. Remove one to add another.`); return; }
+      files.slice(0, room).forEach(f => state.images.push({ file:f, url:URL.createObjectURL(f) }));
+      if (files.length > room) say(`Added ${room}. ${m.label} takes up to ${m.maxImages} image${m.maxImages > 1 ? 's' : ''}.`);
+      renderUploads(); updateReady();
+    }
+    function renderUploads(){
+      const m = MODE(), n = state.images.length;
+      R.dropEmpty.hidden = n > 0;
+      R.previews.hidden = n === 0;
+      R.drop.classList.toggle('is-filled', n > 0);
+      R.drop.setAttribute('aria-label', n ? `${n} of ${m.maxImages} images uploaded` : 'Upload photo');
+      R.previews.innerHTML = '';
+      if (!n) return;
+      const canAdd = n < m.maxImages;
+      R.previews.dataset.n = String(n + (canAdd ? 1 : 0));
+      state.images.forEach((img, i) => {
+        const t = document.createElement('div'); t.className = 'tile';
+        t.innerHTML = `<img src="${img.url}" alt="Uploaded image ${i + 1}">${m.maxImages > 1 ? `<span class="tile__n">${i + 1}</span>` : ''}<button type="button" class="tile__x" aria-label="Remove image ${i + 1}">${svg('x')}</button>`;
+        t.querySelector('.tile__x').addEventListener('click', e => {
+          e.stopPropagation(); URL.revokeObjectURL(img.url); state.images.splice(i, 1); renderUploads(); updateReady();
+        });
+        R.previews.append(t);
+      });
+      if (canAdd){
+        const a = document.createElement('button');
+        a.type = 'button'; a.className = 'tile tile--add';
+        a.innerHTML = `${svg('plus')}<span>Add</span>`;
+        a.addEventListener('click', e => { e.stopPropagation(); R.file.click(); });
+        R.previews.append(a);
+      }
+    }
+    R.drop.addEventListener('click', () => { if (!state.images.length) R.file.click(); });
+    R.drop.addEventListener('keydown', e => {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target === R.drop && !state.images.length){ e.preventDefault(); R.file.click(); }
+    });
+    R.file.addEventListener('change', () => { addFiles(R.file.files); R.file.value = ''; });
+    ['dragenter','dragover'].forEach(t => R.drop.addEventListener(t, e => { e.preventDefault(); R.drop.classList.add('is-drag'); }));
+    ['dragleave','drop'].forEach(t => R.drop.addEventListener(t, e => { e.preventDefault(); R.drop.classList.remove('is-drag'); }));
+    R.drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+
+    /* Prompt */
+    function onPromptInput(){
+      const len = R.prompt.value.length;
+      R.count.textContent = `${len} / 1000`;
+      R.clear.hidden = len === 0;
+      updateReady();
+    }
+    R.prompt.addEventListener('input', onPromptInput);
+    R.prompt.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); R.gen.click(); } });
+    R.clear.addEventListener('click', () => {
+      R.prompt.value = '';
+      if (state.effect){ state.effect = null; renderEffectTag(); syncPressed(); }
+      onPromptInput(); R.prompt.focus();
+    });
+    R.optimize.addEventListener('click', () => {
+      state.optimize = !state.optimize;
+      R.optimize.setAttribute('aria-checked', String(state.optimize));
+    });
+
+    /* Effects */
+    function renderChips(){
+      R.chips.innerHTML = '';
+      CATS.forEach(cat => {
+        const n = EFFECTS.filter(fx => inCat(fx, cat)).length;
+        if (!n && cat !== 'All') return;
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'chip';
+        b.setAttribute('aria-pressed', String(cat === state.cat));
+        b.innerHTML = `${cat}<span class="n">${n}</span>`;
+        b.addEventListener('click', () => { state.cat = cat; renderChips(); renderEffects(); R.track.scrollTo({ left:0, top:0 }); });
+        R.chips.append(b);
+      });
+    }
+    function renderEffects(){
+      const list = EFFECTS.filter(fx => inCat(fx, state.cat));
+      R.fxCount.textContent = list.length;
+      R.track.innerHTML = '';
+      if (!list.length){ R.track.innerHTML = '<p class="track__empty">No effects in this category yet. Try All.</p>'; return; }
+      list.forEach(fx => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'fx'; b.dataset.id = fx.id;
+        b.setAttribute('aria-pressed', String(!!state.effect && state.effect.id === fx.id));
+        b.setAttribute('aria-label', `${fx.title}, ${fx.cat}. Use this prompt`);
+        b.style.setProperty('--c1', fx.c[0]); b.style.setProperty('--c2', fx.c[1]); b.style.setProperty('--c3', fx.c[2]);
+        b.innerHTML =
+          (fx.image ? `<span class="fx__img" style="background-image:url('${fx.image}')"></span>` : `<span class="fx__img is-art">${SIL}</span>`) +
+          '<span class="fx__scrim"></span>' +
+          (fx.badge ? `<span class="fx__badge">${fx.badge}</span>` : '') +
+          `<span class="fx__check">${svg('check')}</span>` +
+          `<span class="fx__meta"><span class="fx__title">${fx.title}</span><span class="fx__cat">${fx.cat}</span></span>`;
+        b.addEventListener('click', () => pickEffect(fx));
+        R.track.append(b);
+      });
+    }
+    const syncPressed = () => R.track.querySelectorAll('.fx').forEach(b => b.setAttribute('aria-pressed', String(!!state.effect && state.effect.id === b.dataset.id)));
+    function renderEffectTag(){
+      R.effectTag.hidden = !state.effect;
+      if (state.effect) R.effectName.textContent = state.effect.title;
+    }
+    function pickEffect(fx){
+      if (state.effect && state.effect.id === fx.id){
+        if (R.prompt.value === fx.prompt) R.prompt.value = '';
+        state.effect = null;
+      } else {
+        state.effect = fx;
+        R.prompt.value = fx.prompt;
+        R.field.classList.remove('is-flash'); void R.field.offsetWidth; R.field.classList.add('is-flash');
+      }
+      renderEffectTag(); syncPressed(); onPromptInput();
+    }
+    R.effectClear.addEventListener('click', () => {
+      if (state.effect && R.prompt.value === state.effect.prompt) R.prompt.value = '';
+      state.effect = null;
+      renderEffectTag(); syncPressed(); onPromptInput(); R.prompt.focus();
+    });
+    R.viewAll.addEventListener('click', () => {
+      state.expanded = !state.expanded;
+      R.effects.classList.toggle('is-expanded', state.expanded);
+      R.viewAll.setAttribute('aria-expanded', String(state.expanded));
+      R.viewAllText.textContent = state.expanded ? 'Show less' : 'View all';
+      R.track.scrollTo({ left:0, top:0 });
+    });
+
+    /* Generate */
+    R.gen.addEventListener('click', async () => {
+      if (state.loading) return;
+      const m = MODE();
+      if (m.maxImages > 0 && !state.images.length){
+        shake(R.drop); say(`Upload a photo to start ${m.id === 'edit' ? 'editing' : 'animating'}.`); return;
+      }
+      if (!R.prompt.value.trim()){
+        shake(R.field); R.prompt.focus({ preventScroll:true }); say('Write a prompt or pick an effect below.'); return;
+      }
+      state.loading = true;
+      R.gen.setAttribute('aria-busy', 'true');
+      R.genIcon.innerHTML = '<span class="spin" aria-hidden="true"></span>';
+      R.genLabel.textContent = 'Generating';
+      await new Promise(r => setTimeout(r, 1800));
+      say(`Generating now. <b>${cost()}</b> coins used.`, 'ok');
+      state.loading = false;
+      R.gen.removeAttribute('aria-busy');
+      R.genIcon.innerHTML = svg('sparkle');
+      R.genLabel.textContent = 'Generate';
+    });
+
+    renderChips(); renderEffects(); renderMode(); onPromptInput();
+  }
+
+  document.querySelectorAll('.device-wrap').forEach(mount);
+
+  /* Full length / phone height */
+  const devices = document.getElementById('devices');
+  document.querySelectorAll('.seg__btn').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.seg__btn').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    devices.classList.toggle('is-clipped', btn.dataset.view === 'clip');
+    closeAll();
+  }));
+})();
+</script>
+</body>
+</html>
