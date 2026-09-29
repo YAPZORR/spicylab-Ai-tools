@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Composer dropdowns | Spicy Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#07061a;
+    --panel-top:rgba(22,18,56,.94);
+    --panel-bot:rgba(13,11,36,.97);
+    --field:#0b0922;
+    --line:rgba(160,136,255,.14);
+    --line-2:rgba(184,122,255,.32);
+    --line-hot:rgba(255,79,179,.65);
+    --text:#f6f4ff;
+    --muted:#aaa4d4;
+    --dim:#716b9e;
+    --pink:#ff4fb3;
+    --grad:linear-gradient(90deg,#7b5cff 0%,#c54cf3 52%,#ff4fb3 100%);
+    --r-xl:24px;
+    --display:'Sora',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --body:'Manrope',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    color-scheme:dark;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:inherit}
+  [hidden]{display:none!important}
+  html{background:var(--bg)}
+  body{
+    margin:0;min-height:100vh;font-family:var(--body);color:var(--text);-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1100px 520px at 50% -160px,rgba(123,92,255,.28),transparent 70%),
+      radial-gradient(720px 420px at 8% 105%,rgba(255,79,179,.10),transparent 70%),
+      radial-gradient(720px 420px at 95% 90%,rgba(123,92,255,.12),transparent 70%),
+      var(--bg);
+  }
+  button,textarea{font:inherit;color:inherit}
+  button{cursor:pointer}
+  :focus-visible{outline:2px solid var(--pink);outline-offset:3px;border-radius:10px}
+
+  .ico{width:18px;height:18px;flex:none;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .ico--fill{fill:currentColor;stroke:none}
+
+  .sheet{max-width:1240px;margin:0 auto;padding:48px 24px 80px}
+  .sheet__head{margin-bottom:28px}
+  .sheet__head h1{margin:0;font:800 clamp(26px,3.2vw,36px)/1.15 var(--display);letter-spacing:-.02em}
+  .sheet__head p{margin:8px 0 0;color:var(--muted);font-size:14.5px;font-weight:500}
+
+  .grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:20px}
+  .spec{margin:0;min-width:0;display:flex;flex-direction:column;gap:10px;grid-column:span 2}
+  .spec--half{grid-column:span 3}
+  .spec--full{grid-column:1/-1}
+  .spec figcaption{font-size:12.5px;font-weight:700;color:var(--muted);padding-left:4px}
+
+  /* ============ Stage: a slice of the composer card ============ */
+  .stage{
+    position:relative;flex:1;display:flex;align-items:flex-end;padding:28px 20px 18px;border-radius:var(--r-xl);
+    background:linear-gradient(180deg,var(--panel-top) 0%,var(--panel-bot) 100%);
+    box-shadow:0 30px 70px -40px rgba(0,0,0,.9),0 0 70px -34px rgba(197,76,243,.5);
+  }
+  .stage::before,.frame::before{
+    content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;z-index:2;
+    background:linear-gradient(135deg,rgba(123,92,255,.9),rgba(255,79,179,.6) 32%,rgba(123,92,255,.16) 62%,rgba(255,79,179,.55));
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;
+  }
+  .stage::after{ /* toolbar band */
+    content:"";position:absolute;left:0;right:0;bottom:0;height:86px;border-top:1px solid var(--line);
+    border-radius:0 0 var(--r-xl) var(--r-xl);
+    background:linear-gradient(180deg,rgba(123,92,255,.08),rgba(255,79,179,.04));
+  }
+
+  /* ============ Dropdown (always open) ============ */
+  .dd{position:relative;z-index:1;max-width:100%;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+  .menu{
+    min-width:160px;width:max-content;max-width:100%;padding:6px;border-radius:14px;
+    background:#141134;border:1px solid var(--line-2);
+    box-shadow:0 22px 50px -12px rgba(0,0,0,.75),0 0 34px -12px rgba(217,70,239,.45);
+  }
+  .opt{display:flex;align-items:flex-start;gap:10px;width:100%;padding:10px 12px;border:0;border-radius:10px;background:transparent;text-align:left;font:700 13.5px var(--body)}
+  .opt:hover,.opt:focus-visible{background:rgba(139,92,246,.16);outline:none}
+  .opt[aria-selected="true"]{background:linear-gradient(90deg,rgba(123,92,255,.24),rgba(255,79,179,.14))}
+  .opt__icon{color:var(--pink);padding-top:1px}
+  .opt__icon .ico{width:16px;height:16px}
+  .opt__body{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+  .opt__sub{font-size:11.5px;font-weight:600;color:var(--muted)}
+  .opt__check{color:var(--pink);margin-left:8px}
+  .opt__check .ico{width:16px;height:16px}
+  .opt[aria-selected="false"] .opt__check{visibility:hidden}
+  .opt.is-locked{cursor:not-allowed}
+  .opt.is-locked .opt__name,.opt.is-locked .opt__sub{opacity:.5}
+  .lock-tag{margin-left:10px;align-self:center;display:inline-flex;align-items:center;gap:4px;padding:4px 7px;border-radius:6px;font:800 9.5px/1 var(--display);letter-spacing:.06em;color:#fff;background:var(--grad)}
+  .lock-tag .ico{width:10px;height:10px}
+  .lock-tag.is-nudge{animation:nudge .4s}
+  .tag-new{font-weight:800;color:#ffb8e0}
+
+  .pill{height:50px;padding:0 14px 0 18px;border-radius:999px;border:1px solid var(--line-hot);background:rgba(40,24,82,.6);display:inline-flex;align-items:center;gap:10px;font:700 13.5px var(--body);white-space:nowrap}
+  .pill__icon{color:var(--pink);display:grid;place-items:center}
+  .pill__icon .ico{width:17px;height:17px}
+  .pill__pre{font:800 10.5px/1 var(--display);letter-spacing:.08em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .pill__chev{color:var(--muted);transform:rotate(180deg)}
+  .pill__chev .ico{width:16px;height:16px}
+
+  /* ============ Prompt field ============ */
+  .frame{
+    position:relative;padding:20px;border-radius:var(--r-xl);
+    background:linear-gradient(180deg,var(--panel-top) 0%,var(--panel-bot) 100%);
+    box-shadow:0 30px 70px -40px rgba(0,0,0,.9),0 0 70px -34px rgba(197,76,243,.5);
+  }
+  .prompt{display:flex;flex-direction:column;min-width:0}
+  .prompt__head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .label{margin:0;display:block;font:700 11.5px/1.3 var(--display);letter-spacing:.14em;text-transform:uppercase}
+  .req{color:var(--pink)}
+  .helper{margin:5px 0 0;font-size:12.5px;line-height:1.45;color:var(--muted);font-weight:500}
+  .badge{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:999px;border:1px solid var(--line-2);background:rgba(139,92,246,.10);font:700 11.5px var(--body);white-space:nowrap}
+
+  .field{position:relative;display:flex;flex-direction:column;margin-top:12px;border-radius:16px;background:var(--field);border:1px solid rgba(186,120,255,.40);transition:border-color .2s,box-shadow .2s}
+  .field:focus-within{border-color:var(--line-hot);box-shadow:0 0 0 4px rgba(217,70,239,.12),0 0 32px -8px rgba(217,70,239,.5)}
+  .field textarea{min-height:148px;resize:none;border:0;outline:0;background:transparent;padding:16px 18px 6px;font:500 16px/1.55 var(--body);color:var(--text)}
+  .field textarea::placeholder{color:#6d6897;font-size:18px}
+  .field__foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 12px 10px 18px;font-size:11.5px;font-weight:600;color:var(--dim)}
+  .field__foot-r{display:inline-flex;align-items:center;gap:12px}
+  .link{border:0;background:none;padding:2px 4px;font-weight:700;font-size:11.5px;color:var(--muted)}
+  .link:hover{color:#fff}
+  .kbd{font:700 10px var(--body);padding:2px 6px;border-radius:5px;border:1px solid var(--line-2);color:var(--muted)}
+
+  .effect-tag{align-self:flex-start;margin:12px 14px 0;display:inline-flex;align-items:center;gap:8px;padding:4px 4px 4px 10px;border-radius:999px;font-size:12px;font-weight:600;color:#f3e8ff;background:linear-gradient(90deg,rgba(123,92,255,.28),rgba(255,79,179,.24));border:1px solid rgba(255,79,179,.45)}
+  .effect-tag b{font-weight:800;color:#fff}
+  .effect-tag button{width:22px;height:22px;border-radius:50%;border:0;display:grid;place-items:center;background:rgba(7,6,26,.5);color:#fff}
+  .effect-tag button .ico{width:12px;height:12px}
+
+  .prompt__foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+  .toggle{display:inline-flex;align-items:center;gap:10px;border:0;background:none;padding:0;font:700 12.5px var(--body);white-space:nowrap}
+  .switch{position:relative;width:44px;height:24px;border-radius:999px;background:#2a2552;border:1px solid var(--line-2);transition:background .2s,box-shadow .2s}
+  .switch::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s}
+  .toggle[aria-checked="true"] .switch{background:var(--grad);border-color:transparent;box-shadow:0 0 16px rgba(217,70,239,.5)}
+  .toggle[aria-checked="true"] .switch::after{transform:translateX(20px)}
+  .note{font-size:12px;color:var(--dim);font-weight:600}
+
+  @keyframes nudge{20%,60%{transform:translateX(-3px)}40%,80%{transform:translateX(3px)}}
+
+  @media (max-width:980px){
+    .spec,.spec--half{grid-column:span 3}
+  }
+  @media (max-width:640px){
+    .sheet{padding:28px 14px 64px}
+    .grid{grid-template-columns:minmax(0,1fr);gap:16px}
+    .spec,.spec--half,.spec--full{grid-column:1/-1}
+    .frame{padding:14px}
+    .prompt__head .badge{display:none}
+    .kbd-hint{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- Icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="m21 15-4.5-4.5L6 21"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.6v14.8L19 12z"/></symbol>
+  <symbol id="i-text" viewBox="0 0 24 24"><path d="M4 7V5h16v2M12 5v14M9 19h6"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2.8 2.8 5.7 6.3.9-4.55 4.43 1.07 6.27L12 17.1l-5.62 2.97 1.07-6.27L2.9 9.4l6.3-.9z"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+</svg>
+
+<main class="sheet">
+  <header class="sheet__head">
+    <h1>Composer dropdowns</h1>
+    <p>Every open menu and the prompt field from the create page, shown at once.</p>
+  </header>
+
+  <div class="grid">
+
+    <!-- 1. Mode -->
+    <figure class="spec">
+      <div class="stage">
+        <div class="dd" data-copy-icon>
+          <div class="menu" role="listbox" aria-label="Mode">
+            <button type="button" class="opt" role="option" aria-selected="true">
+              <span class="opt__icon"><svg class="ico"><use href="#i-image"/></svg></span>
+              <span class="opt__body"><span class="opt__name">AI Image Edit</span><span class="opt__sub">Restyle or change a photo</span></span>
+              <span class="opt__check"><svg class="ico"><use href="#i-check"/></svg></span>
+            </button>
+            <button type="button" class="opt" role="option" aria-selected="false">
+              <span class="opt__icon"><svg class="ico ico--fill"><use href="#i-play"/></svg></span>
+              <span class="opt__body"><span class="opt__name">Image to Video</span><span class="opt__sub">Bring a photo to life</span></span>
+              <span class="opt__check"><svg class="ico"><use href="#i-check"/></svg></span>
+            </button>
+            <button type="button" class="opt" role="option" aria-selected="false">
+              <span class="opt__icon"><svg class="ico"><use href="#i-text"/></svg></span>
+              <span class="opt__body"><span class="opt__name">Text to Video</span><span class="opt__sub">Generate from a prompt only</span></span>
+              <span class="opt__check"><svg class="ico"><use href="#i-check"/></svg></span>
+            </button>
+          </div>
+          <button type="button" class="pill" aria-expanded="true">
+            <span class="pill__icon"><svg class="ico"><use href="#i-image"/></svg></span>
+            <span class="pill__val">AI Image Edit</span>
+            <span class="pill__chev"><svg class="ico"><use href="#i-chev"/></svg></span>
+          </button>
+        </div>
+      </div>
+      <figcaption>Mode</figcaption>
+    </figure>
+
+    <!-- 2. Model -->
+    <figure class="spec">
+      <div class="stage">
+        <div class="dd">
+          <div class="menu" role="listbox" aria-label="Model">
+            <button type="button" class="opt" role="option" aria-selected="true">
+              <span class="opt__body"><span class="opt__name">🌶️ Spicy Verse 2.2</span><span class="opt__sub">Fast, faithful edits</span></span>
+              <span class="opt__check"><svg class="ico"><use href="#i-check"/></svg></span>
+            </button>
+            <button type="button" class="opt is-locked" role="option" aria-selected="false" aria-disabled="true">
+              <span class="opt__body"><span class="opt__name"><span class="tag-new">[NEW]</span> 🌶️ Spicy Verse Pro</span><span class="opt__sub">Sharper detail, multi-image blending</span></span>
+              <span class="lock-tag"><svg class="ico"><use href="#i-lock"/></svg>PRO</span>
+            </button>
+          </div>
+          <button type="button" class="pill" aria-expanded="true">
+            <span class="pill__icon"><svg class="ico ico--fill"><use href="#i-star"/></svg></span>
+            <span class="pill__val">🌶️ Spicy Verse 2.2</span>
+            <span class="pill__chev"><svg class="ico"><use href="#i-chev"/></svg></span>
+          </button>
+        </div>
+      </div>
+      <figcaption>Model</figcaption>
+    </figure>
+
+    <!-- 3. Resolution -->
+    <figure class="spec">
+      <div class="stage">
+        <div class="dd">
+          <div class="menu" role="listbox" aria-label="Resolution">
+            <button type="button" class="opt" role="option" aria-selected="true" data-pre="SD">
+              <span class="opt__body"><span class="opt__name">480p</span><span class="opt__sub">Fastest</span></span>
+              <span class="opt__check"><svg class="ico"><use href="#i-check"/></svg></span>
+            </button>
+            <button type="button" class="opt" role="option" aria-selected="false" data-pre="HD">
+              <span class="opt__body"><span class="opt__name">720p</span><span class="opt__sub">Sharper result</span></span>
+              <span class="opt__check"><svg class="ico"><use href="#i-check"/></svg></span>
+            </button>
+            <button type="button" class="opt is-locked" role="option" aria-selected="false" aria-disabled="true">
+              <span class="opt__body"><span class="opt__name">1080p</span><span class="opt__sub">Highest resolution</span></span>
+              <span class="lock-tag"><svg class="ico"><use href="#i-lock"/></svg>PRO</span>
+            </button>
+          </div>
+          <button type="button" class="pill" aria-expanded="true">
+            <span class="pill__pre">SD</span>
+            <span class="pill__val">480p</span>
+            <span class="pill__chev"><svg class="ico"><use href="#i-chev"/></svg></span>
+          </button>
+        </div>
+      </div>
+      <figcaption>Resolution</figcaption>
+    </figure>
+
+    <!-- 4. Ratio -->
+    <figure class="spec spec--half">
+      <div class="stage">
+        <div class="dd">
+          <div class="menu" role="listbox" aria-label="Ratio">
+            <button type="button" class="opt" role="option" aria-selected="true">
+              <span class="opt__body"><span class="opt__name">9:16</span><span class="opt__sub">Stories and Reels</span></span>
+              <span class="opt__check"><svg class="ico"><use href="#i-check"/></svg></span>
+            </button>
+            <button type="button" class="opt" role="option" aria-selected="false">
+              <span class="opt__body"><span class="opt__name">1:1</span><span class="opt__sub">Feed post</span></span>
+              <span class="opt__check"><svg class="ico"><use href="#i-check"/></svg></span>
+            </button>
+            <button type="button" class="opt" role="option" aria-selected="false">
+              <span class="opt__body"><span class="opt__name">16:9</span><span class="opt__sub">Widescreen</span></span>
+              <span class="opt__check"><svg class="ico"><use href="#i-check"/></svg></span>
+            </button>
+          </div>
+          <button type="button" class="pill" aria-expanded="true">
+            <span class="pill__pre">RATIO</span>
+            <span class="pill__val">9:16</span>
+            <span class="pill__chev"><svg class="ico"><use href="#i-chev"/></svg></span>
+          </button>
+        </div>
+      </div>
+      <figcaption>Ratio</figcaption>
+    </figure>
+
+    <!-- 5. Length -->
+    <figure class="spec spec--half">
+      <div class="stage">
+        <div class="dd">
+          <div class="menu" role="listbox" aria-label="Length">
+            <button type="button" class="opt" role="option" aria-selected="false">
+              <span class="opt__body"><span class="opt__name">5s</span><span class="opt__sub">Short clip</span></span>
+              <span class="opt__check"><svg class="ico"><use href="#i-check"/></svg></span>
+            </button>
+            <button type="button" class="opt" role="option" aria-selected="true">
+              <span class="opt__body"><span class="opt__name">10s</span><span class="opt__sub">Uses 2× coins</span></span>
+              <span class="opt__check"><svg class="ico"><use href="#i-check"/></svg></span>
+            </button>
+          </div>
+          <button type="button" class="pill" aria-expanded="true">
+            <span class="pill__pre">LENGTH</span>
+            <span class="pill__val">10s</span>
+            <span class="pill__chev"><svg class="ico"><use href="#i-chev"/></svg></span>
+          </button>
+        </div>
+      </div>
+      <figcaption>Length</figcaption>
+    </figure>
+
+    <!-- 6. Prompt field -->
+    <figure class="spec spec--full">
+      <div class="frame">
+        <div class="prompt">
+          <div class="prompt__head">
+            <div>
+              <label class="label" for="prompt">What should happen in the video? <span class="req">*</span></label>
+              <p class="helper">Write a detailed prompt describing the action, motion, and camera style.</p>
+            </div>
+            <span class="badge"><span class="tag-new">[NEW]</span> 🌶️ Spicy Pro</span>
+          </div>
+
+          <div class="field">
+            <div class="effect-tag" id="effectTag">
+              <span>Effect: <b>Neon Noir</b></span>
+              <button type="button" id="effectClear" aria-label="Remove effect"><svg class="ico"><use href="#i-x"/></svg></button>
+            </div>
+            <textarea id="prompt" maxlength="1000" placeholder="Type anything you want to animate...">Rain-soaked city street at night, neon signs reflecting on wet pavement, moody cinematic lighting, teal and magenta color grade, shallow depth of field.</textarea>
+            <div class="field__foot">
+              <span class="kbd-hint"><span class="kbd">Ctrl</span> + <span class="kbd">Enter</span> to generate</span>
+              <span class="field__foot-r">
+                <button type="button" class="link" id="clearPrompt">Clear</button>
+                <span id="count">152 / 1000</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="prompt__foot">
+            <button type="button" class="toggle" id="optimize" role="switch" aria-checked="true">
+              <span>Optimize using AI</span><span class="switch" aria-hidden="true"></span>
+            </button>
+            <span class="note">English recommended</span>
+          </div>
+        </div>
+      </div>
+      <figcaption>Prompt field with an effect applied</figcaption>
+    </figure>
+
+  </div>
+</main>
+
+<script>
+  /* Menus stay open; picking an option moves the check and updates the pill. */
+  document.querySelectorAll('.dd').forEach(dd => {
+    const pill = dd.querySelector('.pill');
+    const opts = [...dd.querySelectorAll('.opt')];
+    opts.forEach(opt => {
+      opt.addEventListener('click', () => {
+        if (opt.classList.contains('is-locked')){
+          const tag = opt.querySelector('.lock-tag');
+          tag.classList.remove('is-nudge'); void tag.offsetWidth; tag.classList.add('is-nudge');
+          return;
+        }
+        opts.forEach(o => o.setAttribute('aria-selected', String(o === opt)));
+        pill.querySelector('.pill__val').innerHTML = opt.querySelector('.opt__name').innerHTML;
+        const pre = pill.querySelector('.pill__pre');
+        if (pre && opt.dataset.pre) pre.textContent = opt.dataset.pre;
+        const icon = opt.querySelector('.opt__icon'), pillIcon = pill.querySelector('.pill__icon');
+        if ('copyIcon' in dd.dataset && icon && pillIcon) pillIcon.innerHTML = icon.innerHTML;
+      });
+    });
+    dd.querySelector('.menu').addEventListener('keydown', e => {
+      const i = opts.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown'){ e.preventDefault(); opts[(i + 1) % opts.length].focus(); }
+      if (e.key === 'ArrowUp'){ e.preventDefault(); opts[(i - 1 + opts.length) % opts.length].focus(); }
+    });
+  });
+
+  /* Prompt field */
+  const prompt = document.getElementById('prompt');
+  const count = document.getElementById('count');
+  const clear = document.getElementById('clearPrompt');
+  const tag = document.getElementById('effectTag');
+  const sync = () => {
+    count.textContent = `${prompt.value.length} / 1000`;
+    clear.hidden = prompt.value.length === 0;
+  };
+  prompt.addEventListener('input', sync);
+  clear.addEventListener('click', () => { prompt.value = ''; tag.hidden = true; sync(); prompt.focus(); });
+  document.getElementById('effectClear').addEventListener('click', () => { tag.hidden = true; prompt.focus(); });
+  const optimize = document.getElementById('optimize');
+  optimize.addEventListener('click', () => optimize.setAttribute('aria-checked', String(optimize.getAttribute('aria-checked') !== 'true')));
+  sync();
+</script>
+</body>
+</html>
