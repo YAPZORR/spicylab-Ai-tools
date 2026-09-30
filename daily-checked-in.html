@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daily check-in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+
+  /* page (theme-aware) */
+  --page:#ece7fb;
+  --page-ink:#2e2160;
+  --page-muted:#65589a;
+  --page-btn:#ffffff;
+  --page-btn-line:rgba(76,52,170,.2);
+  --blob-1:rgba(168,85,247,.32);
+  --blob-2:rgba(236,72,153,.24);
+  --blob-3:rgba(61,220,255,.2);
+
+  /* modal palette (from the plan screen) */
+  --line:rgba(160,142,255,.2);
+  --line-strong:rgba(180,160,255,.38);
+  --text:#f7f4ff;
+  --muted:#aba3d8;
+  --dim:#8d86bb;
+  --violet:#8b5cf6;
+  --purple:#a855f7;
+  --magenta:#d946ef;
+  --pink:#ec4899;
+  --hot:#f25fc0;
+  --cyan:#3ddcff;
+  --gold:#fbbf24;
+  --gold-soft:#fde68a;
+
+  --display:'Unbounded','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+  --body:'Plus Jakarta Sans',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --page:#07061a;
+    --page-ink:#e9e4ff;
+    --page-muted:#9990c6;
+    --page-btn:rgba(255,255,255,.06);
+    --page-btn-line:rgba(170,150,255,.24);
+    --blob-1:rgba(124,58,237,.34);
+    --blob-2:rgba(219,39,119,.2);
+    --blob-3:rgba(34,211,238,.1);
+  }
+}
+:root[data-theme="dark"]{
+  --page:#07061a;
+  --page-ink:#e9e4ff;
+  --page-muted:#9990c6;
+  --page-btn:rgba(255,255,255,.06);
+  --page-btn-line:rgba(170,150,255,.24);
+  --blob-1:rgba(124,58,237,.34);
+  --blob-2:rgba(219,39,119,.2);
+  --blob-3:rgba(34,211,238,.1);
+}
+
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;min-height:100%;display:flex;flex-direction:column;
+  background:var(--page);color:var(--page-ink);
+  font-family:var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+button{font:inherit}
+:where(button,a):focus-visible{outline:2px solid #f0abfc;outline-offset:3px}
+
+.defs{position:absolute;width:0;height:0;overflow:hidden}
+.blob{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0}
+.b1{width:420px;height:420px;background:var(--blob-1);top:-140px;left:-120px}
+.b2{width:380px;height:380px;background:var(--blob-2);bottom:-150px;right:-100px}
+.b3{width:280px;height:280px;background:var(--blob-3);top:38%;left:62%}
+
+.stage{
+  position:relative;z-index:1;flex:1 0 auto;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;padding:32px 16px 40px;
+}
+
+/* ---------- Modal ---------- */
+.modal{
+  position:relative;width:min(420px,100%);
+  border-radius:30px;padding:18px 18px 14px;color:var(--text);
+  background:
+    radial-gradient(90% 45% at 50% -8%, rgba(168,85,247,.42), transparent 62%),
+    radial-gradient(60% 35% at 108% 100%, rgba(236,72,153,.18), transparent 70%),
+    linear-gradient(180deg,#171142 0%,#110d33 55%,#0e0a2b 100%);
+  border:1px solid var(--line-strong);
+  box-shadow:
+    0 40px 90px -30px rgba(60,20,140,.75),
+    0 0 70px -20px rgba(217,70,239,.45),
+    inset 0 1px 0 rgba(255,255,255,.08);
+  isolation:isolate;
+  animation:modalIn .55s cubic-bezier(.2,.9,.3,1.12) both;
+}
+.modal[hidden]{display:none}
+.modal.closing{animation:modalOut .26s ease-in both}
+@keyframes modalIn{from{opacity:0;transform:translateY(18px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes modalOut{to{opacity:0;transform:translateY(10px) scale(.95)}}
+
+.bg-spark{position:absolute;color:#fff;opacity:.5;pointer-events:none}
+
+.topbar{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between}
+.balance{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:4px 12px 4px 4px;border-radius:999px;
+  background:rgba(251,191,36,.09);border:1px solid rgba(251,191,36,.28);
+  font-family:var(--display);font-weight:700;font-size:13px;color:var(--gold-soft);
+  font-variant-numeric:tabular-nums;
+}
+.balance svg{width:24px;height:24px;display:block}
+.balance.bump{animation:bump .32s ease-out}
+@keyframes bump{40%{transform:scale(1.14)}}
+.close{
+  width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted);
+  cursor:pointer;transition:background .2s,color .2s;
+}
+.close:hover{background:rgba(255,255,255,.1);color:var(--text)}
+.close svg{width:16px;height:16px}
+
+.hero{text-align:center;margin-top:2px}
+.emblem{position:relative;width:84px;height:80px;margin:0 auto;display:grid;place-items:center}
+.emblem-tile{
+  width:64px;height:64px;border-radius:20px;display:grid;place-items:center;
+  background:linear-gradient(140deg,#b06cff 0%,#d946ef 52%,#f25fc0 100%);
+  box-shadow:0 14px 30px -8px rgba(236,72,153,.65),inset 0 2px 0 rgba(255,255,255,.35),inset 0 -6px 12px rgba(91,33,182,.35);
+  transform:rotate(-8deg);
+}
+.emblem-tile svg{width:30px;height:30px;color:#fff;filter:drop-shadow(0 2px 3px rgba(91,33,182,.5))}
+.emblem .sp{position:absolute}
+.sp1{width:15px;height:15px;top:2px;right:6px;color:var(--gold-soft)}
+.sp2{width:9px;height:9px;bottom:10px;left:6px;color:#8ee9ff}
+.sp3{width:7px;height:7px;top:16px;left:10px;color:#f9a8d4}
+.hero h1{
+  font-family:var(--display);font-weight:800;
+  font-size:clamp(24px,7vw,30px);line-height:1.1;letter-spacing:-.02em;
+  margin:10px 0 8px;text-shadow:0 0 28px rgba(217,70,239,.35);
+}
+.hero p{margin:0 auto;max-width:31ch;font-size:14px;line-height:1.5;color:var(--muted)}
+
+/* ---------- Weekly pass (ticket) ---------- */
+.pass{
+  position:relative;margin-top:18px;padding:1.5px;border-radius:24px;
+  background:linear-gradient(125deg,var(--cyan) 0%,#7d6bff 38%,var(--magenta) 72%,var(--pink) 100%);
+  box-shadow:0 0 26px -6px rgba(125,107,255,.6),0 0 40px -14px rgba(61,220,255,.5);
+}
+.pass.shake{animation:shake .55s cubic-bezier(.36,.07,.19,.97) both}
+@keyframes shake{
+  10%,90%{transform:translateX(-1px)}
+  20%,80%{transform:translateX(3px)}
+  30%,50%,70%{transform:translateX(-5px) rotate(-.5deg)}
+  40%,60%{transform:translateX(5px) rotate(.5deg)}
+}
+.pass-inner{position:relative;border-radius:22.5px;background:linear-gradient(180deg,#1d1655 0%,#16114a 100%)}
+.pass-body{padding:14px 14px 10px}
+.pass-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.streak{display:flex;align-items:center;gap:6px;font-weight:600;font-size:13.5px}
+.streak svg{width:20px;height:20px}
+.streak b{font-family:var(--display);font-weight:700}
+.count{
+  font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap;
+  padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);
+}
+.segments{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px}
+.segments i{height:6px;border-radius:3px;background:rgba(255,255,255,.08);transition:background .4s,box-shadow .4s}
+.segments i.on{background:linear-gradient(90deg,var(--purple),var(--pink));box-shadow:0 0 10px rgba(236,72,153,.55)}
+.segments i.next{background:rgba(242,95,192,.3)}
+.segments i:last-child{background:rgba(251,191,36,.18)}
+.segments i:last-child.next{background:rgba(251,191,36,.42)}
+.segments i:last-child.on{background:linear-gradient(90deg,#fcd34d,#f59e0b);box-shadow:0 0 10px rgba(251,191,36,.6)}
+
+.days{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.day{
+  position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;
+  padding:14px 6px 11px;border-radius:16px;
+  background:rgba(255,255,255,.035);border:1px solid var(--line);color:var(--text);
+  cursor:default;transition:border-color .3s,background .3s,transform .3s;
+}
+.day-name{font-size:12px;font-weight:600;color:var(--dim)}
+.day-coin{width:34px;height:34px;display:block;transition:filter .3s,opacity .3s,transform .3s}
+.day-amt{font-family:var(--display);font-weight:700;font-size:14px;color:var(--muted)}
+.day.is-locked .day-coin{filter:grayscale(1) brightness(.8);opacity:.45}
+
+.day.is-today{
+  border:1.5px solid transparent;
+  background:linear-gradient(180deg,#2d2070,#231a5c) padding-box,linear-gradient(140deg,var(--hot),var(--purple)) border-box;
+  cursor:pointer;transform:translateY(-2px);
+  animation:glow 2.4s ease-in-out infinite;
+}
+@keyframes glow{
+  0%,100%{box-shadow:0 0 0 3px rgba(242,95,192,.1),0 10px 26px -10px rgba(236,72,153,.6)}
+  50%{box-shadow:0 0 0 5px rgba(242,95,192,.2),0 12px 32px -8px rgba(236,72,153,.85)}
+}
+.day.is-today .day-name{color:var(--text)}
+.day.is-today .day-amt{color:#ffd1ee}
+.day.is-today .day-coin{animation:coinIn .6s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes coinIn{from{transform:scale(.3) rotate(-40deg);opacity:0}to{transform:none;opacity:1}}
+.day-tag{
+  display:none;position:absolute;top:-10px;left:50%;transform:translateX(-50%);
+  padding:3px 10px;border-radius:999px;white-space:nowrap;
+  font-size:11px;font-weight:700;color:#fff;
+  background:linear-gradient(90deg,var(--purple),var(--pink));
+  box-shadow:0 4px 12px -2px rgba(236,72,153,.6);
+}
+.day.is-today .day-tag{display:block}
+
+.day.is-claimed{background:rgba(168,85,247,.12);border-color:rgba(192,132,252,.35)}
+.day.is-claimed .day-name{color:var(--muted)}
+.day.is-claimed .day-amt{font-family:var(--body);font-size:12px;font-weight:700;color:#f0abfc}
+.day.is-claimed .day-coin{transform:scale(.9)}
+.day-check{
+  position:absolute;top:7px;right:7px;width:18px;height:18px;border-radius:6px;
+  display:grid;place-items:center;color:#fff;
+  background:linear-gradient(135deg,var(--hot),var(--magenta));
+  opacity:0;transform:scale(.4);
+  transition:opacity .25s,transform .4s cubic-bezier(.3,1.8,.5,1);
+}
+.day-check svg{width:13px;height:13px}
+.day.is-claimed .day-check{opacity:1;transform:none}
+.day.just-claimed .day-coin{animation:flip .7s ease-out}
+@keyframes flip{
+  0%{transform:scale(1) rotateY(0)}
+  50%{transform:scale(1.3) rotateY(180deg)}
+  100%{transform:scale(.9) rotateY(360deg)}
+}
+
+/* perforation + notches */
+.perf{position:relative;height:22px}
+.perf::before{content:"";position:absolute;left:20px;right:20px;top:50%;border-top:2px dashed rgba(170,150,255,.28)}
+.notch{position:absolute;top:50%;width:22px;height:22px;margin-top:-11px;border-radius:50%;border:1.5px solid}
+.notch.l{left:-12.5px;background:#100c30;border-color:#6c88ff;clip-path:inset(0 0 0 50%)}
+.notch.r{right:-12.5px;background:#140c31;border-color:#e647b6;clip-path:inset(0 50% 0 0)}
+
+/* mega chest stub */
+.stub{
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;
+  width:100%;padding:4px 16px 16px 12px;
+  background:none;border:0;border-radius:0 0 22.5px 22.5px;color:inherit;text-align:left;cursor:default;
+}
+.stub.is-ready{cursor:pointer}
+.chest-wrap{position:relative;width:64px;height:58px;display:grid;place-items:center}
+.rays{
+  position:absolute;inset:-18px;border-radius:50%;
+  background:repeating-conic-gradient(from 0deg,rgba(252,211,77,.55) 0deg 7deg,transparent 7deg 22deg);
+  -webkit-mask:radial-gradient(circle,#000 16%,transparent 66%);
+          mask:radial-gradient(circle,#000 16%,transparent 66%);
+  opacity:.22;transition:opacity .4s;
+}
+.stub.is-ready .rays,.stub.is-opened .rays{opacity:1;animation:spin 10s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.chest{position:relative;width:60px;height:auto;overflow:visible;transform-origin:50% 90%}
+.stub.is-ready .chest{animation:wiggle 2.2s ease-in-out infinite}
+@keyframes wiggle{
+  0%,60%,100%{transform:rotate(0)}
+  66%{transform:rotate(-7deg)}
+  74%{transform:rotate(6deg)}
+  82%{transform:rotate(-4deg)}
+  90%{transform:rotate(2deg)}
+}
+.chest-lid{transform-box:fill-box;transform-origin:0% 100%;transition:transform .55s cubic-bezier(.3,1.7,.5,1)}
+.stub.is-opened .chest-lid{transform:translate(-3px,-9px) rotate(-16deg)}
+.chest-glow{opacity:0;transition:opacity .5s}
+.stub.is-opened .chest-glow{opacity:.95}
+.stub-title{font-family:var(--display);font-weight:700;font-size:15px}
+.stub-status{margin-top:4px;font-size:12.5px;line-height:1.35;color:var(--muted)}
+.stub.is-ready .stub-status{color:#f9a8d4;font-weight:700}
+.stub.is-opened .stub-status{color:var(--gold-soft)}
+.stub-reward{
+  display:flex;align-items:center;gap:6px;padding:5px 11px 5px 5px;border-radius:999px;
+  background:linear-gradient(90deg,rgba(124,58,237,.6),rgba(217,70,239,.45));
+  border:1px solid rgba(240,171,252,.35);
+  font-family:var(--display);font-weight:800;font-size:15px;color:#fff;
+}
+.stub-reward svg{width:24px;height:24px;display:block}
+
+/* ---------- CTA ---------- */
+.cta{
+  position:relative;margin-top:16px;width:100%;min-height:56px;
+  display:flex;align-items:center;justify-content:center;gap:12px;padding:0 18px;
+  border:0;border-radius:18px;cursor:pointer;
+  font-weight:700;font-size:17px;color:#fff;text-shadow:0 1px 1px rgba(100,0,50,.35);
+  background:linear-gradient(90deg,#d9409c 0%,#c42d7d 100%);
+  box-shadow:0 14px 30px -12px rgba(236,72,153,.85),inset 0 1px 0 rgba(255,255,255,.3),inset 0 -3px 0 rgba(120,10,70,.35);
+  transition:transform .15s,filter .2s,background .3s;
+}
+.cta:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.cta:active{transform:translateY(1px) scale(.99)}
+.cta.is-mega{background:linear-gradient(90deg,#7c3aed 0%,#b026c9 55%,#c42d7d 100%)}
+.cta-main{display:inline-flex;align-items:center;gap:8px}
+.cta-ico{width:18px;height:18px;flex:none}
+.cta-chip{
+  display:inline-flex;align-items:center;gap:4px;padding:3px 10px 3px 3px;border-radius:999px;
+  background:rgba(70,5,50,.3);font-family:var(--display);font-size:13px;font-weight:700;
+}
+.cta-chip svg{width:20px;height:20px;display:block}
+.cta.is-done{
+  background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px var(--line);
+  color:var(--muted);text-shadow:none;cursor:default;font-weight:600;font-size:14.5px;
+}
+.cta.is-done:hover{filter:none;transform:none}
+.cta.is-done .cta-chip{display:none}
+.cta.is-done .cta-ico{color:#f0abfc}
+.cta .time{font-variant-numeric:tabular-nums;color:var(--text);font-weight:700}
+.cta.nudge{animation:nudge .45s ease-in-out}
+@keyframes nudge{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+.more{
+  display:flex;align-items:center;justify-content:center;gap:7px;width:max-content;
+  margin:10px auto 0;padding:9px 12px;border-radius:12px;
+  color:#c9b3ff;font-size:14px;font-weight:600;text-decoration:none;
+}
+.more:hover{color:#f5d0fe;background:rgba(255,255,255,.04)}
+.more svg{width:18px;height:18px;display:block}
+
+/* ---------- Toast ---------- */
+.toast{
+  position:absolute;left:50%;bottom:10px;z-index:5;
+  display:flex;align-items:center;gap:8px;padding:7px 14px 7px 7px;border-radius:999px;
+  background:rgba(22,15,60,.95);border:1px solid rgba(240,171,252,.4);
+  box-shadow:0 10px 30px -8px rgba(0,0,0,.6),0 0 24px -6px rgba(236,72,153,.5);
+  font-weight:700;font-size:13.5px;white-space:nowrap;
+  opacity:0;transform:translate(-50%,14px);pointer-events:none;
+  transition:opacity .25s,transform .35s cubic-bezier(.3,1.5,.5,1);
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast svg{width:22px;height:22px;display:block}
+
+/* ---------- Effects ---------- */
+.fly{position:fixed;left:0;top:0;width:22px;height:22px;z-index:60;pointer-events:none;will-change:transform;filter:drop-shadow(0 3px 6px rgba(251,191,36,.55))}
+.fly svg{width:100%;height:100%;display:block}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:55}
+
+/* ---------- Page chrome (outside the modal) ---------- */
+.reopen{
+  display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 22px;border:0;border-radius:16px;cursor:pointer;
+  font-weight:700;font-size:16px;color:#fff;background:linear-gradient(90deg,#8b5cf6,#c42d7d);
+  box-shadow:0 14px 30px -12px rgba(168,85,247,.8);
+}
+.reopen[hidden]{display:none}
+.reopen svg{width:22px;height:22px}
+.proto{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;font-size:12.5px;color:var(--page-muted)}
+.proto button{
+  font-weight:600;font-size:12.5px;color:var(--page-ink);cursor:pointer;min-height:36px;padding:0 14px;
+  background:var(--page-btn);border:1px solid var(--page-btn-line);border-radius:999px;
+}
+.proto button:hover{border-color:var(--pink)}
+
+@media (max-width:360px){
+  .modal{padding:16px 12px 12px;border-radius:26px}
+  .pass-body{padding:12px 10px 8px}
+  .days{gap:8px}
+  .day-coin{width:30px;height:30px}
+  .stub{gap:9px;padding:4px 12px 14px 8px}
+  .chest-wrap{width:54px}
+  .chest{width:52px}
+  .stub-reward{font-size:13px}
+  .cta{font-size:16px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+</style>
+</head>
+<body>
+
+<svg class="defs" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="gCoinEdge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe58a"/><stop offset="1" stop-color="#e38a06"/></linearGradient>
+    <radialGradient id="gCoinFace" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#fff4b8"/><stop offset=".55" stop-color="#fcc93c"/><stop offset="1" stop-color="#f09a0c"/></radialGradient>
+    <linearGradient id="gFlame" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ec4899"/><stop offset=".6" stop-color="#fb923c"/><stop offset="1" stop-color="#fde047"/></linearGradient>
+    <linearGradient id="gChestBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#4c1d95"/></linearGradient>
+    <linearGradient id="gChestLid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e879f9"/><stop offset="1" stop-color="#7c3aed"/></linearGradient>
+    <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/></linearGradient>
+    <filter id="fBlur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+    <clipPath id="lidClip"><path d="M8 35V25C8 16 14 11 22 11H58C66 11 72 16 72 25V35Z"/></clipPath>
+  </defs>
+  <symbol id="coin" viewBox="0 0 40 40">
+    <circle cx="20" cy="20" r="19" fill="url(#gCoinEdge)"/>
+    <circle cx="20" cy="20" r="15.2" fill="url(#gCoinFace)" stroke="#d9860b" stroke-width="1.2"/>
+    <path d="M20 11L22.35 16.76L28.56 17.22L23.8 21.24L25.29 27.28L20 24L14.71 27.28L16.2 21.24L11.44 17.22L17.65 16.76Z" fill="#fff7d6" stroke="#c97a06" stroke-width="1" stroke-linejoin="round"/>
+    <path d="M9.5 14.5a12 12 0 0 1 6.5-6" stroke="#fff" stroke-opacity=".65" stroke-width="2" stroke-linecap="round" fill="none"/>
+  </symbol>
+  <symbol id="star" viewBox="10 9.2 20 20">
+    <path d="M20 11L22.35 16.76L28.56 17.22L23.8 21.24L25.29 27.28L20 24L14.71 27.28L16.2 21.24L11.44 17.22L17.65 16.76Z" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="sparkle" viewBox="0 0 24 24">
+    <path d="M12 0C12.9 6.6 17.4 11.1 24 12C17.4 12.9 12.9 17.4 12 24C11.1 17.4 6.6 12.9 0 12C6.6 11.1 11.1 6.6 12 0Z" fill="currentColor"/>
+  </symbol>
+  <symbol id="flame" viewBox="0 0 24 24">
+    <path d="M12.5 2.5c.6 2.6-.4 4.3-1.7 5.8-1.4 1.6-3.3 3.3-3.3 6.4 0 3.6 2.4 6.3 5.5 6.3s5.5-2.5 5.5-6c0-2.6-1.3-4.3-2.4-5.6-.3 1.3-.9 2.3-2 2.8.4-3.4-.4-7.1-1.6-9.7z" fill="url(#gFlame)"/>
+    <path d="M12.8 20c-1.6 0-2.8-1.2-2.8-2.9 0-1.5 1-2.4 1.9-3.4.3.9.9 1.5 1.6 1.7.1-.9.5-1.7 1.2-2.4.8 1 1.3 2.2 1.3 3.5 0 2-1.3 3.5-3.2 3.5z" fill="#fef3c7" opacity=".9"/>
+  </symbol>
+  <symbol id="check" viewBox="0 0 24 24">
+    <path d="M5.5 12.5l4.2 4.2L18.5 8" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+</svg>
+
+<div class="blob b1" aria-hidden="true"></div>
+<div class="blob b2" aria-hidden="true"></div>
+<div class="blob b3" aria-hidden="true"></div>
+
+<main class="stage">
+  <section class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="dci-title">
+    <svg class="bg-spark" style="width:7px;height:7px;top:96px;left:34px" aria-hidden="true"><use href="#sparkle"/></svg>
+    <svg class="bg-spark" style="width:5px;height:5px;top:150px;left:64px" aria-hidden="true"><use href="#sparkle"/></svg>
+    <svg class="bg-spark" style="width:8px;height:8px;top:118px;right:40px" aria-hidden="true"><use href="#sparkle"/></svg>
+    <svg class="bg-spark" style="width:5px;height:5px;top:72px;right:92px" aria-hidden="true"><use href="#sparkle"/></svg>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <header class="topbar">
+      <div class="balance" id="balance" aria-label="Coin balance">
+        <svg aria-hidden="true"><use href="#coin"/></svg>
+        <span id="balanceNum">120</span>
+      </div>
+      <button class="close" id="closeBtn" type="button" aria-label="Close daily check-in">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+
+    <div class="hero">
+      <div class="emblem" aria-hidden="true">
+        <div class="emblem-tile"><svg><use href="#star"/></svg></div>
+        <svg class="sp sp1"><use href="#sparkle"/></svg>
+        <svg class="sp sp2"><use href="#sparkle"/></svg>
+        <svg class="sp sp3"><use href="#sparkle"/></svg>
+      </div>
+      <h1 id="dci-title">Daily check-in</h1>
+      <p>Claim free coins every day. Keep going and day 7 opens the Mega chest.</p>
+    </div>
+
+    <div class="pass" id="pass">
+      <div class="pass-inner">
+        <div class="pass-body">
+          <div class="pass-head">
+            <div class="streak">
+              <svg aria-hidden="true"><use href="#flame"/></svg>
+              <span><b id="streakNum">0</b>-day streak</span>
+            </div>
+            <div class="count" id="countText">0 of 7 days</div>
+          </div>
+          <div class="segments" id="segments" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="days" id="days"></div>
+        </div>
+
+        <div class="perf" aria-hidden="true">
+          <span class="notch l"></span>
+          <span class="notch r"></span>
+        </div>
+
+        <button class="stub" id="mega" type="button">
+          <span class="chest-wrap" aria-hidden="true">
+            <span class="rays"></span>
+            <svg class="chest" id="chest" viewBox="0 0 80 70">
+              <ellipse class="chest-glow" cx="40" cy="34" rx="24" ry="9" fill="#fde68a" filter="url(#fBlur)"/>
+              <g>
+                <rect x="8" y="34" width="64" height="30" rx="6" fill="url(#gChestBody)"/>
+                <rect x="15" y="34" width="6" height="30" fill="url(#gGold)"/>
+                <rect x="59" y="34" width="6" height="30" fill="url(#gGold)"/>
+                <rect x="32.5" y="37" width="15" height="16" rx="4" fill="url(#gGold)" stroke="#b45309" stroke-width="1"/>
+                <circle cx="40" cy="43.5" r="2.3" fill="#7c2d12"/>
+                <rect x="39" y="44.5" width="2" height="4.5" rx="1" fill="#7c2d12"/>
+              </g>
+              <g class="chest-lid">
+                <path d="M8 35V25C8 16 14 11 22 11H58C66 11 72 16 72 25V35Z" fill="url(#gChestLid)"/>
+                <g clip-path="url(#lidClip)">
+                  <rect x="15" y="8" width="6" height="28" fill="url(#gGold)"/>
+                  <rect x="59" y="8" width="6" height="28" fill="url(#gGold)"/>
+                </g>
+                <rect x="6" y="31" width="68" height="5" rx="2.5" fill="url(#gGold)"/>
+                <path d="M26 16.5c4-2 9-2.6 14-2.6" stroke="#fff" stroke-opacity=".5" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+              </g>
+            </svg>
+          </span>
+          <span>
+            <span class="stub-title">Mega chest</span>
+            <span class="stub-status" id="megaStatus" style="display:block">Opens on day 7</span>
+          </span>
+          <span class="stub-reward"><svg aria-hidden="true"><use href="#coin"/></svg>+10</span>
+        </button>
+      </div>
+    </div>
+
+    <button class="cta" id="cta" type="button">
+      <span class="cta-main">
+        <svg class="cta-ico" aria-hidden="true"><use id="ctaUse" href="#star"/></svg>
+        <span id="ctaText">Check in now</span>
+      </span>
+      <span class="cta-chip"><svg aria-hidden="true"><use href="#coin"/></svg><span id="ctaAmt">+5</span></span>
+    </button>
+
+    <a class="more" href="#" id="more">
+      <svg aria-hidden="true"><use href="#coin"/></svg>
+      Get more free coins
+    </a>
+  </section>
+
+  <button class="reopen" id="reopen" type="button" hidden>
+    <svg aria-hidden="true"><use href="#coin"/></svg>
+    Open daily check-in
+  </button>
+
+  <div class="proto" aria-label="Prototype controls">
+    <span>Prototype controls</span>
+    <button type="button" id="nextDay">Skip to tomorrow</button>
+    <button type="button" id="resetWeek">Reset week</button>
+  </div>
+</main>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<script>
+(() => {
+  const REWARDS = [5, 5, 5, 5, 5, 5, 10];
+  const START_BALANCE = 120;
+  const KEY = 'daily-checkin-proto-v1';
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s) => document.querySelector(s);
+
+  let state = { claimed: 0, todayClaimed: false, balance: START_BALANCE };
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (saved && Number.isInteger(saved.claimed) && saved.claimed >= 0 && saved.claimed <= 7) {
+      state = {
+        claimed: saved.claimed,
+        todayClaimed: !!saved.todayClaimed,
+        balance: Number.isFinite(saved.balance) ? saved.balance : START_BALANCE
+      };
+    }
+  } catch (e) {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+
+  const modal = $('#modal'), pass = $('#pass'), cta = $('#cta'), mega = $('#mega');
+  const balanceEl = $('#balance'), balanceNum = $('#balanceNum');
+  const segs = [...document.querySelectorAll('#segments i')];
+
+  // Build day cards 1–6
+  const cards = [];
+  const daysEl = $('#days');
+  for (let i = 0; i < 6; i++) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'day';
+    b.innerHTML =
+      '<span class="day-tag">Today</span>' +
+      '<span class="day-name">Day ' + (i + 1) + '</span>' +
+      '<svg class="day-coin" aria-hidden="true"><use href="#coin"/></svg>' +
+      '<span class="day-amt">+' + REWARDS[i] + '</span>' +
+      '<span class="day-check" aria-hidden="true"><svg><use href="#check"/></svg></span>';
+    b.addEventListener('click', () => { if (b.classList.contains('is-today')) checkIn(); });
+    daysEl.appendChild(b);
+    cards.push(b);
+  }
+
+  const availableIndex = () => (state.todayClaimed || state.claimed >= 7) ? -1 : state.claimed;
+
+  function untilMidnight() {
+    const now = new Date();
+    const mid = new Date(now); mid.setHours(24, 0, 0, 0);
+    let s = Math.max(0, Math.floor((mid - now) / 1000));
+    const h = String(Math.floor(s / 3600)).padStart(2, '0'); s %= 3600;
+    const m = String(Math.floor(s / 60)).padStart(2, '0');
+    const sec = String(s % 60).padStart(2, '0');
+    return h + ':' + m + ':' + sec;
+  }
+
+  function renderCta() {
+    const idx = availableIndex();
+    const done = idx === -1;
+    cta.classList.toggle('is-done', done);
+    cta.classList.toggle('is-mega', idx === 6);
+    cta.setAttribute('aria-disabled', String(done));
+    $('#ctaUse').setAttribute('href', done ? '#check' : '#star');
+    if (done) {
+      const lead = state.claimed >= 7 ? 'Week complete. New week in ' : 'Checked in. Next reward in ';
+      $('#ctaText').innerHTML = lead + '<span class="time">' + untilMidnight() + '</span>';
+    } else {
+      $('#ctaText').textContent = idx === 6 ? 'Open the Mega chest' : 'Check in now';
+      $('#ctaAmt').textContent = '+' + REWARDS[idx];
+    }
+  }
+
+  function render() {
+    const c = state.claimed;
+    const idx = availableIndex();
+
+    $('#streakNum').textContent = c;
+    $('#countText').textContent = c + ' of 7 days';
+    balanceNum.textContent = state.balance.toLocaleString();
+
+    segs.forEach((s, i) => { s.className = i < c ? 'on' : (i === idx ? 'next' : ''); });
+
+    cards.forEach((card, i) => {
+      const claimed = i < c, today = i === idx;
+      card.classList.toggle('is-claimed', claimed);
+      card.classList.toggle('is-today', today);
+      card.classList.toggle('is-locked', !claimed && !today);
+      card.querySelector('.day-amt').textContent = claimed ? 'Claimed' : '+' + REWARDS[i];
+      card.tabIndex = today ? 0 : -1;
+      card.setAttribute('aria-disabled', String(!today));
+      card.setAttribute('aria-label',
+        'Day ' + (i + 1) + ', ' + REWARDS[i] + ' coins, ' + (claimed ? 'claimed' : today ? 'ready to claim' : 'locked'));
+    });
+
+    const ready = idx === 6, opened = c >= 7;
+    mega.classList.toggle('is-ready', ready);
+    mega.classList.toggle('is-opened', opened);
+    mega.tabIndex = ready ? 0 : -1;
+    mega.setAttribute('aria-disabled', String(!ready));
+    const left = 6 - c;
+    const status = opened ? 'Opened! +10 coins claimed'
+      : ready ? 'Ready to open today'
+      : left === 1 ? 'Opens on day 7. 1 check-in to go'
+      : 'Opens on day 7. ' + left + ' check-ins to go';
+    $('#megaStatus').textContent = status;
+    mega.setAttribute('aria-label', 'Mega chest, 10 coins. ' + status);
+
+    renderCta();
+  }
+
+  /* ---------- Effects ---------- */
+  const cv = $('#fx'), ctx = cv.getContext('2d');
+  let parts = [], raf = 0, W = 0, H = 0;
+  function sizeCanvas() {
+    const d = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = W * d; cv.height = H * d;
+    ctx.setTransform(d, 0, 0, d, 0, 0);
+  }
+  sizeCanvas();
+  window.addEventListener('resize', sizeCanvas);
+
+  const COLORS = ['#f25fc0', '#d946ef', '#a855f7', '#8b5cf6', '#3ddcff', '#fbbf24', '#fde68a'];
+  function burst(x, y, n, power) {
+    for (let k = 0; k < n; k++) {
+      const a = Math.random() * Math.PI * 2;
+      const s = (2 + Math.random() * 7) * power;
+      const r = Math.random();
+      parts.push({
+        x, y,
+        vx: Math.cos(a) * s,
+        vy: Math.sin(a) * s - (3 + Math.random() * 4) * power,
+        rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.35,
+        w: 5 + Math.random() * 5, h: 3 + Math.random() * 4,
+        c: COLORS[(Math.random() * COLORS.length) | 0],
+        kind: r < 0.18 ? 'dot' : r < 0.32 ? 'spark' : 'rect',
+        t: 0, life: 60 + Math.random() * 50
+      });
+    }
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+  function drawSpark(r) {
+    ctx.beginPath();
+    ctx.moveTo(0, -r);
+    ctx.quadraticCurveTo(r * 0.15, -r * 0.15, r, 0);
+    ctx.quadraticCurveTo(r * 0.15, r * 0.15, 0, r);
+    ctx.quadraticCurveTo(-r * 0.15, r * 0.15, -r, 0);
+    ctx.quadraticCurveTo(-r * 0.15, -r * 0.15, 0, -r);
+    ctx.fill();
+  }
+  function tick() {
+    ctx.clearRect(0, 0, W, H);
+    for (const q of parts) {
+      q.t++; q.vy += 0.22; q.vx *= 0.985; q.vy *= 0.985;
+      q.x += q.vx; q.y += q.vy; q.rot += q.vr;
+      ctx.globalAlpha = Math.max(0, 1 - q.t / q.life);
+      ctx.fillStyle = q.c;
+      ctx.save(); ctx.translate(q.x, q.y); ctx.rotate(q.rot);
+      if (q.kind === 'dot') { ctx.beginPath(); ctx.arc(0, 0, q.w / 2.2, 0, 6.283); ctx.fill(); }
+      else if (q.kind === 'spark') drawSpark(q.w * 1.1);
+      else ctx.fillRect(-q.w / 2, -q.h / 2, q.w, q.h);
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+    parts = parts.filter((q) => q.t < q.life && q.y < H + 40);
+    if (parts.length) raf = requestAnimationFrame(tick);
+    else { raf = 0; ctx.clearRect(0, 0, W, H); }
+  }
+
+  function flyCoins(fromEl, toEl, count, onArrive) {
+    const a = fromEl.getBoundingClientRect(), b = toEl.getBoundingClientRect();
+    const x0 = a.left + a.width / 2, y0 = a.top + a.height / 2;
+    const x1 = b.left + 16, y1 = b.top + b.height / 2;
+    for (let k = 0; k < count; k++) {
+      const el = document.createElement('div');
+      el.className = 'fly';
+      el.innerHTML = '<svg aria-hidden="true"><use href="#coin"/></svg>';
+      document.body.appendChild(el);
+      const jx = (Math.random() - 0.5) * 60, jy = (Math.random() - 0.5) * 30 - 10;
+      const mx = (x0 + x1) / 2 + (Math.random() - 0.5) * 90;
+      const my = Math.min(y0, y1) - 50 - Math.random() * 50;
+      const anim = el.animate([
+        { transform: `translate(${x0 - 11}px,${y0 - 11}px) scale(.4)`, opacity: 0 },
+        { transform: `translate(${x0 - 11 + jx}px,${y0 - 11 + jy}px) scale(1.15)`, opacity: 1, offset: 0.2 },
+        { transform: `translate(${mx - 11}px,${my - 11}px) scale(1)`, opacity: 1, offset: 0.6 },
+        { transform: `translate(${x1 - 11}px,${y1 - 11}px) scale(.55)`, opacity: 0.9 }
+      ], { duration: 900 + Math.random() * 150, delay: k * 70, easing: 'cubic-bezier(.45,.05,.4,1)', fill: 'both' });
+      anim.onfinish = () => { el.remove(); onArrive(); };
+    }
+  }
+
+  function bump() {
+    balanceEl.classList.remove('bump');
+    void balanceEl.offsetWidth;
+    balanceEl.classList.add('bump');
+  }
+
+  function countTo(from, to, dur) {
+    const t0 = performance.now();
+    const step = (t) => {
+      const p = Math.min(1, (t - t0) / dur);
+      const e = 1 - Math.pow(1 - p, 3);
+      balanceNum.textContent = Math.round(from + (to - from) * e).toLocaleString();
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  const toastEl = $('#toast');
+  let toastTimer = 0;
+  function toast(text) {
+    toastEl.innerHTML = '<svg aria-hidden="true"><use href="#coin"/></svg><span></span>';
+    toastEl.querySelector('span').textContent = text;
+    toastEl.classList.remove('show');
+    void toastEl.offsetWidth;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2400);
+  }
+
+  /* ---------- Actions ---------- */
+  let busy = false;
+  function checkIn() {
+    const i = availableIndex();
+    if (busy || i === -1) return;
+    busy = true;
+
+    const amt = REWARDS[i], isMega = i === 6;
+    const src = isMega ? $('#chest') : cards[i];
+    const from = state.balance;
+    state.claimed += 1;
+    state.todayClaimed = true;
+    state.balance += amt;
+    save();
+    render();
+    balanceNum.textContent = from.toLocaleString();
+
+    if (isMega) {
+      pass.classList.add('shake');
+      setTimeout(() => pass.classList.remove('shake'), 600);
+    } else {
+      cards[i].classList.add('just-claimed');
+      setTimeout(() => cards[i].classList.remove('just-claimed'), 800);
+    }
+
+    toast(isMega ? 'Mega chest opened! +10 coins' : 'Checked in! +' + amt + ' coins');
+
+    if (reduce) {
+      balanceNum.textContent = state.balance.toLocaleString();
+      busy = false;
+      return;
+    }
+
+    const r = src.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    burst(cx, cy, isMega ? 140 : 70, isMega ? 1.35 : 1);
+    if (isMega) setTimeout(() => burst(cx, cy - 10, 80, 1.1), 260);
+
+    const n = isMega ? 10 : 6;
+    let arrived = 0;
+    flyCoins(src, balanceEl, n, () => {
+      arrived++;
+      bump();
+      if (arrived === 1) countTo(from, state.balance, 650);
+      if (arrived === n) busy = false;
+    });
+  }
+
+  function nextDay() {
+    if (busy) return;
+    if (!state.todayClaimed) {
+      toast("Check in first. Today's coins are waiting");
+      cta.classList.remove('nudge'); void cta.offsetWidth; cta.classList.add('nudge');
+      return;
+    }
+    if (state.claimed >= 7) state.claimed = 0;
+    state.todayClaimed = false;
+    save();
+    render();
+    toast(state.claimed === 6 ? 'Mega chest day! Open it now' : 'New day, new coins to claim');
+  }
+
+  function resetWeek() {
+    if (busy) return;
+    state = { claimed: 0, todayClaimed: false, balance: START_BALANCE };
+    save();
+    render();
+    toast('Week reset');
+  }
+
+  function closeModal() {
+    modal.classList.add('closing');
+    setTimeout(() => {
+      modal.hidden = true;
+      modal.classList.remove('closing');
+      $('#reopen').hidden = false;
+      $('#reopen').focus();
+    }, 240);
+  }
+  function openModal() {
+    $('#reopen').hidden = true;
+    modal.hidden = false;
+    modal.style.animation = 'none';
+    void modal.offsetWidth;
+    modal.style.animation = '';
+    cta.focus({ preventScroll: true });
+  }
+
+  cta.addEventListener('click', checkIn);
+  mega.addEventListener('click', () => { if (mega.classList.contains('is-ready')) checkIn(); });
+  $('#closeBtn').addEventListener('click', closeModal);
+  $('#reopen').addEventListener('click', openModal);
+  $('#nextDay').addEventListener('click', nextDay);
+  $('#resetWeek').addEventListener('click', resetWeek);
+  $('#more').addEventListener('click', (e) => { e.preventDefault(); toast('Opens ways to earn more coins'); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+
+  setInterval(() => { if (availableIndex() === -1 && !modal.hidden) renderCta(); }, 1000);
+
+  render();
+})();
+</script>
+</body>
+</html>
