@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Affiliate activity · SpicyLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   SpicyLab — Affiliate activity (all-in-one page)
+   Tokens mirror the existing SpicyLab UI
+   ========================================================= */
+:root {
+  color-scheme: dark;
+  --bg: #0b0a18;
+  --inset: #0e0c20;
+  --border: #2c2753;
+  --border-hi: #3d3670;
+  --text: #f5f3ff;
+  --text-2: #bcb7d9;
+  --text-3: #8a84ad;
+  --violet: #8b5cf6;
+  --lavender: #a78bfa;
+  --purple: #c084fc;
+  --sky: #38bdf8;
+  --gold: #fbbf24;
+  --teal: #2dd4bf;
+  --red: #f87171;
+  --grad-primary: linear-gradient(90deg, #7c3aed 0%, #c026d3 60%, #d946ef 100%);
+  --grad-soft: linear-gradient(90deg, #8b5cf6 0%, #a855f7 100%);
+  --grad-text: linear-gradient(90deg, #c084fc 0%, #e879f9 100%);
+  --r-xl: 26px;
+  --r-lg: 20px;
+  --r-md: 14px;
+  --font-display: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; min-height: 100%;
+  background: var(--bg); color: var(--text);
+  font: 400 15px/1.55 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+body.no-scroll { overflow: hidden; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid #e9d5ff; outline-offset: 2px; border-radius: 6px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+[hidden] { display: none !important; }
+.i { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.coin { flex: none; }
+
+.page-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(900px 520px at 8% -8%, rgba(79, 62, 214, .3), transparent 62%),
+    radial-gradient(820px 520px at 96% -4%, rgba(176, 44, 178, .22), transparent 60%),
+    radial-gradient(900px 700px at 50% 115%, rgba(91, 33, 182, .16), transparent 60%);
+}
+.aff { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 44px 24px 96px; }
+
+/* ---------- Page header + sections ---------- */
+.page-head { margin-bottom: 36px; }
+.page-head h1 { margin: 0 0 6px; font-family: var(--font-display); font-weight: 900; font-size: clamp(30px, 4.4vw, 42px); line-height: 1.1; letter-spacing: -0.02em; }
+.page-head p { margin: 0; color: var(--text-2); max-width: 60ch; }
+.sec { margin-bottom: 56px; }
+.sec__title { margin: 0 0 16px; font-family: var(--font-display); font-weight: 800; font-size: 22px; letter-spacing: -0.01em; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 0 22px; border-radius: 12px;
+  font-weight: 700; font-size: 15px; line-height: 1; white-space: nowrap;
+  border: 1px solid transparent; color: #fff;
+  transition: transform .15s ease, filter .15s ease, box-shadow .2s ease, opacity .2s ease, background-color .2s ease;
+}
+.btn--primary { background: var(--grad-primary); box-shadow: 0 12px 30px -12px rgba(217, 70, 239, .75); }
+.btn--primary:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.btn--ghost { background: rgba(14, 12, 32, .65); border-color: rgba(192, 132, 252, .5); }
+.btn--ghost:hover:not(:disabled) { border-color: rgba(232, 121, 249, .85); background: rgba(30, 24, 62, .8); }
+.btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; filter: saturate(.6); }
+.btn .i { width: 17px; height: 17px; }
+.icon-btn {
+  width: 40px; height: 40px; border-radius: 10px; display: inline-grid; place-items: center;
+  background: transparent; border: 1px solid var(--border); color: var(--text-2);
+}
+.icon-btn:hover:not(:disabled) { color: #fff; border-color: var(--border-hi); background: rgba(255, 255, 255, .04); }
+.icon-btn:disabled { opacity: .35; cursor: not-allowed; }
+.link-btn { display: inline; background: none; border: 0; padding: 0; color: #fde68a; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- Filter chips + select ---------- */
+.toolbar { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 2px; max-width: 100%; }
+.chips::-webkit-scrollbar { display: none; }
+.fchip {
+  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  padding: 9px 14px; border-radius: 999px; font-size: 14.5px; font-weight: 600;
+  background: rgba(14, 12, 32, .7); border: 1px solid var(--border); color: var(--text-2);
+}
+.fchip:hover { color: #fff; border-color: var(--border-hi); }
+.fchip[aria-pressed="true"] { color: #fff; border-color: rgba(192, 132, 252, .85); background: rgba(139, 92, 246, .2); }
+.fchip__n { font-size: 13px; color: var(--text-3); }
+.fchip[aria-pressed="true"] .fchip__n { color: #e9d5ff; }
+
+/* ---------- Inputs ---------- */
+.input {
+  position: relative; display: flex; align-items: center;
+  min-height: 52px; border-radius: 12px;
+  background: var(--inset); border: 1px solid var(--border-hi);
+  transition: border-color .15s, box-shadow .15s, opacity .15s;
+}
+.input:focus-within { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139, 92, 246, .22); }
+.input input, .input select, .input textarea {
+  flex: 1; min-width: 0; width: 100%; background: transparent; border: 0; outline: 0;
+  padding: 13px 16px; font-size: 15.5px; font-weight: 500; color: var(--text);
+}
+.input input::placeholder, .input textarea::placeholder { color: #6f6a92; }
+.input textarea { resize: vertical; min-height: 92px; line-height: 1.5; }
+.input select { appearance: none; -webkit-appearance: none; padding-right: 44px; cursor: pointer; }
+.input select option { background: #15122d; color: #fff; }
+.input .caret { position: absolute; right: 16px; pointer-events: none; color: var(--text-3); }
+.input__prefix { padding-left: 16px; color: var(--text-3); font-weight: 700; }
+.input__prefix + input { padding-left: 6px; font-family: var(--font-display); font-weight: 800; font-size: 21px; }
+.chip-btn { margin-right: 8px; padding: 8px 14px; border-radius: 9px; border: 1px solid rgba(192, 132, 252, .5); background: rgba(139, 92, 246, .15); color: #e9d5ff; font-weight: 700; font-size: 14px; }
+.chip-btn:hover:not(:disabled) { background: rgba(139, 92, 246, .3); }
+.select-pill { min-height: 44px; border-radius: 999px; }
+.select-pill select { padding: 9px 44px 9px 18px; font-size: 14.5px; font-weight: 700; }
+
+.fs { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: 18px; }
+.fs[disabled] .input, .fs[disabled] .check, .fs[disabled] .summary { opacity: .5; }
+.field { display: grid; gap: 7px; }
+.field > label { font-weight: 700; font-size: 15px; }
+.field .opt { color: var(--text-3); font-weight: 500; }
+.help { margin: 0; color: var(--text-3); font-size: 13px; }
+.err { margin: 0; color: #fca5a5; font-size: 13px; display: flex; gap: 6px; align-items: center; }
+.err .i { width: 14px; height: 14px; }
+.field.is-invalid .input { border-color: rgba(248, 113, 113, .8); }
+
+.check { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; font-size: 15px; font-weight: 600; color: var(--text-2); }
+.check input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.check__box { width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid var(--border-hi); background: var(--inset); display: grid; place-items: center; flex: none; margin-top: 1px; color: transparent; }
+.check__box .i { width: 14px; height: 14px; stroke-width: 3; }
+.check input:checked + .check__box { background: linear-gradient(135deg, #a855f7, #d946ef); border-color: transparent; color: #fff; }
+.check input:focus-visible + .check__box { outline: 2px solid #e9d5ff; outline-offset: 2px; }
+
+/* ---------- Tables (become cards on mobile) ---------- */
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--r-lg); background: rgba(14, 12, 32, .55); }
+.rtable { width: 100%; border-collapse: collapse; min-width: 900px; font-size: 15px; }
+.rtable th {
+  text-align: left; font-size: 13.5px; font-weight: 600; color: var(--text-3);
+  padding: 16px 14px; background: rgba(29, 25, 56, .7); border-bottom: 1px solid var(--border); white-space: nowrap;
+}
+.rtable td { padding: 16px 14px; border-bottom: 1px solid rgba(44, 39, 83, .7); vertical-align: middle; white-space: nowrap; transition: background-color .6s ease; }
+.rtable tbody tr:last-child td { border-bottom: 0; }
+.rtable th:first-child, .rtable td:first-child { padding-left: 20px; }
+.rtable th:last-child, .rtable td:last-child { padding-right: 20px; }
+.rtable tr.clickable { cursor: pointer; }
+.rtable tr.clickable:hover td { background: rgba(139, 92, 246, .06); }
+.rtable tr.is-new td { background: rgba(45, 212, 191, .09); }
+.rtable .num, .rtable th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.row-link { background: none; border: 0; padding: 0; color: #fff; font-weight: 700; text-decoration: underline; text-decoration-color: rgba(192, 132, 252, .55); text-underline-offset: 4px; }
+.row-link:hover { text-decoration-color: var(--purple); }
+.stack { display: flex; flex-direction: column; line-height: 1.35; }
+.sub { color: var(--text-3); font-size: 13px; }
+.muted { color: var(--text-3); }
+.amt { font-weight: 700; }
+.was { display: block; color: var(--text-3); font-size: 12.5px; font-weight: 500; }
+.neg { color: #fca5a5; font-weight: 700; }
+.est { color: var(--text-2); }
+.reason-row td { padding-top: 0; }
+.reason {
+  display: flex; gap: 10px; align-items: flex-start; white-space: normal;
+  padding: 12px 14px; border-radius: 10px; font-size: 14.5px;
+  background: rgba(248, 113, 113, .08); border: 1px solid rgba(248, 113, 113, .3); color: #fecaca;
+}
+.reason .i { width: 17px; height: 17px; margin-top: 1px; color: var(--red); }
+@media (min-width: 761px) { .rtable .has-reason td { border-bottom: 0; } }
+
+@media (max-width: 760px) {
+  .table-wrap { border: 0; background: none; overflow: visible; border-radius: 0; }
+  .rtable { min-width: 0; }
+  .rtable thead { display: none; }
+  .rtable, .rtable tbody { display: block; }
+  .rtable tr {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px 14px;
+    margin-bottom: 10px; padding: 14px 16px;
+    background: rgba(26, 22, 54, .85); border: 1px solid var(--border); border-radius: var(--r-md);
+  }
+  .rtable td, .rtable td:first-child, .rtable td:last-child {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+    padding: 0; border: 0; white-space: normal; text-align: left; overflow-wrap: anywhere;
+  }
+  .rtable td::before { content: attr(data-label); color: var(--text-3); font-size: 12px; }
+  .rtable tbody tr td.c-primary, .rtable tbody tr td.c-status { padding-bottom: 12px; border-bottom: 1px dashed rgba(61, 54, 112, .7); }
+  .rtable td.c-primary { order: -2; font-size: 16px; justify-content: center; margin-right: -14px; padding-right: 14px; }
+  .rtable td.c-status { order: -1; align-items: flex-end; justify-content: center; }
+  .rtable td.c-primary::before, .rtable td.c-status::before { display: none; }
+  .rtable .num { text-align: left; }
+  .rtable tr.clickable:hover td { background: none; }
+  .rtable tr.is-new { border-color: rgba(45, 212, 191, .55); }
+  .rtable tr.is-new td { background: none; }
+  .stack { align-items: flex-start; }
+  .rtable tr.has-reason { margin-bottom: 0; border-bottom: 0; border-radius: var(--r-md) var(--r-md) 0 0; }
+  .rtable tr.reason-row { display: block; border-top: 0; border-radius: 0 0 var(--r-md) var(--r-md); padding-top: 0; }
+  .rtable tr.reason-row td { display: block; }
+  .rtable tr.reason-row td::before { display: none; }
+}
+
+/* ---------- Badges ---------- */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 11px 4px 9px; border-radius: 999px; border: 1px solid;
+  font-size: 13.5px; font-weight: 600; line-height: 1.45; white-space: nowrap;
+}
+.badge .i { width: 14px; height: 14px; stroke-width: 2.4; }
+.badge[data-tone="gold"]   { color: #fcd34d; background: rgba(251, 191, 36, .1);  border-color: rgba(251, 191, 36, .38); }
+.badge[data-tone="teal"]   { color: #5eead4; background: rgba(45, 212, 191, .1);  border-color: rgba(45, 212, 191, .38); }
+.badge[data-tone="blue"]   { color: #93c5fd; background: rgba(59, 130, 246, .12); border-color: rgba(96, 165, 250, .42); }
+.badge[data-tone="cyan"]   { color: #67e8f9; background: rgba(34, 211, 238, .1);  border-color: rgba(34, 211, 238, .38); }
+.badge[data-tone="violet"] { color: #d8b4fe; background: rgba(168, 85, 247, .13); border-color: rgba(192, 132, 252, .42); }
+.badge[data-tone="orange"] { color: #fdba74; background: rgba(251, 146, 60, .1);  border-color: rgba(251, 146, 60, .42); }
+.badge[data-tone="red"]    { color: #fca5a5; background: rgba(248, 113, 113, .1); border-color: rgba(248, 113, 113, .42); }
+.badge[data-tone="muted"]  { color: #a8a3c6; background: rgba(255, 255, 255, .04); border-color: rgba(255, 255, 255, .14); }
+
+/* ---------- Pager ---------- */
+.pager { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; }
+.pager__info { margin: 0; color: var(--text-3); font-size: 15px; }
+.pager__btns { display: flex; gap: 8px; align-items: center; }
+.pnum { min-width: 42px; height: 42px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-2); font-weight: 700; font-size: 15px; }
+.pnum:hover { color: #fff; border-color: var(--border-hi); }
+.pnum[aria-current="page"] { background: var(--grad-soft); border-color: transparent; color: #fff; }
+
+/* ---------- Notices + states ---------- */
+.notice {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 14px 18px; border-radius: var(--r-md); margin-bottom: 18px;
+  background: rgba(56, 189, 248, .07); border: 1px solid rgba(56, 189, 248, .3); color: #cfeafe; font-size: 15px;
+}
+.notice p { margin: 0; }
+.notice .i { color: var(--sky); margin-top: 2px; }
+.notice--violet { background: rgba(139, 92, 246, .1); border-color: rgba(167, 139, 250, .35); color: #e4dcff; margin: 0; }
+.notice--violet .i { color: var(--lavender); }
+.notice--gold { background: rgba(251, 191, 36, .08); border-color: rgba(251, 191, 36, .35); color: #fef3c7; margin: 0; }
+.notice--gold .i { color: var(--gold); }
+.empty { text-align: center; padding: 40px 20px; border: 1px dashed var(--border-hi); border-radius: var(--r-lg); background: rgba(14, 12, 32, .4); }
+.empty h3 { margin: 0 0 6px; font-family: var(--font-display); font-weight: 800; font-size: 18px; }
+.empty p { margin: 0 auto; max-width: 46ch; color: var(--text-2); font-size: 14.5px; }
+.empty .btn { margin-top: 16px; }
+.skel-row { height: 14px; border-radius: 6px; background: linear-gradient(90deg, rgba(255,255,255,.05), rgba(255,255,255,.11), rgba(255,255,255,.05)); background-size: 200% 100%; animation: shimmer 1.3s linear infinite; }
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+/* ---------- Withdrawal flow: form + success, shown inline ---------- */
+.flow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start; }
+.panel {
+  position: relative; border-radius: var(--r-xl); border: 1px solid #30296a; overflow: hidden;
+  background:
+    radial-gradient(560px 280px at 0% 0%, rgba(79, 70, 229, .38), transparent 62%),
+    radial-gradient(520px 300px at 100% 0%, rgba(192, 38, 211, .3), transparent 60%),
+    #13102a;
+  box-shadow: 0 40px 100px -40px rgba(0, 0, 0, .85);
+}
+.panel--sticky { position: sticky; top: calc(24px + env(safe-area-inset-top, 0px)); }
+.panel.is-flash { animation: flash 1.4s ease; }
+@keyframes flash { 0% { box-shadow: 0 0 0 0 rgba(45, 212, 191, .7); } 100% { box-shadow: 0 0 0 18px rgba(45, 212, 191, 0); } }
+@media (max-width: 1020px) {
+  .flow { grid-template-columns: minmax(0, 620px); justify-content: center; }
+  .panel--sticky { position: relative; top: 0; }
+}
+
+.modal__head { padding: 34px 30px 6px; text-align: center; }
+.modal__title { margin: 0; font-family: var(--font-display); font-weight: 900; font-size: 34px; letter-spacing: -0.02em; }
+.modal__sub { margin: 8px 0 0; color: var(--text-2); font-size: 15.5px; }
+.grad-text { background: var(--grad-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.balance-chip {
+  display: inline-flex; align-items: center; gap: 12px; margin-top: 18px;
+  padding: 9px 9px 9px 14px; border-radius: 16px; text-align: left;
+  background: rgba(14, 12, 32, .7); border: 1px solid rgba(251, 191, 36, .45);
+}
+.balance-chip .coin { width: 32px; height: 32px; }
+.balance-chip__text { display: flex; flex-direction: column; font-size: 13px; color: var(--gold); }
+.balance-chip__text strong { color: #fff; font-size: 14.5px; }
+.balance-chip__value { padding: 7px 14px; border-radius: 10px; background: #0b0a18; border: 1px solid rgba(251, 191, 36, .35); font-family: var(--font-display); font-weight: 900; color: var(--gold); font-size: 19px; }
+.modal__body { padding: 22px 30px 30px; display: grid; gap: 18px; }
+.modal__actions { display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap; }
+.modal__actions .btn { min-width: 150px; }
+.modal__actions--center { justify-content: center; }
+@media (max-width: 520px) {
+  .modal__head { padding: 28px 18px 4px; }
+  .modal__body { padding: 18px 18px 24px; }
+  .modal__actions .btn { flex: 1; min-width: 0; }
+}
+
+.summary { border-radius: var(--r-md); background: var(--inset); border: 1px solid var(--border); padding: 16px 18px; }
+.summary dl { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 10px 0; font-size: 15.5px; }
+.summary dt { color: var(--text-2); }
+.summary dd { margin: 0; padding-left: 16px; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.summary .net { border-top: 1px dashed var(--border-hi); padding-top: 12px; color: #fff; font-weight: 700; }
+.summary dd.net { font-family: var(--font-display); font-size: 22px; font-weight: 900; color: #5eead4; }
+.summary .help { margin-top: 12px; }
+.form-error { padding: 10px 12px; border-radius: 10px; background: rgba(248, 113, 113, .1); border: 1px solid rgba(248, 113, 113, .4); color: #fecaca; font-size: 14px; }
+
+.success { padding: 34px 30px 30px; text-align: center; }
+.success__icon { width: 72px; height: 72px; margin: 0 auto 18px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, #5eead4, #14b8a6); color: #042f2e; box-shadow: 0 16px 40px -14px rgba(20, 184, 166, .85); }
+.success__icon .i { width: 32px; height: 32px; stroke-width: 3; }
+.success h2 { margin: 0 0 8px; font-family: var(--font-display); font-weight: 900; font-size: 28px; letter-spacing: -0.01em; }
+.success > p { margin: 0 auto 20px; color: var(--text-2); max-width: 46ch; font-size: 15.5px; }
+.success .summary { text-align: left; margin-bottom: 20px; }
+.success > p strong { white-space: nowrap; }
+@media (max-width: 520px) {
+  .success { padding: 28px 18px 24px; }
+  .modal__actions--center { flex-direction: column-reverse; }
+  .modal__actions--center .btn { flex: none; width: 100%; }
+}
+
+/* ---------- Drawer (commission details) ---------- */
+.overlay {
+  position: fixed; inset: 0; z-index: 60; display: grid; place-items: stretch end;
+  background: rgba(6, 5, 16, .72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  opacity: 0; transition: opacity .2s ease;
+}
+.overlay.is-open { opacity: 1; }
+.drawer {
+  width: min(460px, 100%); height: 100%; overflow-y: auto;
+  background: linear-gradient(180deg, #1c1740, #120f28); border-left: 1px solid var(--border);
+  padding: calc(22px + env(safe-area-inset-top, 0px)) 24px calc(28px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(24px); transition: transform .22s ease;
+}
+.overlay.is-open .drawer { transform: none; }
+.drawer__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 18px; }
+.drawer__eyebrow { margin: 0; color: var(--text-3); font-size: 13px; }
+.drawer__title { margin: 2px 0 8px; font-family: var(--font-display); font-weight: 900; font-size: 26px; }
+.drawer section { padding: 16px 0; border-top: 1px solid var(--border); }
+.drawer h3 { margin: 0 0 10px; font-size: 14px; color: var(--text-2); font-weight: 600; }
+.kv { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; font-size: 14px; }
+.kv dt { color: var(--text-3); }
+.kv dd { margin: 0; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.kv .strong { color: #fff; font-family: var(--font-display); font-weight: 900; font-size: 18px; }
+.drawer .note { margin: 12px 0 0; font-size: 13px; color: var(--text-2); padding: 10px 12px; border-radius: 10px; background: rgba(139, 92, 246, .09); border: 1px solid rgba(167, 139, 250, .25); }
+@media (max-width: 560px) {
+  .overlay { place-items: end stretch; }
+  .drawer { width: 100%; height: auto; max-height: 88%; border-left: 0; border-top: 1px solid var(--border); border-radius: 22px 22px 0 0; padding-top: 22px; transform: translateY(24px); }
+}
+
+/* ---------- Toasts ---------- */
+.toast-region {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 80; pointer-events: none;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 0 16px calc(24px + env(safe-area-inset-bottom, 0px));
+}
+.toast {
+  pointer-events: auto; display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; border-radius: 14px; font-size: 14px; font-weight: 600;
+  background: #1f1a42; border: 1px solid rgba(94, 234, 212, .4); color: #ccfbf1;
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, .8); animation: toast-in .2s ease;
+}
+.toast .i { color: var(--teal); }
+@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.spin { animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 640px) { .aff { padding: 28px 16px 80px; } .sec { margin-bottom: 44px; } }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="coin-g" cx="35%" cy="30%" r="75%">
+      <stop offset="0" stop-color="#fde68a"/><stop offset=".55" stop-color="#fbbf24"/><stop offset="1" stop-color="#d97706"/>
+    </radialGradient>
+  </defs>
+  <symbol id="coin" viewBox="0 0 32 32">
+    <circle cx="16" cy="16" r="15" fill="url(#coin-g)"/>
+    <circle cx="16" cy="16" r="11" fill="none" stroke="#b45309" stroke-opacity=".55" stroke-width="1.5"/>
+    <path d="M19.2 12.6c-.5-1-1.7-1.7-3.2-1.7-1.9 0-3.2 1-3.2 2.4 0 3.3 6.6 1.8 6.6 5.1 0 1.4-1.4 2.5-3.4 2.5-1.6 0-2.9-.7-3.4-1.9M16 9v2M16 21v2" fill="none" stroke="#92400e" stroke-width="1.9" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-user-check" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></symbol>
+  <symbol id="i-user-plus" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-banknote" viewBox="0 0 24 24"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M11.56 3.27a.5.5 0 0 1 .88 0l2.95 5.6a1 1 0 0 0 1.52.29l4.27-3.66a.5.5 0 0 1 .82.5l-2.83 10.25a1 1 0 0 1-.96.75H5.8a1 1 0 0 1-.96-.75L2.02 6a.5.5 0 0 1 .82-.5l4.27 3.66a1 1 0 0 0 1.52-.29zM5 21h14"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4M12 16h.01"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="i-percent" viewBox="0 0 24 24"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></symbol>
+  <symbol id="i-infinity" viewBox="0 0 24 24"><path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24"><path d="M10 2h4M12 14l3-3"/><circle cx="12" cy="14" r="8"/></symbol>
+  <symbol id="i-loader" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></symbol>
+  <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 17.5v-11"/></symbol>
+</svg>
+
+<div class="page-bg" aria-hidden="true"></div>
+
+<main class="aff" id="main">
+  <header class="page-head">
+    <h1>Affiliate activity</h1>
+    <p>Every commission you've earned, every payout you've requested, and a place to request your next one.</p>
+  </header>
+
+  <!-- 1. Commissions -->
+  <section class="sec" id="sec-commissions" aria-labelledby="commissions-title">
+    <h2 class="sec__title" id="commissions-title">Commissions</h2>
+    <div class="toolbar">
+      <div class="chips" role="group" aria-label="Filter commissions by status" id="status-chips"></div>
+      <label class="input select-pill">
+        <span class="sr-only">Purchase type</span>
+        <select id="type-filter">
+          <option value="">All purchase types</option>
+          <option value="subscription">Subscriptions</option>
+          <option value="renewal">Renewals</option>
+          <option value="coin_pack">Coin packs</option>
+          <option value="adjustment">Adjustments</option>
+        </select>
+        <svg class="i caret" aria-hidden="true"><use href="#i-chevron-down"/></svg>
+      </label>
+    </div>
+    <div id="commissions-body"></div>
+    <nav class="pager" id="commissions-pager" aria-label="Commission pages"></nav>
+  </section>
+
+  <!-- 2. Withdrawal history -->
+  <section class="sec" id="sec-withdrawals" aria-labelledby="withdrawals-title">
+    <h2 class="sec__title" id="withdrawals-title">Withdrawal history</h2>
+    <div class="notice">
+      <svg class="i" aria-hidden="true"><use href="#i-clock"/></svg>
+      <p>Payouts are generally completed within <strong data-cfg="payout">15 business days</strong> after a complete and valid request is received. Transaction fees are deducted from each payout.</p>
+    </div>
+    <div id="withdrawals-body"></div>
+    <nav class="pager" id="withdrawals-pager" aria-label="Withdrawal pages"></nav>
+  </section>
+
+  <!-- 3 + 4. Withdraw funds form and submitted state -->
+  <section class="sec flow" id="sec-withdraw" aria-label="Request a withdrawal">
+    <div class="panel" id="wd-panel">
+      <div class="modal__body" aria-hidden="true">
+        <div class="skel-row" style="height:34px;width:60%;margin:16px auto 8px"></div>
+        <div class="skel-row" style="height:52px"></div>
+        <div class="skel-row" style="height:52px"></div>
+        <div class="skel-row" style="height:92px"></div>
+      </div>
+    </div>
+    <div class="panel panel--sticky" id="wd-success" role="region" aria-labelledby="ok-title"></div>
+  </section>
+</main>
+
+<div id="overlay-root"></div>
+<div class="toast-region" id="toasts" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* =========================================================
+   1. CONFIG — mirror the backend's affiliate settings.
+   Values marked "Recommended" in the rules (hold days, payout days)
+   live here so every piece of copy updates from one place.
+   ========================================================= */
+const CONFIG = {
+  ratePct: 20,
+  referralWindowHours: 24,
+  holdDays: 30,
+  minWithdrawalCents: 1000,
+  payoutBusinessDays: 15,
+  currency: 'USD',
+  locale: 'en-US',
+  pageSize: 8,
+  withdrawalPageSize: 6,
+};
+
+/* Payout methods. Fee estimates are PLACEHOLDERS for the preview only.
+   Replace with ops-confirmed values. The final fee is always recorded
+   by ops when a withdrawal is marked paid. fee: null = "confirmed at payout". */
+const PAYOUT_METHODS = [
+  { id: 'paypal', label: 'PayPal', detailsLabel: 'PayPal email address', placeholder: 'name@example.com', fee: { bps: 290, fixedCents: 30 } },
+  { id: 'bank', label: 'Bank transfer', detailsLabel: 'Bank name, account number, and SWIFT or routing code', placeholder: 'Bank name, account number, SWIFT', fee: { bps: 0, fixedCents: 500 } },
+  { id: 'wise', label: 'Wise', detailsLabel: 'Wise email or account details', placeholder: 'name@example.com', fee: { bps: 60, fixedCents: 50 } },
+  { id: 'usdt', label: 'Crypto (USDT)', detailsLabel: 'Wallet address and network', placeholder: 'Network and wallet address, e.g. TRC-20 T9yD…', fee: { bps: 0, fixedCents: 100 } },
+  { id: 'other', label: 'Other', detailsLabel: 'Account details', placeholder: 'Tell us exactly how to pay you', fee: null },
+];
+
+const COMMISSION_STATUS = {
+  pending:       { label: 'Pending',       tone: 'gold',   icon: 'clock' },
+  available:     { label: 'Available',     tone: 'teal',   icon: 'check' },
+  in_withdrawal: { label: 'In withdrawal', tone: 'blue',   icon: 'lock' },
+  paid:          { label: 'Paid',          tone: 'violet', icon: 'banknote' },
+  held:          { label: 'Held',          tone: 'orange', icon: 'shield' },
+  cancelled:     { label: 'Cancelled',     tone: 'muted',  icon: 'x' },
+  deducted:      { label: 'Deducted',      tone: 'red',    icon: 'minus' },
+};
+const WITHDRAWAL_STATUS = {
+  pending_review: { label: 'Pending review', tone: 'gold',  icon: 'clock' },
+  approved:       { label: 'Approved',       tone: 'cyan',  icon: 'check' },
+  processing:     { label: 'Processing',     tone: 'blue',  icon: 'refresh' },
+  paid:           { label: 'Paid',           tone: 'teal',  icon: 'check' },
+  rejected:       { label: 'Rejected',       tone: 'red',   icon: 'x' },
+  cancelled:      { label: 'Cancelled',      tone: 'muted', icon: 'x' },
+};
+const PURCHASE_TYPE = {
+  subscription: { label: 'Subscription', icon: 'crown',   tile: '' },
+  renewal:      { label: 'Renewal',      icon: 'refresh', tile: 'tile--blue' },
+  coin_pack:    { label: 'Coin pack',    icon: 'coin',    tile: 'tile--gold' },
+  adjustment:   { label: 'Adjustment',   icon: 'undo',    tile: 'tile--dark' },
+};
+const ACTIVE_WITHDRAWAL = new Set(['pending_review', 'approved', 'processing']);
+
+/* =========================================================
+   2. HELPERS — money is always integer cents.
+   ========================================================= */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const ic = (name, cls = '') => name === 'coin'
+  ? `<svg class="coin ${cls}" width="20" height="20" aria-hidden="true"><use href="#coin"/></svg>`
+  : `<svg class="i ${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+
+const moneyFmt = new Intl.NumberFormat(CONFIG.locale, { style: 'currency', currency: CONFIG.currency });
+/* Display only: cents → string. Never used for arithmetic. */
+function fmtMoney(cents, { sign = false } = {}) {
+  const s = moneyFmt.format(Math.abs(cents) / 100);
+  if (cents < 0) return '−' + s;
+  return sign && cents > 0 ? '+' + s : s;
+}
+function centsToInput(cents) {
+  const c = Math.max(0, cents);
+  return `${Math.floor(c / 100)}.${String(c % 100).padStart(2, '0')}`;
+}
+function parseMoneyToCents(input) {
+  const s = String(input).trim().replace(/[$,\s]/g, '');
+  if (!/^\d+(\.\d{1,2})?$/.test(s)) return null;
+  const [whole, frac = ''] = s.split('.');
+  return Number(whole) * 100 + Number((frac + '00').slice(0, 2));
+}
+const dateFmt = new Intl.DateTimeFormat(CONFIG.locale, { month: 'short', day: 'numeric', year: 'numeric' });
+const shortFmt = new Intl.DateTimeFormat(CONFIG.locale, { month: 'short', day: 'numeric' });
+const fmtDate = (ts) => (ts == null ? '—' : dateFmt.format(new Date(ts)));
+const fmtShort = (ts) => (ts == null ? '—' : shortFmt.format(new Date(ts)));
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+
+function estimateFee(amountCents, method) {
+  if (!method || !method.fee) return null;
+  return Math.round((amountCents * method.fee.bps) / 10000) + method.fee.fixedCents;
+}
+function maskAccount(details) {
+  const s = String(details).trim();
+  const email = s.match(/([^\s@]+)@([^\s@]+\.[^\s@]+)/);
+  if (email) return `${email[1].slice(0, 2)}····@${email[2]}`;
+  const alnum = s.replace(/[^a-z0-9]/gi, '');
+  return alnum.length >= 4 ? `····${alnum.slice(-4)}` : '····';
+}
+const badge = (map, key) => {
+  const s = map[key] || { label: key, tone: 'muted', icon: 'info' };
+  return `<span class="badge" data-tone="${s.tone}">${ic(s.icon)}${esc(s.label)}</span>`;
+};
+
+/* =========================================================
+   3. MOCK API — replace with real endpoints:
+      GET  /api/affiliate              → getDashboard
+      GET  /api/affiliate/commissions  → getCommissions
+      GET  /api/affiliate/withdrawals  → getWithdrawals
+      POST /api/affiliate/withdrawals  → createWithdrawal
+   The mock behaves like the backend should: it computes every balance
+   from a ledger, validates withdrawals itself, and serialises them so
+   two requests can't reserve the same money.
+   ========================================================= */
+const MockApi = (() => {
+  const DAY = 86400000;
+  const NOW = Date.parse('2026-10-01T09:00:00Z'); // fixed demo clock
+  const at = (d) => Date.parse(d + 'T12:00:00Z');
+  const commissionFor = (cents, pct) => Math.round((cents * pct) / 100);
+  const delay = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  // [paid date, order, masked referral, type, product, amount paid (cents), options]
+  const SEED = [
+    ['2026-06-04', 'ORD-10018', 'jo***@gmail.com',   'subscription', 'Monthly Pro',   1299],
+    ['2026-06-09', 'ORD-10034', 'ma***@yahoo.com',   'subscription', 'Monthly Pro',   1299],
+    ['2026-06-15', 'ORD-10059', 'kr***@gmail.com',   'coin_pack',    '6000 Coins',    7999],
+    ['2026-06-21', 'ORD-10077', 'jo***@gmail.com',   'coin_pack',    '1500 Coins',    3999, { chargebackAfterPayout: { date: '2026-09-08', ref: 'ADJ-2041' } }],
+    ['2026-06-27', 'ORD-10096', 'al***@outlook.com', 'subscription', 'Annual Pro',    6999],
+    ['2026-07-04', 'ORD-10118', 'jo***@gmail.com',   'renewal',      'Monthly Pro',   1299],
+    ['2026-07-09', 'ORD-10133', 'ma***@yahoo.com',   'renewal',      'Monthly Pro',   1299],
+    ['2026-07-12', 'ORD-10146', 'de***@gmail.com',   'coin_pack',    '6000 Coins',    7999],
+    ['2026-07-18', 'ORD-10171', 'ri***@icloud.com',  'subscription', 'Quarterly Pro', 3999],
+    ['2026-07-24', 'ORD-10192', 'sa***@gmail.com',   'coin_pack',    '6000 Coins',    7999],
+    ['2026-07-30', 'ORD-10214', 'kr***@gmail.com',   'coin_pack',    '1500 Coins',    3999],
+    ['2026-08-04', 'ORD-10249', 'jo***@gmail.com',   'renewal',      'Monthly Pro',   1299],
+    ['2026-08-09', 'ORD-10268', 'ma***@yahoo.com',   'renewal',      'Monthly Pro',   1299],
+    ['2026-08-11', 'ORD-10280', 'pa***@hotmail.com', 'subscription', 'Annual Pro',    6999],
+    ['2026-08-16', 'ORD-10301', 'kr***@gmail.com',   'coin_pack',    '1500 Coins',    3999, { partialRefund: { cents: 1500, date: '2026-08-23' } }],
+    ['2026-08-22', 'ORD-10322', 'ne***@gmail.com',   'coin_pack',    '6000 Coins',    7999],
+    ['2026-08-31', 'ORD-10363', 'jo***@gmail.com',   'coin_pack',    '6000 Coins',    7999],
+    ['2026-09-04', 'ORD-10388', 'jo***@gmail.com',   'renewal',      'Monthly Pro',   1299],
+    ['2026-09-06', 'ORD-10402', 'th***@proton.me',   'coin_pack',    '1500 Coins',    3999, { fullRefund: '2026-09-12' }],
+    ['2026-09-09', 'ORD-10419', 'ma***@yahoo.com',   'renewal',      'Monthly Pro',   1299],
+    ['2026-09-12', 'ORD-10437', 'sa***@gmail.com',   'subscription', 'Monthly Pro',   974, { note: 'A 25% promo code was applied, so commission is based on the $9.74 actually paid.' }],
+    ['2026-09-15', 'ORD-10458', 'ri***@icloud.com',  'coin_pack',    '300 Coins',     1299],
+    ['2026-09-19', 'ORD-10476', 'li***@gmail.com',   'subscription', 'Quarterly Pro', 3999],
+    ['2026-09-22', 'ORD-10495', 'al***@outlook.com', 'coin_pack',    '6000 Coins',    7999, { held: 'The related payment is under review.' }],
+    ['2026-09-26', 'ORD-10521', 'de***@gmail.com',   'subscription', 'Annual Pro',    6999],
+    ['2026-09-30', 'ORD-10548', 'jo***@gmail.com',   'coin_pack',    '1500 Coins',    3999],
+  ];
+  const WITHDRAWAL_SEED = [
+    { ref: 'WD-10031', submittedAt: '2026-07-28', amountCents: 4320, feeCents: 100, status: 'paid', paidAt: '2026-08-10', method: 'Crypto (USDT)', account: 'TRC-20 ····9fA2' },
+    { ref: 'WD-10039', submittedAt: '2026-08-13', amountCents: 2120, status: 'rejected', rejectedAt: '2026-08-15', method: 'PayPal', account: 'an····@gmail.com', reason: "The PayPal account name didn't match the account holder name provided." },
+    { ref: 'WD-10044', submittedAt: '2026-08-18', amountCents: 2120, feeCents: 92, status: 'paid', paidAt: '2026-09-02', method: 'PayPal', account: 'an····@gmail.com' },
+    { ref: 'WD-10052', submittedAt: '2026-09-29', amountCents: 3200, estimatedFeeCents: 500, status: 'pending_review', method: 'Bank transfer', account: '····4821' },
+  ];
+
+  function build(kind) {
+    if (kind === 'new') return { code: 'SPICY-Q9M3XR', validReferrals: 0, commissions: [], withdrawals: [], nextWd: 10001 };
+    let n = 7001;
+    const commissions = [];
+    for (const [date, orderRef, referral, type, product, paid, opts = {}] of SEED) {
+      const paidAt = at(date);
+      const original = commissionFor(paid, CONFIG.ratePct);
+      const c = {
+        id: `COM-${n++}`, kind: 'commission', paidAt, orderRef, referral, type, product,
+        amountPaidCents: paid, ratePct: CONFIG.ratePct, originalCents: original, currentCents: original,
+        adjustments: [], availableAt: paidAt + CONFIG.holdDays * DAY, flag: null, note: opts.note || null,
+      };
+      if (opts.partialRefund) {
+        const next = commissionFor(paid - opts.partialRefund.cents, CONFIG.ratePct);
+        c.adjustments.push({ label: `Partial refund of ${fmtMoney(opts.partialRefund.cents)}`, at: at(opts.partialRefund.date), cents: next - original });
+        c.currentCents = next;
+      }
+      if (opts.fullRefund) {
+        c.adjustments.push({ label: 'Full refund', at: at(opts.fullRefund), cents: -original });
+        c.currentCents = 0; c.flag = 'cancelled'; c.cancelledAt = at(opts.fullRefund);
+      }
+      if (opts.held) { c.flag = 'held'; c.holdReason = opts.held; }
+      commissions.push(c);
+      if (opts.chargebackAfterPayout) {
+        const cb = opts.chargebackAfterPayout;
+        c.postPayout = { ref: cb.ref, at: at(cb.date), cents: -original };
+        commissions.push({
+          id: `COM-${n++}`, kind: 'deduction', paidAt: at(cb.date), orderRef: cb.ref, relatedOrder: orderRef, referral,
+          type: 'adjustment', product: `Chargeback on ${orderRef}`, amountPaidCents: null, ratePct: null,
+          originalCents: -original, currentCents: -original, adjustments: [], availableAt: null, flag: 'deducted',
+          note: `${orderRef} was charged back after its commission was paid out, so ${fmtMoney(original)} is deducted from your balance.`,
+        });
+      }
+    }
+    const withdrawals = WITHDRAWAL_SEED.map((w) => {
+      const r = { estimatedFeeCents: null, feeCents: null, ...w, submittedAt: at(w.submittedAt), paidAt: w.paidAt ? at(w.paidAt) : null, rejectedAt: w.rejectedAt ? at(w.rejectedAt) : null };
+      r.netCents = r.feeCents != null ? r.amountCents - r.feeCents : null;
+      return r;
+    });
+    return { code: 'SPICY-A7F4K2', validReferrals: 24, commissions, withdrawals, nextWd: 10053 };
+  }
+
+  let mode = 'active';
+  let db = build(mode);
+
+  /* Ledger: derive every status and balance. Matured commissions are
+     allocated oldest-first to paid withdrawals, then active ones. */
+  function derive() {
+    const list = db.commissions.map((c) => ({ ...c, allocations: [] }));
+    for (const c of list) c.status = c.flag || (c.availableAt <= NOW ? 'available' : 'pending');
+
+    const matured = list.filter((c) => c.status === 'available').sort((a, b) => a.paidAt - b.paidAt);
+    const bySubmit = (a, b) => a.submittedAt - b.submittedAt;
+    const consumers = [
+      ...db.withdrawals.filter((w) => w.status === 'paid').sort(bySubmit),
+      ...db.withdrawals.filter((w) => ACTIVE_WITHDRAWAL.has(w.status)).sort(bySubmit),
+    ];
+    let ci = 0;
+    let left = consumers[0] ? consumers[0].amountCents : 0;
+    for (const c of matured) {
+      let need = c.currentCents;
+      while (need > 0 && ci < consumers.length) {
+        const take = Math.min(need, left);
+        if (take > 0) {
+          c.allocations.push({ ref: consumers[ci].ref, status: consumers[ci].status, paidAt: consumers[ci].paidAt, cents: take });
+          need -= take; left -= take;
+        }
+        if (left === 0) { ci += 1; left = consumers[ci] ? consumers[ci].amountCents : 0; }
+      }
+      if (need === 0 && c.allocations.length) {
+        c.status = c.allocations.every((a) => a.status === 'paid') ? 'paid' : 'in_withdrawal';
+      }
+    }
+
+    const sum = (arr, f) => arr.reduce((t, x) => t + f(x), 0);
+    const maturedCents = sum(matured, (c) => c.currentCents);
+    const deductionsCents = sum(list.filter((c) => c.kind === 'deduction'), (c) => c.currentCents);
+    const paidWds = db.withdrawals.filter((w) => w.status === 'paid');
+    const activeWds = db.withdrawals.filter((w) => ACTIVE_WITHDRAWAL.has(w.status));
+    const paidOutCents = sum(paidWds, (w) => w.amountCents);
+    const frozenCents = sum(activeWds, (w) => w.amountCents);
+    const pending = list.filter((c) => c.status === 'pending');
+    let next = null;
+    if (pending.length) {
+      const nextAt = Math.min(...pending.map((c) => c.availableAt));
+      const sameDay = (t) => new Date(t).toDateString() === new Date(nextAt).toDateString();
+      next = { at: nextAt, cents: sum(pending.filter((c) => sameDay(c.availableAt)), (c) => c.currentCents) };
+    }
+    const summary = {
+      availableCents: maturedCents + deductionsCents - paidOutCents - frozenCents,
+      pendingCents: sum(pending, (c) => c.currentCents),
+      heldCents: sum(list.filter((c) => c.status === 'held'), (c) => c.currentCents),
+      frozenCents, paidOutCents, maturedCents, deductionsCents, next,
+      activeWithdrawals: activeWds.length,
+      completedPayouts: paidWds.length,
+      validReferrals: db.validReferrals,
+      payingReferrals: new Set(list.filter((c) => c.kind === 'commission' && c.status !== 'cancelled').map((c) => c.referral)).size,
+      commissionCount: list.length,
+      withdrawalCount: db.withdrawals.length,
+    };
+    return { list, summary };
+  }
+
+  function guard() { if (mode === 'error') throw new Error('Unable to load affiliate data.'); }
+
+  // Serialise writes, like a row lock on the affiliate's balance.
+  let lock = Promise.resolve();
+  const serial = (fn) => { const p = lock.then(fn); lock = p.catch(() => {}); return p; };
+
+  return {
+    setMode(m) { mode = m; db = build(m === 'error' ? 'active' : m); },
+    async getDashboard() {
+      await delay(650); guard();
+      return {
+        affiliate: { code: db.code, url: `https://spicylab.com/?ref=${db.code}` },
+        stats: derive().summary,
+        currency: CONFIG.currency,
+      };
+    },
+    async getCommissions({ status = 'all', type = '', page = 1, pageSize = CONFIG.pageSize } = {}) {
+      await delay(300); guard();
+      let rows = derive().list.sort((a, b) => b.paidAt - a.paidAt);
+      if (type) rows = rows.filter((r) => r.type === type);
+      const counts = { all: rows.length };
+      for (const r of rows) counts[r.status] = (counts[r.status] || 0) + 1;
+      if (status !== 'all') rows = rows.filter((r) => r.status === status);
+      const total = rows.length;
+      const pages = Math.max(1, Math.ceil(total / pageSize));
+      const p = Math.min(Math.max(1, page), pages);
+      return { items: rows.slice((p - 1) * pageSize, p * pageSize), total, page: p, pages, pageSize, counts };
+    },
+    async getWithdrawals({ page = 1, pageSize = CONFIG.withdrawalPageSize } = {}) {
+      await delay(300); guard();
+      const rows = db.withdrawals.slice().sort((a, b) => b.submittedAt - a.submittedAt);
+      const total = rows.length;
+      const pages = Math.max(1, Math.ceil(total / pageSize));
+      const p = Math.min(Math.max(1, page), pages);
+      return { items: rows.slice((p - 1) * pageSize, p * pageSize), total, page: p, pages, pageSize };
+    },
+    createWithdrawal(payload) {
+      return serial(async () => {
+        await delay(900); guard();
+        const fieldErrors = {};
+        const amount = Number.isInteger(payload.amountCents) ? payload.amountCents : null;
+        const method = PAYOUT_METHODS.find((m) => m.id === payload.methodId);
+        const { summary } = derive(); // authoritative balance, read inside the lock
+        if (amount == null) fieldErrors.amount = 'Enter a valid amount.';
+        else if (amount < CONFIG.minWithdrawalCents) fieldErrors.amount = `The minimum withdrawal is ${fmtMoney(CONFIG.minWithdrawalCents)}.`;
+        else if (amount > summary.availableCents) fieldErrors.amount = `You can withdraw up to ${fmtMoney(Math.max(0, summary.availableCents))}.`;
+        if (!method) fieldErrors.method = 'Choose a payout method.';
+        if (method && method.id === 'other' && !String(payload.methodOther || '').trim()) fieldErrors.methodOther = 'Tell us which payout method to use.';
+        if (String(payload.holder || '').trim().length < 2) fieldErrors.holder = 'Enter the account holder name.';
+        if (String(payload.details || '').trim().length < 4) fieldErrors.details = 'Enter your payout account details.';
+        if (!payload.confirmed) fieldErrors.confirm = 'Confirm your payout details to continue.';
+        const fee = method ? estimateFee(amount || 0, method) : null;
+        if (!fieldErrors.amount && fee != null && fee >= amount) fieldErrors.amount = 'The estimated fee is larger than this amount. Withdraw more to receive a payout.';
+        if (Object.keys(fieldErrors).length) { const e = new Error('Please fix the highlighted fields.'); e.fieldErrors = fieldErrors; throw e; }
+
+        const w = {
+          ref: `WD-${db.nextWd++}`,
+          submittedAt: NOW + (db.nextWd % 1000) * 1000,
+          amountCents: amount,
+          estimatedFeeCents: fee,
+          feeCents: null,
+          netCents: null,
+          status: 'pending_review',
+          method: method.id === 'other' ? String(payload.methodOther).trim() : method.label,
+          account: maskAccount(payload.details), // real backend stores an encrypted snapshot
+        };
+        db.withdrawals.push(w);
+        return { withdrawal: w, stats: derive().summary };
+      });
+    },
+  };
+})();
+
+const api = MockApi;
+
+/* =========================================================
+   4. UI STATE
+   ========================================================= */
+const ui = {
+  stats: null,
+  comm: { status: 'all', type: '', page: 1 },
+  wd: { page: 1 },
+  commissionsById: new Map(),
+  newRef: null,          // highlights a withdrawal created on this page
+  successIsReal: false,  // false = design preview of the success state
+};
+
+function fillConfigText() {
+  const text = { payout: `${CONFIG.payoutBusinessDays} business days` };
+  $$('[data-cfg]').forEach((el) => { if (text[el.dataset.cfg]) el.textContent = text[el.dataset.cfg]; });
+}
+
+/* =========================================================
+   5. COMMISSIONS
+   ========================================================= */
+function commissionAmountHtml(c) {
+  if (c.kind === 'deduction') return `<span class="neg">${fmtMoney(c.currentCents)}</span>`;
+  if (c.adjustments.length) return `<span class="amt">${fmtMoney(c.currentCents)}</span><s class="was"><span class="sr-only">Originally </span>${fmtMoney(c.originalCents)}</s>`;
+  return `<span class="amt">${fmtMoney(c.currentCents)}</span>`;
+}
+function availableOnHtml(c) {
+  if (c.status === 'held') return '<span class="muted">Under review</span>';
+  if (c.availableAt == null || c.status === 'cancelled') return '<span class="muted">—</span>';
+  return esc(fmtDate(c.availableAt));
+}
+
+function renderChips(counts) {
+  const keys = ['all', 'pending', 'available', 'in_withdrawal', 'paid', 'held', 'cancelled'];
+  if (counts.deducted) keys.push('deducted');
+  $('#status-chips').innerHTML = keys.map((k) => {
+    const label = k === 'all' ? 'All' : COMMISSION_STATUS[k].label;
+    return `<button type="button" class="fchip" data-status="${k}" aria-pressed="${ui.comm.status === k}">${label}<span class="fchip__n">${counts[k] || 0}</span></button>`;
+  }).join('');
+}
+
+function skeletonTable(cols, rows = 5) {
+  const cells = Array.from({ length: cols }, () => '<td><div class="skel-row" style="width:70%"></div></td>').join('');
+  return `<div class="table-wrap" aria-hidden="true"><table class="rtable"><tbody>${Array.from({ length: rows }, () => `<tr>${cells}</tr>`).join('')}</tbody></table></div>`;
+}
+
+function renderCommissions(result) {
+  const body = $('#commissions-body');
+  renderChips(result.counts);
+  result.items.forEach((c) => ui.commissionsById.set(c.id, c));
+  if (!result.total) {
+    const filtered = ui.comm.status !== 'all' || ui.comm.type;
+    body.innerHTML = filtered
+      ? `<div class="empty"><h3>No commissions match these filters</h3><p>Try another status or purchase type.</p><button type="button" class="btn btn--ghost" id="clear-filters">Clear filters</button></div>`
+      : `<div class="empty"><h3>No commissions yet</h3><p>When one of your referred users makes an eligible purchase, your commission will appear here.</p></div>`;
+    $('#commissions-pager').innerHTML = '';
+    return;
+  }
+  body.innerHTML = `<div class="table-wrap"><table class="rtable">
+    <caption class="sr-only">Commission history. Select an order to see details.</caption>
+    <thead><tr>
+      <th scope="col">Date</th><th scope="col">Order</th><th scope="col">Referral</th><th scope="col">Purchase</th>
+      <th scope="col" class="num">Amount paid</th><th scope="col" class="num">Rate</th><th scope="col" class="num">Commission</th>
+      <th scope="col">Status</th><th scope="col">Available on</th>
+    </tr></thead>
+    <tbody>${result.items.map((c) => {
+      const t = PURCHASE_TYPE[c.type];
+      return `<tr class="clickable" data-row="${c.id}">
+        <td data-label="Date">${esc(fmtDate(c.paidAt))}</td>
+        <td data-label="Order" class="c-primary"><button type="button" class="row-link" data-open="${c.id}">${esc(c.orderRef)}</button></td>
+        <td data-label="Referral" class="muted">${esc(c.referral)}</td>
+        <td data-label="Purchase"><span class="stack"><span>${esc(t.label)}</span><span class="sub">${esc(c.product)}</span></span></td>
+        <td data-label="Amount paid" class="num">${c.amountPaidCents == null ? '<span class="muted">—</span>' : fmtMoney(c.amountPaidCents)}</td>
+        <td data-label="Rate" class="num">${c.ratePct == null ? '<span class="muted">—</span>' : c.ratePct + '%'}</td>
+        <td data-label="Commission" class="num"><span class="stack">${commissionAmountHtml(c)}</span></td>
+        <td data-label="Status" class="c-status">${badge(COMMISSION_STATUS, c.status)}</td>
+        <td data-label="Available on">${availableOnHtml(c)}</td>
+      </tr>`;
+    }).join('')}</tbody></table></div>`;
+  renderPager($('#commissions-pager'), result, 'commissions');
+}
+
+/* =========================================================
+   6. WITHDRAWAL HISTORY
+   ========================================================= */
+function feeHtml(w) {
+  if (w.feeCents != null) return fmtMoney(w.feeCents);
+  if (!ACTIVE_WITHDRAWAL.has(w.status)) return '<span class="muted">—</span>';
+  return w.estimatedFeeCents != null ? `<span class="est">Est. ${fmtMoney(w.estimatedFeeCents)}</span>` : '<span class="muted">Confirmed at payout</span>';
+}
+function netHtml(w) {
+  if (w.netCents != null) return `<strong>${fmtMoney(w.netCents)}</strong>`;
+  if (!ACTIVE_WITHDRAWAL.has(w.status)) return '<span class="muted">—</span>';
+  return w.estimatedFeeCents != null ? `<span class="est">Est. ${fmtMoney(w.amountCents - w.estimatedFeeCents)}</span>` : '<span class="muted">Confirmed at payout</span>';
+}
+
+function renderWithdrawals(result) {
+  const body = $('#withdrawals-body');
+  if (!result.total) {
+    body.innerHTML = `<div class="empty"><h3>No withdrawal requests yet</h3><p>Once your available balance reaches ${fmtMoney(CONFIG.minWithdrawalCents)}, you can request a payout with the form below.</p></div>`;
+    $('#withdrawals-pager').innerHTML = '';
+    return;
+  }
+  body.innerHTML = `<div class="table-wrap"><table class="rtable">
+    <caption class="sr-only">Withdrawal history</caption>
+    <thead><tr>
+      <th scope="col">Request ID</th><th scope="col">Requested</th><th scope="col" class="num">Amount</th><th scope="col" class="num">Fee</th>
+      <th scope="col" class="num">Net payout</th><th scope="col">Method</th><th scope="col">Status</th><th scope="col">Paid date</th>
+    </tr></thead>
+    <tbody>${result.items.map((w) => {
+      const rejected = w.status === 'rejected';
+      const cls = [rejected ? 'has-reason' : '', w.ref === ui.newRef ? 'is-new' : ''].join(' ').trim();
+      const row = `<tr${cls ? ` class="${cls}"` : ''}>
+        <td data-label="Request ID" class="c-primary"><strong>${esc(w.ref)}</strong></td>
+        <td data-label="Requested">${esc(fmtDate(w.submittedAt))}</td>
+        <td data-label="Amount" class="num"><strong>${fmtMoney(w.amountCents)}</strong></td>
+        <td data-label="Fee" class="num">${feeHtml(w)}</td>
+        <td data-label="Net payout" class="num">${netHtml(w)}</td>
+        <td data-label="Method"><span class="stack"><span>${esc(w.method)}</span><span class="sub">${esc(w.account)}</span></span></td>
+        <td data-label="Status" class="c-status">${badge(WITHDRAWAL_STATUS, w.status)}</td>
+        <td data-label="Paid date">${w.paidAt ? esc(fmtDate(w.paidAt)) : '<span class="muted">—</span>'}</td>
+      </tr>`;
+      const reason = rejected ? `<tr class="reason-row"><td colspan="8"><div class="reason">${ic('alert')}<span><strong>Reason:</strong> ${esc(w.reason)} The ${fmtMoney(w.amountCents)} was returned to your available balance.</span></div></td></tr>` : '';
+      return row + reason;
+    }).join('')}</tbody></table></div>`;
+  renderPager($('#withdrawals-pager'), result, 'withdrawals');
+}
+
+function renderPager(el, r, target) {
+  if (r.total <= r.pageSize) { el.innerHTML = r.total ? `<p class="pager__info">Showing all ${r.total}</p>` : ''; return; }
+  const from = (r.page - 1) * r.pageSize + 1;
+  const to = Math.min(r.total, r.page * r.pageSize);
+  const nums = Array.from({ length: r.pages }, (_, i) => i + 1)
+    .map((n) => `<button type="button" class="pnum" data-page="${n}" data-target="${target}" ${n === r.page ? 'aria-current="page"' : ''} aria-label="Page ${n}">${n}</button>`).join('');
+  el.innerHTML = `<p class="pager__info">Showing ${from}–${to} of ${r.total}</p>
+    <div class="pager__btns">
+      <button type="button" class="icon-btn" data-page="${r.page - 1}" data-target="${target}" ${r.page <= 1 ? 'disabled' : ''} aria-label="Previous page">${ic('chevron-left')}</button>
+      ${nums}
+      <button type="button" class="icon-btn" data-page="${r.page + 1}" data-target="${target}" ${r.page >= r.pages ? 'disabled' : ''} aria-label="Next page">${ic('chevron-right')}</button>
+    </div>`;
+}
+
+/* =========================================================
+   7. WITHDRAW FUNDS FORM (inline)
+   ========================================================= */
+function renderForm() {
+  const panel = $('#wd-panel');
+  const av = ui.stats.availableCents;
+  const min = CONFIG.minWithdrawalCents;
+  const locked = av < min;
+  const methodOptions = PAYOUT_METHODS.map((m) => `<option value="${m.id}">${esc(m.label)}</option>`).join('');
+
+  panel.innerHTML = `
+    <div class="modal__head">
+      <h2 class="modal__title" id="wd-title">Withdraw <span class="grad-text">funds</span></h2>
+      <p class="modal__sub">Request a payout of your available commission.</p>
+      <div class="balance-chip">
+        ${ic('coin')}
+        <span class="balance-chip__text"><strong>Available balance</strong><span>Minimum ${fmtMoney(min)}</span></span>
+        <span class="balance-chip__value">${fmtMoney(av)}</span>
+      </div>
+    </div>
+    <form class="modal__body" id="wd-form" novalidate aria-labelledby="wd-title">
+      ${locked ? `<div class="notice notice--gold">${ic('info')}<p>Your available balance is below the ${fmtMoney(min)} minimum, so a new request can't be submitted yet. <button type="button" class="link-btn" data-reset-demo>Reset demo data</button></p></div>` : ''}
+      <fieldset class="fs" ${locked ? 'disabled' : ''}>
+        <legend class="sr-only">Withdrawal details</legend>
+        <div class="field" data-field="amount">
+          <label for="wd-amount">Withdrawal amount</label>
+          <div class="input">
+            <span class="input__prefix" aria-hidden="true">$</span>
+            <input id="wd-amount" name="amount" inputmode="decimal" autocomplete="off" value="${locked ? '' : centsToInput(av)}" aria-describedby="wd-amount-help wd-amount-err">
+            <button type="button" class="chip-btn" id="wd-max">Max</button>
+          </div>
+          <p class="help" id="wd-amount-help">Between ${fmtMoney(min)} and ${fmtMoney(Math.max(min, av))}</p>
+          <p class="err" id="wd-amount-err" hidden></p>
+        </div>
+
+        <div class="field" data-field="method">
+          <label for="wd-method">Preferred payout method</label>
+          <div class="input">
+            <select id="wd-method" name="method" aria-describedby="wd-method-help wd-method-err">
+              <option value="">Choose a method</option>${methodOptions}
+            </select>
+            ${ic('chevron-down', 'caret')}
+          </div>
+          <p class="help" id="wd-method-help">Our team confirms the method can be supported before processing your payout.</p>
+          <p class="err" id="wd-method-err" hidden></p>
+        </div>
+
+        <div class="field" data-field="methodOther" id="wd-other-field" hidden>
+          <label for="wd-other">Which payout method?</label>
+          <div class="input"><input id="wd-other" name="methodOther" autocomplete="off" placeholder="e.g. GCash, Payoneer, Revolut" aria-describedby="wd-methodOther-err"></div>
+          <p class="err" id="wd-methodOther-err" hidden></p>
+        </div>
+
+        <div class="field" data-field="holder">
+          <label for="wd-holder">Account holder name</label>
+          <div class="input"><input id="wd-holder" name="holder" autocomplete="name" placeholder="Name exactly as it appears on the account" aria-describedby="wd-holder-err"></div>
+          <p class="err" id="wd-holder-err" hidden></p>
+        </div>
+
+        <div class="field" data-field="details">
+          <label for="wd-details" id="wd-details-label">Account details</label>
+          <div class="input"><textarea id="wd-details" name="details" rows="2" autocomplete="off" placeholder="Choose a payout method first" aria-describedby="wd-details-help wd-details-err"></textarea></div>
+          <p class="help" id="wd-details-help">Stored encrypted and visible only to our payouts team.</p>
+          <p class="err" id="wd-details-err" hidden></p>
+        </div>
+
+        <div class="field" data-field="notes">
+          <label for="wd-notes">Additional instructions <span class="opt">(optional)</span></label>
+          <div class="input"><textarea id="wd-notes" name="notes" rows="2" placeholder="Anything our payouts team should know"></textarea></div>
+        </div>
+
+        <div class="summary" id="wd-summary"></div>
+
+        <div class="field" data-field="confirm">
+          <label class="check">
+            <input type="checkbox" id="wd-confirm" aria-describedby="wd-confirm-err">
+            <span class="check__box">${ic('check')}</span>
+            <span>I confirm these payout details are correct, and I understand the transaction fee is deducted from my withdrawal.</span>
+          </label>
+          <p class="err" id="wd-confirm-err" hidden></p>
+        </div>
+
+        <div class="notice notice--violet">
+          ${ic('lock')}
+          <p>Submitting reserves <strong id="wd-reserve">${fmtMoney(Math.max(0, av))}</strong> right away, so it can't be requested again while we review it. If the request is rejected, it returns to your available balance.</p>
+        </div>
+
+        <div class="form-error" id="wd-form-err" role="alert" hidden></div>
+
+        <div class="modal__actions">
+          <button type="button" class="btn btn--ghost" id="wd-cancel">Cancel</button>
+          <button type="submit" class="btn btn--primary" id="wd-submit">Submit request</button>
+        </div>
+      </fieldset>
+    </form>`;
+
+  const form = $('#wd-form', panel);
+  const amountIn = $('#wd-amount', panel);
+  const methodIn = $('#wd-method', panel);
+  const detailsIn = $('#wd-details', panel);
+
+  function renderSummaryBox() {
+    const method = PAYOUT_METHODS.find((m) => m.id === methodIn.value) || null;
+    const amountCents = parseMoneyToCents(amountIn.value);
+    const amt = amountCents ?? 0;
+    const fee = method ? estimateFee(amt, method) : null;
+    const feeText = !method ? 'Choose a method' : fee == null ? 'Confirmed at payout' : fmtMoney(-fee);
+    const netText = !method || amountCents == null ? '—' : fee == null ? 'Confirmed at payout' : fmtMoney(Math.max(0, amt - fee));
+    $('#wd-summary', panel).innerHTML = `
+      <dl>
+        <dt>Withdrawal amount</dt><dd>${amountCents == null ? '—' : fmtMoney(amt)}</dd>
+        <dt>Estimated fee</dt><dd>${feeText}</dd>
+        <dt class="net">Estimated net payout</dt><dd class="net">${netText}</dd>
+      </dl>
+      <p class="help">This is an estimate. The final fee depends on the payout method and is confirmed when your payout is processed.</p>`;
+    $('#wd-reserve', panel).textContent = amountCents == null ? 'this amount' : fmtMoney(amt);
+  }
+
+  function setError(name, msg) {
+    const field = $(`[data-field="${name}"]`, panel);
+    const err = $(`#wd-${name}-err`, panel);
+    if (!field || !err) return;
+    field.classList.toggle('is-invalid', !!msg);
+    const control = $('input, select, textarea', field);
+    if (control) control.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    err.hidden = !msg;
+    err.innerHTML = msg ? `${ic('alert')}${esc(msg)}` : '';
+  }
+  const clearErrors = () => ['amount', 'method', 'methodOther', 'holder', 'details', 'confirm'].forEach((n) => setError(n, ''));
+
+  function validate(v) {
+    const e = {};
+    if (v.amountCents == null) e.amount = 'Enter an amount, like 25.00.';
+    else if (v.amountCents < min) e.amount = `The minimum withdrawal is ${fmtMoney(min)}.`;
+    else if (v.amountCents > av) e.amount = `You can withdraw up to ${fmtMoney(av)}.`;
+    const method = PAYOUT_METHODS.find((m) => m.id === v.methodId);
+    if (!method) e.method = 'Choose a payout method.';
+    if (method && method.id === 'other' && !v.methodOther.trim()) e.methodOther = 'Tell us which payout method to use.';
+    if (v.holder.trim().length < 2) e.holder = 'Enter the account holder name.';
+    if (v.details.trim().length < 4) e.details = 'Enter your payout account details.';
+    if (!v.confirmed) e.confirm = 'Confirm your payout details to continue.';
+    const fee = method ? estimateFee(v.amountCents || 0, method) : null;
+    if (!e.amount && fee != null && fee >= v.amountCents) e.amount = 'The estimated fee is larger than this amount. Withdraw more to receive a payout.';
+    return e;
+  }
+
+  methodIn.addEventListener('change', () => {
+    const m = PAYOUT_METHODS.find((x) => x.id === methodIn.value);
+    $('#wd-other-field', panel).hidden = !(m && m.id === 'other');
+    $('#wd-details-label', panel).textContent = m ? m.detailsLabel : 'Account details';
+    detailsIn.placeholder = m ? m.placeholder : 'Choose a payout method first';
+    setError('method', '');
+    renderSummaryBox();
+  });
+  amountIn.addEventListener('input', () => { setError('amount', ''); renderSummaryBox(); });
+  amountIn.addEventListener('blur', () => { const c = parseMoneyToCents(amountIn.value); if (c != null) amountIn.value = centsToInput(c); });
+  $('#wd-max', panel).addEventListener('click', () => { amountIn.value = centsToInput(av); setError('amount', ''); renderSummaryBox(); amountIn.focus(); });
+  $('#wd-cancel', panel).addEventListener('click', () => { renderForm(); $('#wd-amount').focus(); });
+  form.addEventListener('input', (e) => { const f = e.target.closest('[data-field]'); if (f && f.dataset.field !== 'amount') setError(f.dataset.field, ''); });
+  renderSummaryBox();
+
+  let submitting = false;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (submitting || locked) return;
+    clearErrors();
+    $('#wd-form-err', panel).hidden = true;
+    const v = {
+      amountCents: parseMoneyToCents(amountIn.value),
+      methodId: methodIn.value,
+      methodOther: $('#wd-other', panel).value,
+      holder: $('#wd-holder', panel).value,
+      details: detailsIn.value,
+      notes: $('#wd-notes', panel).value,
+      confirmed: $('#wd-confirm', panel).checked,
+    };
+    const errs = validate(v);
+    if (Object.keys(errs).length) {
+      Object.entries(errs).forEach(([k, m]) => setError(k, m));
+      const firstBad = $('.is-invalid input, .is-invalid select, .is-invalid textarea', panel);
+      if (firstBad) firstBad.focus();
+      return;
+    }
+
+    submitting = true;
+    const submitBtn = $('#wd-submit', panel);
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `${ic('loader', 'spin')}Submitting…`;
+    try {
+      const { withdrawal: w } = await api.createWithdrawal(v);
+      ui.newRef = w.ref;
+      ui.successIsReal = true;
+      renderSuccess(w);
+      toast(`Withdrawal request ${w.ref} submitted.`);
+      ui.wd.page = 1;
+      await loadAll({ quiet: true });
+      const panelS = $('#wd-success');
+      panelS.classList.remove('is-flash'); void panelS.offsetWidth; panelS.classList.add('is-flash');
+      $('#ok-title').focus({ preventScroll: window.matchMedia('(min-width: 1021px)').matches });
+    } catch (err) {
+      submitting = false;
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit request';
+      if (err && err.fieldErrors) Object.entries(err.fieldErrors).forEach(([k, m]) => setError(k, m));
+      else { const fe = $('#wd-form-err', panel); fe.textContent = (err && err.message) || "Your request wasn't submitted. Try again."; fe.hidden = false; }
+    }
+  });
+}
+
+/* =========================================================
+   8. REQUEST SUBMITTED (inline)
+   Shows a design preview until a real request is submitted on this page.
+   ========================================================= */
+function previewWithdrawal() {
+  const wise = PAYOUT_METHODS.find((m) => m.id === 'wise');
+  const amount = Math.max(CONFIG.minWithdrawalCents, ui.stats.availableCents);
+  return { ref: 'WD-10053', amountCents: amount, method: wise.label, account: 'al····@gmail.com', estimatedFeeCents: estimateFee(amount, wise) };
+}
+
+function renderSuccess(w) {
+  const netEst = w.estimatedFeeCents != null ? fmtMoney(w.amountCents - w.estimatedFeeCents) : 'Confirmed at payout';
+  $('#wd-success').innerHTML = `
+    <div class="success">
+      <div class="success__icon">${ic('check')}</div>
+      <h2 id="ok-title" tabindex="-1">Withdrawal request submitted</h2>
+      <p>We've reserved ${fmtMoney(w.amountCents)} for request <strong>${esc(w.ref)}</strong>. Payouts are generally completed within ${CONFIG.payoutBusinessDays} business days, and we'll notify you when the status changes.</p>
+      <div class="summary"><dl>
+        <dt>Reserved amount</dt><dd>${fmtMoney(w.amountCents)}</dd>
+        <dt>Payout method</dt><dd>${esc(w.method)}</dd>
+        <dt>Account</dt><dd>${esc(w.account)}</dd>
+        <dt class="net">Estimated net payout</dt><dd class="net">${netEst}</dd>
+      </dl></div>
+      <div class="modal__actions modal__actions--center">
+        <button type="button" class="btn btn--ghost" data-scroll="main">Close</button>
+        <button type="button" class="btn btn--primary" data-scroll="sec-withdrawals">View withdrawal history</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
+   9. COMMISSION DETAIL DRAWER
+   ========================================================= */
+function openOverlay(html) {
+  const prevFocus = document.activeElement;
+  const el = document.createElement('div');
+  el.className = 'overlay';
+  el.innerHTML = html;
+  $('#overlay-root').appendChild(el);
+  document.body.classList.add('no-scroll');
+  const panel = el.firstElementChild;
+  const focusables = () => $$('button:not([disabled]),[tabindex]:not([tabindex="-1"])', panel).filter((n) => n.offsetParent !== null);
+  function onKey(e) {
+    if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+    if (e.key !== 'Tab') return;
+    const f = focusables(); if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+  function close() {
+    document.removeEventListener('keydown', onKey);
+    el.classList.remove('is-open');
+    document.body.classList.remove('no-scroll');
+    setTimeout(() => el.remove(), 220);
+    if (prevFocus && prevFocus.isConnected && prevFocus.focus) prevFocus.focus();
+  }
+  document.addEventListener('keydown', onKey);
+  el.addEventListener('mousedown', (e) => { if (e.target === el) close(); });
+  el.addEventListener('click', (e) => { if (e.target.closest('[data-close]')) close(); });
+  requestAnimationFrame(() => el.classList.add('is-open'));
+  setTimeout(() => { const f = focusables()[0]; if (f) f.focus(); }, 40);
+}
+
+function openCommission(id) {
+  const c = ui.commissionsById.get(id);
+  if (!c) return;
+  const t = PURCHASE_TYPE[c.type];
+  const isDed = c.kind === 'deduction';
+  const reserved = c.allocations.filter((a) => a.status !== 'paid');
+  const paidAlloc = c.allocations.filter((a) => a.status === 'paid');
+  const allocatedCents = c.allocations.reduce((s, a) => s + a.cents, 0);
+
+  const calc = isDed
+    ? `<dt>Related order</dt><dd>${esc(c.relatedOrder)}</dd><dt>Deducted</dt><dd class="neg">${fmtMoney(c.currentCents)}</dd>`
+    : `<dt>Amount paid</dt><dd>${fmtMoney(c.amountPaidCents)}</dd>
+       <dt>Commission rate</dt><dd>${c.ratePct}%</dd>
+       <dt>Original commission</dt><dd>${fmtMoney(c.originalCents)}</dd>
+       ${c.adjustments.map((a) => `<dt>${esc(a.label)}<br><span class="sub">${esc(fmtDate(a.at))}</span></dt><dd class="neg">${fmtMoney(a.cents)}</dd>`).join('')}
+       <dt>Current commission</dt><dd class="strong">${fmtMoney(c.currentCents)}</dd>`;
+
+  const timeline = [`<dt>${isDed ? 'Deducted on' : 'Payment date'}</dt><dd>${esc(fmtDate(c.paidAt))}</dd>`];
+  if (!isDed) {
+    if (c.status === 'held') timeline.push('<dt>Available on</dt><dd>Under review</dd>');
+    else if (c.status === 'cancelled') timeline.push(`<dt>Cancelled on</dt><dd>${esc(fmtDate(c.cancelledAt))}</dd>`);
+    else timeline.push(`<dt>${c.status === 'pending' ? 'Available on' : 'Became available'}</dt><dd>${esc(fmtDate(c.availableAt))}</dd>`);
+  }
+  paidAlloc.forEach((a) => timeline.push(`<dt>Paid out</dt><dd>${esc(a.ref)}, ${esc(fmtDate(a.paidAt))}</dd>`));
+  reserved.forEach((a) => timeline.push(`<dt>Reserved</dt><dd>${fmtMoney(a.cents)} in ${esc(a.ref)}</dd>`));
+  if (c.status === 'available' && allocatedCents > 0) timeline.push(`<dt>Still available</dt><dd>${fmtMoney(c.currentCents - allocatedCents)}</dd>`);
+  if (c.postPayout) timeline.push(`<dt>Charged back</dt><dd class="neg">${fmtMoney(c.postPayout.cents)} (${esc(c.postPayout.ref)})</dd>`);
+
+  const note = c.note || (c.status === 'held' ? c.holdReason + " It can't be withdrawn until the review is finished." : '')
+    || (c.status === 'cancelled' ? 'The order was fully refunded, so this commission was cancelled.' : '');
+
+  openOverlay(`
+    <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="dr-title">
+      <div class="drawer__head">
+        <div>
+          <p class="drawer__eyebrow">${isDed ? 'Balance adjustment' : esc(t.label) + ' commission'}</p>
+          <h2 class="drawer__title" id="dr-title">${esc(c.orderRef)}</h2>
+          ${badge(COMMISSION_STATUS, c.status)}
+        </div>
+        <button type="button" class="icon-btn" data-close aria-label="Close details">${ic('x')}</button>
+      </div>
+      <section><h3>Purchase</h3><dl class="kv">
+        <dt>Commission ID</dt><dd>${esc(c.id)}</dd>
+        <dt>Referral</dt><dd>${esc(c.referral)}</dd>
+        <dt>Purchase type</dt><dd>${esc(t.label)}</dd>
+        <dt>Product</dt><dd>${esc(c.product)}</dd>
+      </dl></section>
+      <section><h3>Calculation</h3><dl class="kv">${calc}</dl>${note ? `<p class="note">${esc(note)}</p>` : ''}</section>
+      <section><h3>Timeline</h3><dl class="kv">${timeline.join('')}</dl></section>
+    </aside>`);
+}
+
+/* =========================================================
+   10. LOADING + WIRING
+   ========================================================= */
+function toast(message) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `${ic('check')}<span>${esc(message)}</span>`;
+  $('#toasts').appendChild(t);
+  setTimeout(() => t.remove(), 3400);
+}
+
+const loadErrorHtml = (what) => `<div class="empty"><h3>Couldn't load your ${what}</h3><p>Check your connection and try again.</p><button type="button" class="btn btn--ghost" data-reload>${ic('refresh')}Try again</button></div>`;
+
+async function loadCommissions() {
+  $('#commissions-body').innerHTML = skeletonTable(9);
+  try { renderCommissions(await api.getCommissions(ui.comm)); }
+  catch { $('#commissions-body').innerHTML = loadErrorHtml('commissions'); }
+}
+async function loadWithdrawals() {
+  $('#withdrawals-body').innerHTML = skeletonTable(8, 3);
+  try { renderWithdrawals(await api.getWithdrawals(ui.wd)); }
+  catch { $('#withdrawals-body').innerHTML = loadErrorHtml('withdrawals'); }
+}
+
+async function loadAll({ quiet = false } = {}) {
+  if (!quiet) {
+    $('#commissions-body').innerHTML = skeletonTable(9);
+    $('#withdrawals-body').innerHTML = skeletonTable(8, 3);
+  }
+  try {
+    const [d, comm, wds] = await Promise.all([api.getDashboard(), api.getCommissions(ui.comm), api.getWithdrawals(ui.wd)]);
+    ui.stats = d.stats;
+    renderCommissions(comm);
+    renderWithdrawals(wds);
+    renderForm();
+    if (!ui.successIsReal) renderSuccess(previewWithdrawal());
+  } catch {
+    $('#commissions-body').innerHTML = loadErrorHtml('commissions');
+    $('#withdrawals-body').innerHTML = loadErrorHtml('withdrawals');
+    $('#wd-panel').innerHTML = `<div class="modal__body">${loadErrorHtml('balance')}</div>`;
+  }
+}
+
+function wire() {
+  document.addEventListener('click', (e) => {
+    const open = e.target.closest('[data-open]');
+    if (open) { openCommission(open.dataset.open); return; }
+    const row = e.target.closest('tr[data-row]');
+    if (row && !e.target.closest('button, a')) { openCommission(row.dataset.row); return; }
+
+    const chip = e.target.closest('[data-status]');
+    if (chip) { ui.comm.status = chip.dataset.status; ui.comm.page = 1; loadCommissions(); return; }
+
+    const pg = e.target.closest('[data-page]');
+    if (pg && !pg.disabled) {
+      const page = Number(pg.dataset.page);
+      if (pg.dataset.target === 'commissions') { ui.comm.page = page; loadCommissions(); }
+      else { ui.wd.page = page; loadWithdrawals(); }
+      return;
+    }
+
+    const scroll = e.target.closest('[data-scroll]');
+    if (scroll) {
+      const target = document.getElementById(scroll.dataset.scroll);
+      if (target) { target.scrollIntoView({ block: 'start' }); const h = target.querySelector('h1, h2'); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); } }
+      return;
+    }
+
+    if (e.target.closest('#clear-filters')) { ui.comm = { status: 'all', type: '', page: 1 }; $('#type-filter').value = ''; loadCommissions(); return; }
+    if (e.target.closest('[data-reload]')) { loadAll(); return; }
+    if (e.target.closest('[data-reset-demo]')) {
+      api.setMode('active');
+      ui.comm = { status: 'all', type: '', page: 1 }; ui.wd = { page: 1 };
+      ui.newRef = null; ui.successIsReal = false; ui.commissionsById.clear();
+      $('#type-filter').value = '';
+      loadAll();
+    }
+  });
+  $('#type-filter').addEventListener('change', (e) => { ui.comm.type = e.target.value; ui.comm.page = 1; loadCommissions(); });
+}
+
+fillConfigText();
+wire();
+loadAll();
+
+})();
+</script>
+</body>
+</html>
