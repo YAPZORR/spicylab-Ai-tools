@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>You're invited to SpicyLab</title>
+<meta name="description" content="A friend invited you to SpicyLab. Turn your ideas into AI-generated videos in seconds.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   SpicyLab — Invite landing page (/?ref=CODE)
+   Tokens mirror the SpicyLab app and the affiliate dashboard
+   ========================================================= */
+:root {
+  color-scheme: dark;
+  --bg: #0b0a18;
+  --surface: #1a1636;
+  --inset: #0e0c20;
+  --border: #2c2753;
+  --border-hi: #3d3670;
+  --text: #f5f3ff;
+  --text-2: #bcb7d9;
+  --text-3: #8a84ad;
+  --violet: #8b5cf6;
+  --lavender: #a78bfa;
+  --purple: #c084fc;
+  --pink: #ec4899;
+  --pink-2: #f472b6;
+  --sky: #38bdf8;
+  --gold: #fbbf24;
+  --teal: #2dd4bf;
+  --grad-primary: linear-gradient(90deg, #7c3aed 0%, #c026d3 60%, #d946ef 100%);
+  --grad-soft: linear-gradient(90deg, #8b5cf6 0%, #a855f7 100%);
+  --grad-ring: linear-gradient(135deg, #22d3ee 0%, #a855f7 50%, #ec4899 100%);
+  --grad-text: linear-gradient(90deg, #a78bfa 0%, #c084fc 45%, #e879f9 100%);
+  --grad-band: linear-gradient(100deg, #6a4cff 0%, #9b45f5 45%, #f02fd9 100%);
+  --r-xl: 26px;
+  --r-lg: 20px;
+  --r-md: 14px;
+  --font-display: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-hand: "Caveat", "Segoe Print", "Comic Sans MS", cursive;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; min-height: 100%;
+  background: var(--bg); color: var(--text);
+  font: 400 16px/1.55 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: inherit; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid #e9d5ff; outline-offset: 3px; border-radius: 8px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+[hidden] { display: none !important; }
+.i { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.coin { flex: none; }
+.grad-text { background: var(--grad-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.page-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(900px 560px at 6% -6%, rgba(79, 62, 214, .36), transparent 62%),
+    radial-gradient(860px 560px at 98% -2%, rgba(176, 44, 178, .28), transparent 60%),
+    radial-gradient(900px 700px at 50% 120%, rgba(91, 33, 182, .2), transparent 60%);
+}
+.wrap { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  min-height: 48px; padding: 0 22px; border-radius: 13px;
+  font-weight: 700; font-size: 15.5px; line-height: 1; white-space: nowrap; text-decoration: none;
+  border: 1px solid transparent; color: #fff;
+  transition: transform .15s ease, filter .15s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.btn--primary { background: var(--grad-primary); box-shadow: 0 14px 34px -14px rgba(217, 70, 239, .8); }
+.btn--primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.btn--ghost { background: rgba(14, 12, 32, .65); border-color: rgba(192, 132, 252, .5); }
+.btn--ghost:hover { border-color: rgba(232, 121, 249, .85); background: rgba(30, 24, 62, .8); }
+.btn--white { background: #fff; color: #1a1236; box-shadow: 0 16px 36px -14px rgba(20, 8, 60, .7); }
+.btn--white:hover { transform: translateY(-1px); }
+.btn--sm { min-height: 40px; padding: 0 16px; font-size: 14.5px; border-radius: 11px; }
+.btn--xl { min-height: 58px; padding: 0 28px; font-size: 17px; border-radius: 15px; width: 100%; }
+.btn .i { width: 18px; height: 18px; }
+
+/* ---------- Top bar ---------- */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; }
+.brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--font-display); font-weight: 900; font-size: 22px; letter-spacing: -0.01em; }
+.brand__mark { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; background: linear-gradient(135deg, #ec4899, #d946ef); box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 10px 24px -10px rgba(236,72,153,.9); }
+.brand__mark .i { width: 19px; height: 19px; }
+.topbar__nav { display: flex; gap: 10px; }
+
+/* ---------- Pills, tiles, badges ---------- */
+.kicker {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 15px; border-radius: 999px; font-size: 14px; font-weight: 600;
+  border: 1px solid rgba(45, 212, 191, .38); background: rgba(45, 212, 191, .08); color: #99f6e4;
+}
+.kicker .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 12px var(--teal); }
+.kicker[data-tone="gold"] { border-color: rgba(251, 191, 36, .4); background: rgba(251, 191, 36, .08); color: #fde68a; }
+.kicker[data-tone="gold"] .dot { background: var(--gold); box-shadow: 0 0 12px var(--gold); }
+.kicker[data-tone="violet"] { border-color: rgba(167, 139, 250, .45); background: rgba(139, 92, 246, .12); color: #ddd6fe; }
+.kicker[data-tone="violet"] .dot { background: var(--lavender); box-shadow: 0 0 12px var(--lavender); }
+
+.tile {
+  --t: linear-gradient(135deg, #8b5cf6, #6d5bf6);
+  width: 48px; height: 48px; border-radius: 14px; flex: none;
+  display: grid; place-items: center; color: #fff; background: var(--t);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 12px 26px -12px rgba(139, 92, 246, .85);
+}
+.tile .i { width: 22px; height: 22px; }
+.tile--sm { width: 38px; height: 38px; border-radius: 11px; }
+.tile--sm .i { width: 18px; height: 18px; }
+.tile--pink { --t: linear-gradient(135deg, #ec4899, #d946ef); box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 12px 26px -12px rgba(236,72,153,.85); }
+.tile--gold { --t: linear-gradient(135deg, #fcd34d, #f59e0b); color: #4a2a00; box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 12px 26px -12px rgba(245,158,11,.85); }
+.tile--blue { --t: linear-gradient(135deg, #38bdf8, #3b82f6); box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 12px 26px -12px rgba(59,130,246,.85); }
+.tile--teal { --t: linear-gradient(135deg, #5eead4, #14b8a6); color: #042f2e; box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 12px 26px -12px rgba(20,184,166,.85); }
+.tile--orange { --t: linear-gradient(135deg, #fdba74, #f97316); color: #431407; box-shadow: inset 0 1px 0 rgba(255,255,255,.3), 0 12px 26px -12px rgba(249,115,22,.85); }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 11px 4px 9px; border-radius: 999px; border: 1px solid;
+  font-size: 13px; font-weight: 600; line-height: 1.45; white-space: nowrap;
+}
+.badge .i { width: 14px; height: 14px; stroke-width: 2.4; }
+.badge[data-tone="teal"] { color: #5eead4; background: rgba(45, 212, 191, .1); border-color: rgba(45, 212, 191, .4); }
+.badge[data-tone="gold"] { color: #fcd34d; background: rgba(251, 191, 36, .1); border-color: rgba(251, 191, 36, .4); }
+.badge[data-tone="pink"] { color: #f9a8d4; background: rgba(236, 72, 153, .1); border-color: rgba(236, 72, 153, .4); }
+.badge[data-tone="violet"] { color: #d8b4fe; background: rgba(168, 85, 247, .13); border-color: rgba(192, 132, 252, .45); }
+
+.cmark { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; flex: none; background: linear-gradient(135deg, #a855f7, #d946ef); color: #fff; }
+.cmark .i { width: 13px; height: 13px; stroke-width: 3; }
+.cmark--no { background: #2a2647; color: var(--text-3); }
+
+/* ---------- Ring card + ticket notch (signature) ---------- */
+.ring {
+  position: relative; border-radius: var(--r-xl); padding: 30px 26px 26px;
+  border: 1px solid transparent;
+  background: linear-gradient(180deg, #251e54, #171334) padding-box, var(--grad-ring) border-box;
+  box-shadow: 0 30px 90px -30px rgba(168, 85, 247, .65);
+}
+.ring--muted { background: linear-gradient(180deg, #211c45, #161331) padding-box, linear-gradient(135deg, #4b4580, #3a3466) border-box; box-shadow: 0 30px 80px -40px rgba(0, 0, 0, .8); }
+.ribbon {
+  position: absolute; top: -14px; left: 24px;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 13px 5px 11px; border-radius: 999px;
+  background: var(--grad-soft); color: #fff; font-size: 13px; font-weight: 700;
+  box-shadow: 0 8px 20px -6px rgba(168, 85, 247, .85);
+}
+.ribbon .i { width: 15px; height: 15px; }
+.ticket { position: relative; height: 0; border-top: 1.5px dashed rgba(167, 139, 250, .32); margin: 22px -26px; }
+.ticket::before, .ticket::after {
+  content: ""; position: absolute; top: -12px; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--bg); border: 1px solid var(--border);
+}
+.ticket::before { left: -12px; clip-path: inset(0 0 0 50%); border-color: rgba(34, 211, 238, .8); }
+.ticket::after { right: -12px; clip-path: inset(0 50% 0 0); border-color: rgba(236, 72, 153, .8); }
+.ring--muted .ticket::before, .ring--muted .ticket::after { border-color: var(--border-hi); }
+
+/* ---------- Hero ---------- */
+.hero { position: relative; text-align: center; padding: 34px 0 30px; }
+.hero h1 {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: clamp(40px, 6.8vw, 78px); line-height: 1.02; letter-spacing: -0.025em;
+  margin: 20px auto 16px; max-width: 14ch; text-wrap: balance;
+}
+.hero__sub { margin: 0 auto; max-width: 52ch; color: var(--text-2); font-size: 18px; }
+.proof {
+  display: inline-flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 16px;
+  margin: 24px auto 0; padding: 8px 18px 8px 8px; border-radius: 999px;
+  background: rgba(14, 12, 32, .72); border: 1px solid var(--border); font-size: 14px; font-weight: 600;
+}
+.avatars { display: flex; }
+.avatars span {
+  width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+  font-size: 12px; font-weight: 800; color: #fff; border: 2px solid #15122d; margin-left: -8px;
+}
+.avatars span:first-child { margin-left: 0; }
+.proof .sep { width: 1px; height: 18px; background: var(--border-hi); }
+.stars { display: inline-flex; gap: 2px; color: var(--gold); }
+.stars .i { width: 15px; height: 15px; fill: currentColor; stroke: none; }
+@media (max-width: 560px) { .proof { border-radius: 20px; padding: 10px 14px; } .proof .sep { display: none; } }
+
+.invite-stage { position: relative; width: min(470px, 100%); margin: 38px auto 0; }
+.invite { text-align: left; }
+.inv-head { display: flex; align-items: center; gap: 14px; }
+.inv-head__text { flex: 1; min-width: 0; }
+.inv-title { margin: 0; font-family: var(--font-display); font-weight: 900; font-size: 22px; line-height: 1.2; }
+.inv-code { margin: 3px 0 0; color: var(--text-2); font-size: 14.5px; }
+.inv-code strong { color: #fff; letter-spacing: .04em; white-space: nowrap; }
+.inv-label { margin: 0 0 12px; text-align: center; font-weight: 600; color: var(--text-2); font-size: 15px; }
+.inv-text { margin: 0 0 18px; color: var(--text-2); font-size: 15px; text-align: center; }
+.inv-alt { margin: 14px 0 0; text-align: center; font-size: 15px; color: var(--text-2); }
+.inv-alt a { color: #fff; font-weight: 700; text-underline-offset: 3px; text-decoration-color: rgba(192, 132, 252, .6); }
+.inv-note { margin: 8px 0 0; text-align: center; font-size: 13px; color: var(--text-3); }
+.inv-actions { display: grid; gap: 10px; }
+.inv-actions .btn--ghost { width: 100%; min-height: 50px; }
+
+@media (max-width: 640px) {
+  .hero .float-coin { display: none; }
+  .hero h1 { font-size: clamp(34px, 10vw, 44px); max-width: none; }
+  .hero__sub { font-size: 16.5px; }
+  .ring { padding: 28px 18px 20px; }
+  .ticket { margin: 20px -18px; }
+  .ribbon { left: 18px; }
+}
+@media (max-width: 480px) { .inv-head .badge { display: none; } }
+.cd { display: flex; justify-content: center; align-items: flex-start; gap: 8px; margin-bottom: 20px; }
+.cd__unit { min-width: 84px; padding: 12px 8px 10px; border-radius: 15px; text-align: center; background: var(--inset); border: 1px solid var(--border); }
+.cd__num { display: block; font-family: var(--font-display); font-weight: 900; font-size: 36px; line-height: 1; font-variant-numeric: tabular-nums; }
+.cd__lbl { display: block; margin-top: 6px; font-size: 12.5px; color: var(--text-3); font-weight: 600; }
+.cd__colon { font-family: var(--font-display); font-weight: 900; font-size: 30px; color: var(--border-hi); padding-top: 10px; }
+.cd .h { color: var(--gold); } .cd .m { color: var(--sky); } .cd .s { color: var(--pink-2); }
+@media (max-width: 400px) { .cd__unit { min-width: 0; flex: 1; } .cd__num { font-size: 30px; } .cd__colon { display: none; } }
+
+.scribble {
+  position: absolute; right: -150px; top: 196px; width: 140px;
+  font-family: var(--font-hand); font-weight: 700; font-size: 30px; line-height: 1; color: var(--pink-2);
+  transform: rotate(-7deg); pointer-events: none;
+}
+.scribble svg { display: block; width: 74px; height: 50px; margin: 6px 0 0 -6px; fill: none; stroke: var(--pink-2); stroke-width: 2.4; stroke-linecap: round; }
+@media (max-width: 1080px) { .scribble { display: none; } }
+
+/* decorative creation cards, like the phones on the SpicyLab app page */
+.side-card {
+  position: absolute; top: 330px; width: 196px; aspect-ratio: 9 / 16;
+  border-radius: 26px; padding: 7px; background: #15122d; border: 1px solid var(--border-hi);
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .9), 0 0 0 1px rgba(255, 255, 255, .03) inset;
+}
+.side-card--left { left: 0; transform: rotate(-9deg); }
+.side-card--right { right: 0; transform: rotate(8deg); top: 360px; }
+.scene { position: relative; height: 100%; border-radius: 20px; overflow: hidden; }
+.scene--sunset { background: radial-gradient(circle at 50% 56%, #ffe29a 0 15%, rgba(255, 226, 154, 0) 16%), linear-gradient(180deg, #ff9ec0 0%, #ff6f91 34%, #9a5cff 70%, #2a1a66 100%); }
+.scene--sunset::before, .scene--sunset::after { content: ""; position: absolute; left: -10%; right: -10%; bottom: 0; }
+.scene--sunset::before { height: 42%; background: #3a1f7a; clip-path: polygon(0 45%, 18% 20%, 38% 50%, 58% 12%, 80% 44%, 100% 24%, 100% 100%, 0 100%); }
+.scene--sunset::after { height: 28%; background: #1d1145; clip-path: polygon(0 40%, 25% 10%, 50% 45%, 72% 18%, 100% 50%, 100% 100%, 0 100%); }
+.scene--city { background: radial-gradient(120px 90px at 70% 30%, rgba(236, 72, 153, .55), transparent 70%), linear-gradient(180deg, #120d38 0%, #33196b 55%, #b02bd0 100%); }
+.scene--city::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 52%;
+  background:
+    repeating-linear-gradient(180deg, rgba(253, 224, 71, .55) 0 3px, transparent 3px 12px) 14px 18px / 10px 100% no-repeat,
+    repeating-linear-gradient(180deg, rgba(103, 232, 249, .5) 0 3px, transparent 3px 12px) 78px 34px / 10px 100% no-repeat,
+    repeating-linear-gradient(180deg, rgba(249, 168, 212, .55) 0 3px, transparent 3px 12px) 132px 10px / 10px 100% no-repeat,
+    #0c0826;
+  clip-path: polygon(0 30%, 22% 30%, 22% 8%, 40% 8%, 40% 42%, 55% 42%, 55% 0, 72% 0, 72% 26%, 88% 26%, 88% 14%, 100% 14%, 100% 100%, 0 100%);
+}
+.sc-chip {
+  position: absolute; top: 12px; left: 12px; z-index: 2;
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px 5px 8px; border-radius: 999px;
+  background: rgba(11, 10, 24, .7); border: 1px solid rgba(255, 255, 255, .16); font-size: 12px; font-weight: 700;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.sc-chip .i { width: 13px; height: 13px; color: var(--gold); }
+.sc-play {
+  position: absolute; top: 50%; left: 50%; z-index: 2; transform: translate(-50%, -50%);
+  width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
+  background: rgba(255, 255, 255, .22); border: 1px solid rgba(255, 255, 255, .4);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.sc-play .i { width: 20px; height: 20px; fill: #fff; stroke: none; margin-left: 3px; }
+.sc-bar { position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 2; padding: 9px 11px; border-radius: 13px; background: rgba(11, 10, 24, .78); font-size: 11.5px; font-weight: 700; }
+.sc-bar__row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.sc-track { height: 5px; border-radius: 999px; background: rgba(255, 255, 255, .15); overflow: hidden; }
+.sc-track i { display: block; height: 100%; width: 98%; border-radius: inherit; background: linear-gradient(90deg, #22d3ee, #a855f7, #ec4899); }
+@media (max-width: 1080px) { .side-card { display: none; } }
+
+.float-coin { position: absolute; filter: drop-shadow(0 8px 16px rgba(245, 158, 11, .4)); pointer-events: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal { animation: rise .7s cubic-bezier(.2, .8, .2, 1) both; }
+  .reveal--2 { animation-delay: .12s; }
+  .reveal--3 { animation-delay: .24s; }
+  .side-card--left { animation: rise-left .9s .3s cubic-bezier(.2, .8, .2, 1) both; }
+  .side-card--right { animation: rise-right .9s .42s cubic-bezier(.2, .8, .2, 1) both; }
+}
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes rise-left { from { opacity: 0; transform: translateY(40px) rotate(-3deg); } to { opacity: 1; transform: rotate(-9deg); } }
+@keyframes rise-right { from { opacity: 0; transform: translateY(40px) rotate(2deg); } to { opacity: 1; transform: rotate(8deg); } }
+
+/* ---------- Sections ---------- */
+.sec { padding: 72px 0 0; }
+.sec__head { text-align: center; margin: 0 auto 32px; max-width: 640px; }
+.sec__head h2 { margin: 0 0 8px; font-family: var(--font-display); font-weight: 900; font-size: clamp(30px, 4vw, 42px); line-height: 1.1; letter-spacing: -0.02em; text-wrap: balance; }
+.sec__head p { margin: 0; color: var(--text-2); font-size: 16.5px; }
+@media (max-width: 640px) { .sec { padding-top: 60px; } }
+
+/* What you get */
+.perks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.perk {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 26px 18px 22px; border-radius: var(--r-lg);
+  background: rgba(20, 17, 42, .78); border: 1px solid var(--border);
+}
+.perk h3 { margin: 16px 0 6px; font-size: 17px; font-weight: 700; }
+.perk p { margin: 0; color: var(--text-2); font-size: 14.5px; line-height: 1.5; }
+.perk .tag { margin-top: 14px; display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: #d8b4fe; background: rgba(168, 85, 247, .12); border: 1px solid rgba(192, 132, 252, .35); }
+.perk .tag--free { color: #fde68a; background: rgba(251, 191, 36, .1); border-color: rgba(251, 191, 36, .38); }
+@media (max-width: 980px) { .perks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) {
+  .perks { grid-template-columns: 1fr; gap: 10px; }
+  .perk { display: grid; grid-template-columns: auto 1fr; column-gap: 14px; align-items: start; text-align: left; padding: 16px; }
+  .perk .tile { grid-row: 1 / span 3; }
+  .perk h3 { margin: 2px 0 4px; }
+  .perk .tag { justify-self: start; margin-top: 10px; }
+}
+
+/* How your invite works */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; position: relative; }
+.step { position: relative; padding: 24px 22px; border-radius: var(--r-lg); background: rgba(20, 17, 42, .78); border: 1px solid var(--border); }
+.step__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; }
+.step__n { font-family: var(--font-display); font-weight: 900; font-size: 15px; color: var(--text-3); }
+.step h3 { margin: 0 0 6px; font-size: 18px; font-weight: 700; }
+.step p { margin: 0; color: var(--text-2); font-size: 15px; }
+.step.is-done { border-color: rgba(45, 212, 191, .45); background: linear-gradient(180deg, rgba(20, 60, 64, .35), rgba(20, 17, 42, .8)); }
+@media (min-width: 861px) {
+  .step:not(:last-child)::after {
+    content: ""; position: absolute; top: 48px; right: -17px; width: 18px; border-top: 2px dashed var(--border-hi);
+  }
+}
+@media (max-width: 860px) { .steps { grid-template-columns: 1fr; } }
+
+.rules { margin: 22px auto 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; list-style: none; padding: 0; max-width: 900px; }
+.rules li {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 8px 15px 8px 9px; border-radius: 999px; font-size: 14.5px; font-weight: 600;
+  background: rgba(14, 12, 32, .72); border: 1px solid var(--border);
+}
+.rules li.no { color: var(--text-3); }
+
+/* Plans */
+.plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
+.plan { position: relative; display: flex; flex-direction: column; border-radius: var(--r-lg); padding: 24px 22px 22px; background: rgba(23, 19, 50, .85); border: 1px solid var(--border); }
+.plan.ring {
+  border-radius: var(--r-lg); padding: 24px 22px 22px; border: 1px solid transparent;
+  background: linear-gradient(180deg, #251e54, #171334) padding-box, var(--grad-ring) border-box;
+}
+.plan:not(.ring) .ticket::before, .plan:not(.ring) .ticket::after { border-color: var(--border); }
+.plan__name { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; font-size: 19px; font-weight: 700; }
+.plan__price { margin: 0; font-family: var(--font-display); font-weight: 900; font-size: 42px; line-height: 1; letter-spacing: -0.02em; }
+.plan__price span { font-family: var(--font-body); font-weight: 500; font-size: 15px; color: var(--text-3); letter-spacing: 0; }
+.plan__bill { margin: 10px 0 16px; font-size: 13.5px; color: var(--text-3); }
+.plan__bill strong { display: block; color: var(--lavender); font-size: 15px; }
+.minis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.mini { display: flex; align-items: center; gap: 8px; padding: 9px 9px; border-radius: 12px; background: var(--inset); border: 1px solid var(--border); min-width: 0; }
+.mini .coin { width: 24px; height: 24px; }
+.mini__icon { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; flex: none; border: 1px solid; }
+.mini__icon .i { width: 14px; height: 14px; }
+.mini__icon--v { color: var(--lavender); border-color: rgba(167, 139, 250, .45); background: rgba(139, 92, 246, .14); }
+.mini__icon--img { color: var(--sky); border-color: rgba(56, 189, 248, .45); background: rgba(56, 189, 248, .12); }
+.mini b { display: block; font-family: var(--font-display); font-weight: 900; font-size: 16px; line-height: 1.1; }
+.mini small { display: block; color: var(--text-3); font-size: 11.5px; }
+.mini .gold { color: var(--gold); } .mini .lav { color: var(--lavender); } .mini .sky { color: var(--sky); }
+.plan .ticket { margin: 20px -22px 18px; }
+.plan.ring .ticket { margin: 20px -22px 18px; }
+.flist { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: 14.5px; }
+.flist li { display: flex; gap: 10px; align-items: center; }
+.flist li.no { color: var(--text-3); }
+.flist .cmark { width: 20px; height: 20px; }
+.ribbon--plan { left: 50%; transform: translateX(-50%); white-space: nowrap; }
+.ribbon .save { margin-left: 4px; padding: 2px 8px; border-radius: 999px; background: #1a1236; color: var(--gold); font-size: 11.5px; }
+.packs { margin: 22px auto 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; font-size: 14.5px; }
+.packs__label { color: var(--text-2); font-weight: 600; margin-right: 4px; }
+.pack { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 8px; border-radius: 999px; background: rgba(14, 12, 32, .72); border: 1px solid rgba(251, 191, 36, .32); font-weight: 600; }
+.pack .coin { width: 22px; height: 22px; }
+.pack span { color: var(--text-3); font-weight: 500; }
+.center-cta { display: flex; justify-content: center; margin-top: 28px; }
+@media (max-width: 900px) {
+  .plans { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(280px, 82%); overflow-x: auto; scroll-snap-type: x mandatory; padding: 18px 2px 8px; margin: -18px -2px 0; scrollbar-width: none; }
+  .plans::-webkit-scrollbar { display: none; }
+  .plan { scroll-snap-align: center; }
+}
+
+/* Earn too */
+.earn {
+  position: relative; overflow: hidden;
+  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 34px; align-items: center;
+  padding: 44px; border-radius: 30px; border: 1px solid #30296a;
+  background:
+    radial-gradient(620px 320px at 0% 0%, rgba(79, 70, 229, .38), transparent 62%),
+    radial-gradient(560px 320px at 100% 0%, rgba(192, 38, 211, .3), transparent 60%),
+    #13102a;
+}
+.earn h2 { margin: 14px 0 10px; font-family: var(--font-display); font-weight: 900; font-size: clamp(30px, 4vw, 44px); line-height: 1.08; letter-spacing: -0.02em; }
+.earn__lead { margin: 0 0 24px; color: var(--text-2); font-size: 16.5px; max-width: 48ch; }
+.earn__list { list-style: none; margin: 0 0 26px; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
+.earn__list li { display: flex; gap: 12px; align-items: flex-start; font-size: 14.5px; color: var(--text-2); }
+.earn__list strong { display: block; color: #fff; font-size: 15px; margin-bottom: 1px; }
+.earn__fine { margin: 14px 0 0; font-size: 13px; color: var(--text-3); }
+.math { padding: 26px 24px; }
+.math__row { display: flex; align-items: center; gap: 14px; }
+.math__row p { margin: 0; color: var(--text-2); font-size: 14.5px; }
+.math__row strong { display: block; font-family: var(--font-display); font-weight: 900; font-size: 30px; line-height: 1.1; color: #fff; }
+.math__op { display: flex; align-items: center; gap: 10px; margin: 12px 0 12px 12px; color: var(--purple); font-family: var(--font-display); font-weight: 900; font-size: 22px; }
+.math__op::before { content: ""; width: 2px; height: 34px; margin-right: 20px; background: linear-gradient(180deg, rgba(167,139,250,.1), rgba(192,132,252,.6), rgba(167,139,250,.1)); }
+.math__result strong { font-size: 44px; color: #5eead4; }
+.math__note { margin: 18px 0 0; padding-top: 16px; border-top: 1px dashed var(--border-hi); font-size: 13.5px; color: var(--text-3); text-align: center; }
+@media (max-width: 900px) { .earn { grid-template-columns: 1fr; padding: 30px 22px; } }
+@media (max-width: 560px) { .earn__list { grid-template-columns: 1fr; } }
+
+/* FAQ */
+.faq { max-width: 780px; margin: 0 auto; border-radius: var(--r-lg); background: rgba(20, 17, 42, .78); border: 1px solid var(--border); padding: 6px 22px; }
+.faq details { border-top: 1px solid var(--border); }
+.faq details:first-child { border-top: 0; }
+.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 18px 2px; font-weight: 700; font-size: 16px; border-radius: 6px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary .i { color: var(--text-3); transition: transform .2s; }
+.faq details[open] summary .i { transform: rotate(180deg); }
+.faq details p { margin: 0 2px 18px; color: var(--text-2); font-size: 15px; max-width: 68ch; }
+
+/* Final band */
+.band {
+  position: relative; overflow: hidden; margin-top: 80px;
+  padding: 64px 24px; border-radius: 32px; text-align: center; background: var(--grad-band);
+  box-shadow: 0 40px 120px -40px rgba(168, 85, 247, .8);
+}
+.band h2 { margin: 0 0 10px; font-family: var(--font-display); font-weight: 900; font-size: clamp(30px, 4.6vw, 48px); line-height: 1.05; letter-spacing: -0.02em; }
+.band p { margin: 0 auto 26px; max-width: 46ch; color: rgba(255, 255, 255, .88); font-size: 17px; }
+.band .btn--white { min-height: 56px; padding: 0 32px; border-radius: 999px; font-size: 16.5px; }
+.band__timer { margin: 14px auto 0 !important; font-size: 14px !important; color: rgba(255, 255, 255, .8) !important; }
+@media (max-width: 640px) { .band { padding: 48px 20px; border-radius: 26px; } }
+
+.footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 34px 0 40px; color: var(--text-3); font-size: 14px; }
+.footer nav { display: flex; gap: 18px; }
+.footer a { text-decoration: none; }
+.footer a:hover { color: #fff; }
+
+/* Sticky mobile CTA */
+.sticky-cta {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  background: rgba(11, 10, 24, .86); border-top: 1px solid var(--border);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  display: none; align-items: center; gap: 12px;
+  transform: translateY(110%); transition: transform .25s ease;
+}
+.sticky-cta.is-shown { transform: none; }
+.sticky-cta__text { flex: 1; min-width: 0; font-size: 13px; color: var(--text-2); line-height: 1.35; }
+.sticky-cta__text strong { display: block; color: #fff; font-size: 14.5px; }
+.sticky-cta .btn { min-height: 46px; }
+@media (max-width: 760px) { .sticky-cta { display: flex; } .footer { padding-bottom: 110px; } }
+
+/* Toast + demo switcher */
+.toast-region { position: fixed; left: 0; right: 0; bottom: 0; z-index: 80; pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 16px calc(96px + env(safe-area-inset-bottom, 0px)); }
+.toast { pointer-events: auto; display: flex; align-items: center; gap: 10px; max-width: 520px; padding: 12px 16px; border-radius: 14px; font-size: 14px; font-weight: 600; background: #1f1a42; border: 1px solid rgba(94, 234, 212, .4); color: #ccfbf1; box-shadow: 0 20px 50px -20px rgba(0, 0, 0, .8); animation: rise .2s ease both; }
+.toast .i { color: var(--teal); }
+.demo-bar { position: fixed; left: 0; bottom: 0; z-index: 50; padding: 0 16px calc(16px + env(safe-area-inset-bottom, 0px)); pointer-events: none; }
+.demo-bar__inner { pointer-events: auto; }
+.demo-bar__inner { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px; padding: 4px; border-radius: 12px; background: rgba(14, 12, 32, .94); border: 1px solid var(--border-hi); font-size: 12.5px; box-shadow: 0 12px 30px -12px rgba(0, 0, 0, .8); }
+.demo-bar__label { padding: 0 8px; color: var(--text-3); }
+.demo-bar button { border: 0; background: transparent; color: var(--text-2); padding: 6px 10px; border-radius: 8px; font-weight: 600; }
+.demo-bar button[aria-pressed="true"] { background: rgba(139, 92, 246, .25); color: #fff; }
+@media (max-width: 760px) { .demo-bar { padding: 0 8px calc(84px + env(safe-area-inset-bottom, 0px)); } .demo-bar__label { display: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <radialGradient id="coin-g" cx="35%" cy="30%" r="75%">
+      <stop offset="0" stop-color="#fde68a"/><stop offset=".55" stop-color="#fbbf24"/><stop offset="1" stop-color="#d97706"/>
+    </radialGradient>
+  </defs>
+  <symbol id="coin" viewBox="0 0 32 32">
+    <circle cx="16" cy="16" r="15" fill="url(#coin-g)"/>
+    <circle cx="16" cy="16" r="11" fill="none" stroke="#b45309" stroke-opacity=".55" stroke-width="1.5"/>
+    <path d="M19.2 12.6c-.5-1-1.7-1.7-3.2-1.7-1.9 0-3.2 1-3.2 2.4 0 3.3 6.6 1.8 6.6 5.1 0 1.4-1.4 2.5-3.4 2.5-1.6 0-2.9-.7-3.4-1.9M16 9v2M16 21v2" fill="none" stroke="#92400e" stroke-width="1.9" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-user-check" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></symbol>
+  <symbol id="i-user-plus" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0l1.58 6.14a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96l-6.14 1.58a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></symbol>
+  <symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></symbol>
+  <symbol id="i-rocket" viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-layout" viewBox="0 0 24 24"><rect width="18" height="7" x="3" y="3" rx="1"/><rect width="9" height="7" x="3" y="14" rx="1"/><rect width="5" height="7" x="16" y="14" rx="1"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 3l14 9-14 9z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M11.53 2.3a.53.53 0 0 1 .95 0l2.31 4.68a2.12 2.12 0 0 0 1.6 1.16l5.16.76a.53.53 0 0 1 .3.9l-3.74 3.64a2.12 2.12 0 0 0-.61 1.88l.88 5.14a.53.53 0 0 1-.77.56l-4.62-2.43a2.12 2.12 0 0 0-1.97 0l-4.62 2.43a.53.53 0 0 1-.77-.56l.88-5.14a2.12 2.12 0 0 0-.61-1.88L2.16 9.8a.53.53 0 0 1 .3-.91l5.16-.75a2.12 2.12 0 0 0 1.6-1.16z"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M11.56 3.27a.5.5 0 0 1 .88 0l2.95 5.6a1 1 0 0 0 1.52.29l4.27-3.66a.5.5 0 0 1 .82.5l-2.83 10.25a1 1 0 0 1-.96.75H5.8a1 1 0 0 1-.96-.75L2.02 6a.5.5 0 0 1 .82-.5l4.27 3.66a1 1 0 0 0 1.52-.29zM5 21h14"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><path d="m16 13 5.22 3.48a.5.5 0 0 0 .78-.42V7.87a.5.5 0 0 0-.75-.43L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></symbol>
+  <symbol id="i-percent" viewBox="0 0 24 24"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></symbol>
+  <symbol id="i-infinity" viewBox="0 0 24 24"><path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+  <symbol id="i-banknote" viewBox="0 0 24 24"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></symbol>
+  <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 17.5v-11"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+</svg>
+
+<div class="page-bg" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header class="topbar">
+    <!-- Replace with the real SpicyLab logo -->
+    <a class="brand" href="/" data-nav="home" aria-label="SpicyLab home">
+      <span class="brand__mark" aria-hidden="true"><svg class="i"><use href="#i-flame"/></svg></span>
+      SpicyLab
+    </a>
+    <nav class="topbar__nav" aria-label="Account" id="topnav"></nav>
+  </header>
+
+  <main id="main">
+    <!-- ================= HERO ================= -->
+    <section class="hero" aria-labelledby="hero-title">
+      <svg class="coin float-coin" style="left:8%;top:40px;width:26px;height:26px" aria-hidden="true"><use href="#coin"/></svg>
+      <svg class="coin float-coin" style="right:7%;top:110px;width:40px;height:40px" aria-hidden="true"><use href="#coin"/></svg>
+      <svg class="coin float-coin" style="left:22%;top:250px;width:16px;height:16px;opacity:.7" aria-hidden="true"><use href="#coin"/></svg>
+
+      <div class="reveal">
+        <span class="kicker" id="hero-kicker"><span class="dot" aria-hidden="true"></span><span></span></span>
+        <h1 id="hero-title"></h1>
+        <p class="hero__sub" id="hero-sub"></p>
+        <div class="proof">
+          <span class="avatars" aria-hidden="true">
+            <span style="background:linear-gradient(135deg,#8b5cf6,#6366f1)">M</span>
+            <span style="background:linear-gradient(135deg,#ec4899,#d946ef)">A</span>
+            <span style="background:linear-gradient(135deg,#f59e0b,#f97316)">K</span>
+            <span style="background:linear-gradient(135deg,#22d3ee,#3b82f6)">J</span>
+            <span style="background:linear-gradient(135deg,#14b8a6,#22c55e)">R</span>
+          </span>
+          <span>Trusted by <strong>1M+</strong> creators worldwide</span>
+          <span class="sep" aria-hidden="true"></span>
+          <span class="stars" aria-hidden="true">
+            <svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg><svg class="i"><use href="#i-star"/></svg>
+          </span>
+          <span><strong>1000+</strong> ratings<span class="sr-only">, rated five stars</span></span>
+        </div>
+      </div>
+
+      <div class="side-card side-card--left" aria-hidden="true">
+        <div class="scene scene--sunset"></div>
+        <span class="sc-chip"><svg class="i"><use href="#i-sparkles"/></svg>Face swap</span>
+        <span class="sc-play"><svg class="i"><use href="#i-play"/></svg></span>
+        <div class="sc-bar"><div class="sc-bar__row"><span>Creating video</span><span>98%</span></div><div class="sc-track"><i></i></div></div>
+      </div>
+      <div class="side-card side-card--right" aria-hidden="true">
+        <div class="scene scene--city"></div>
+        <span class="sc-chip"><svg class="i"><use href="#i-layout"/></svg>New template</span>
+        <span class="sc-play"><svg class="i"><use href="#i-play"/></svg></span>
+      </div>
+
+      <div class="invite-stage reveal reveal--2">
+        <div class="ring invite" id="invite-card" aria-live="polite"></div>
+        <div class="scribble" id="scribble" aria-hidden="true">
+          it's free!
+          <svg viewBox="0 0 74 50"><path d="M68 4C50 10 30 22 14 40"/><path d="M12 26l1 16 15-3"/></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= WHAT YOU GET ================= -->
+    <section class="sec" aria-labelledby="get-title">
+      <div class="sec__head">
+        <h2 id="get-title">What you get with SpicyLab</h2>
+        <p>Everything you need to turn an idea into a video worth sharing.</p>
+      </div>
+      <ul class="perks">
+        <li class="perk"><span class="tile"><svg class="i" aria-hidden="true"><use href="#i-zap"/></svg></span><h3>Videos in seconds</h3><p>Describe an idea and get an AI-generated video fast.</p></li>
+        <li class="perk"><span class="tile tile--pink"><svg class="i" aria-hidden="true"><use href="#i-sparkles"/></svg></span><h3>Every effect unlocked</h3><p>Use all of SpicyLab's effects in your creations.</p><span class="tag">Any Pro plan</span></li>
+        <li class="perk"><span class="tile tile--gold"><svg class="i" aria-hidden="true"><use href="#i-smile"/></svg></span><h3>Free face swaps</h3><p>Swap faces into your videos without spending extra.</p><span class="tag">Annual Pro</span></li>
+        <li class="perk"><span class="tile tile--blue"><svg class="i" aria-hidden="true"><use href="#i-rocket"/></svg></span><h3>Skip the queue</h3><p>Priority video creation gets your videos done first.</p><span class="tag">Annual Pro or coin packs</span></li>
+        <li class="perk"><span class="tile tile--teal"><svg class="i" aria-hidden="true"><use href="#i-monitor"/></svg></span><h3>Highest resolution</h3><p>Crisp, high-quality results ready to post anywhere.</p><span class="tag">Annual Pro</span></li>
+        <li class="perk"><span class="tile tile--orange"><svg class="i" aria-hidden="true"><use href="#i-layout"/></svg></span><h3>Fresh templates daily</h3><p>New templates land every day, so there's always something to try.</p><span class="tag">Annual Pro or coin packs</span></li>
+        <li class="perk"><span class="tile tile--gold"><svg class="coin" width="24" height="24" aria-hidden="true"><use href="#coin"/></svg></span><h3>Daily coin bonus</h3><p>Claim free coins from your account menu every day.</p><span class="tag tag--free">Free account</span></li>
+        <li class="perk"><span class="tile tile--pink"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg></span><h3>Create anywhere</h3><p>Pick up on iPhone or Android, even without a connection.</p></li>
+      </ul>
+    </section>
+
+    <!-- ================= HOW YOUR INVITE WORKS ================= -->
+    <section class="sec" aria-labelledby="how-title">
+      <div class="sec__head">
+        <h2 id="how-title">How your invite works</h2>
+        <p>Three steps, and you're already through the first one.</p>
+      </div>
+      <ol class="steps">
+        <li class="step" id="step-1">
+          <div class="step__top"><span class="tile tile--teal"><svg class="i" aria-hidden="true"><use href="#i-link"/></svg></span><span id="step-1-badge"></span></div>
+          <h3>Open your friend's link</h3>
+          <p id="step-1-text">Your invite is saved on this browser.</p>
+        </li>
+        <li class="step">
+          <div class="step__top"><span class="tile tile--pink"><svg class="i" aria-hidden="true"><use href="#i-user-plus"/></svg></span><span class="step__n">Step 2</span></div>
+          <h3>Create your account within <span data-cfg="window">24 hours</span></h3>
+          <p>Sign up with a new account. Invites can't be added to an account you already have.</p>
+        </li>
+        <li class="step">
+          <div class="step__top"><span class="tile tile--gold"><svg class="i" aria-hidden="true"><use href="#i-sparkles"/></svg></span><span class="step__n">Step 3</span></div>
+          <h3>Start creating</h3>
+          <p>Make your first video. If you buy a plan or coins, your friend earns a thank-you, and your price stays exactly the same.</p>
+        </li>
+      </ol>
+      <ul class="rules" aria-label="Invite rules">
+        <li><span class="cmark"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg></span>New accounts only</li>
+        <li><span class="cmark"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg></span><span><span data-cfg="window">24 hours</span> to sign up</span></li>
+        <li><span class="cmark"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg></span>The latest invite link you opened counts</li>
+        <li class="no"><span class="cmark cmark--no"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></span>Can't be added to an existing account later</li>
+        <li class="no"><span class="cmark cmark--no"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></span>Can't be used to invite yourself</li>
+      </ul>
+    </section>
+
+    <!-- ================= PLANS ================= -->
+    <section class="sec" aria-labelledby="plans-title">
+      <div class="sec__head">
+        <h2 id="plans-title">Pick a plan when you're ready</h2>
+        <p>Creating an account is free. Upgrade any time for more coins and features.</p>
+      </div>
+      <div class="plans" id="plans"></div>
+      <div class="packs" id="packs"></div>
+      <div class="center-cta"><a class="btn btn--primary btn--sm" data-cta="primary" style="min-height:50px;padding:0 26px;font-size:15.5px"></a></div>
+    </section>
+
+    <!-- ================= EARN TOO ================= -->
+    <section class="sec" aria-labelledby="earn-title">
+      <div class="earn">
+        <div>
+          <span class="kicker" data-tone="violet"><span class="dot" aria-hidden="true"></span>Affiliate Program</span>
+          <h2 id="earn-title">Love it? Share it and earn <span class="grad-text"><span data-cfg="rate">20%</span> cash</span></h2>
+          <p class="earn__lead">Every SpicyLab account comes with its own invite link. When people you invite buy something, you get <span data-cfg="rate">20%</span> of what they pay, in cash.</p>
+          <ul class="earn__list">
+            <li><span class="tile tile--sm"><svg class="i" aria-hidden="true"><use href="#i-percent"/></svg></span><span><strong><span data-cfg="rate">20%</span> on every purchase</strong>Subscriptions, renewals, and coin packs.</span></li>
+            <li><span class="tile tile--sm tile--pink"><svg class="i" aria-hidden="true"><use href="#i-infinity"/></svg></span><span><strong>No 12-month limit</strong>Earn on every future purchase they make.</span></li>
+            <li><span class="tile tile--sm tile--blue"><svg class="i" aria-hidden="true"><use href="#i-calendar"/></svg></span><span><strong>Confirmed in <span data-cfg="holdShort">30 days</span></strong>Each commission is ready <span data-cfg="hold">30 calendar days</span> after payment.</span></li>
+            <li><span class="tile tile--sm tile--gold"><svg class="i" aria-hidden="true"><use href="#i-wallet"/></svg></span><span><strong>Withdraw from <span data-cfg="min">$10</span></strong>Cash out once you reach the minimum.</span></li>
+            <li><span class="tile tile--sm tile--teal"><svg class="i" aria-hidden="true"><use href="#i-banknote"/></svg></span><span><strong>Paid in <span data-cfg="payout">15 business days</span></strong>After a complete, valid request. Fees come out of the payout, and you see them first.</span></li>
+            <li><span class="tile tile--sm tile--orange"><svg class="i" aria-hidden="true"><use href="#i-receipt"/></svg></span><span><strong>See every order</strong>Track commissions and payouts in your dashboard.</span></li>
+          </ul>
+          <a class="btn btn--primary" data-cta="earn" style="min-height:52px;padding:0 26px"></a>
+          <p class="earn__fine">Refunded or charged-back purchases don't earn commission, and purchases on your own account don't count.</p>
+        </div>
+        <div class="ring math" aria-label="Example: a friend buys a $50 coin pack and you earn $10">
+          <span class="ribbon"><svg class="i" aria-hidden="true"><use href="#i-crown"/></svg>Example</span>
+          <div class="math__row">
+            <span class="tile tile--gold"><svg class="coin" width="26" height="26" aria-hidden="true"><use href="#coin"/></svg></span>
+            <p>Your friend buys a coin pack<strong id="ex-purchase">$50.00</strong></p>
+          </div>
+          <div class="math__op" aria-hidden="true">× <span data-cfg="rate">20%</span></div>
+          <div class="math__row math__result">
+            <span class="tile tile--teal"><svg class="i" aria-hidden="true"><use href="#i-wallet"/></svg></span>
+            <p>Cash for you<strong id="ex-earn">$10.00</strong></p>
+          </div>
+          <p class="math__note">Confirmed after <span data-cfg="hold">30 calendar days</span>, then ready to withdraw.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FAQ ================= -->
+    <section class="sec" aria-labelledby="faq-title">
+      <div class="sec__head"><h2 id="faq-title">Quick answers</h2></div>
+      <div class="faq">
+        <details>
+          <summary><span>Is SpicyLab free to join?</span><svg class="i" aria-hidden="true"><use href="#i-chevron-down"/></svg></summary>
+          <p>Yes. Creating an account is free, and you can claim a daily coin bonus. You only pay if you choose a plan or a coin pack.</p>
+        </details>
+        <details>
+          <summary><span>What if I sign up after <span data-cfg="window">24 hours</span>?</span><svg class="i" aria-hidden="true"><use href="#i-chevron-down"/></svg></summary>
+          <p>You can still join, but the invite won't be linked to your account. Opening your friend's link again starts a fresh <span data-cfg="window">24 hours</span>.</p>
+        </details>
+        <details>
+          <summary><span>I already have an account. Can I use this invite?</span><svg class="i" aria-hidden="true"><use href="#i-chevron-down"/></svg></summary>
+          <p>No. Invites only apply to brand-new accounts, so just log in as usual. You can share your own invite link from your account menu.</p>
+        </details>
+        <details>
+          <summary><span>Does joining through an invite change my price?</span><svg class="i" aria-hidden="true"><use href="#i-chevron-down"/></svg></summary>
+          <p>No. You pay exactly the same price. Your friend's commission comes from SpicyLab, not from you.</p>
+        </details>
+        <details>
+          <summary><span>What can my friend see about me?</span><svg class="i" aria-hidden="true"><use href="#i-chevron-down"/></svg></summary>
+          <p>A masked version of your email, like jo***@gmail.com, and the amount of each purchase that earned them a commission. They never see your creations, your payment details, or your full email.</p>
+        </details>
+        <details>
+          <summary><span>I opened links from more than one friend. Who gets credit?</span><svg class="i" aria-hidden="true"><use href="#i-chevron-down"/></svg></summary>
+          <p>The last invite link you opened before creating your account. After you sign up, it can't change.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- ================= FINAL BAND ================= -->
+    <section class="band" aria-labelledby="band-title">
+      <svg class="coin float-coin" style="left:8%;top:28%;width:38px;height:38px" aria-hidden="true"><use href="#coin"/></svg>
+      <svg class="coin float-coin" style="right:12%;bottom:22%;width:26px;height:26px" aria-hidden="true"><use href="#coin"/></svg>
+      <h2 id="band-title"></h2>
+      <p id="band-sub"></p>
+      <a class="btn btn--white" data-cta="primary"></a>
+      <p class="band__timer" id="band-timer"></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>© 2026 SpicyLab</span>
+    <nav aria-label="Legal">
+      <a href="/terms" data-nav="terms">Terms</a>
+      <a href="/privacy" data-nav="privacy">Privacy</a>
+      <a href="/affiliate-terms" data-nav="affiliate-terms">Affiliate terms</a>
+    </nav>
+  </footer>
+</div>
+
+<div class="sticky-cta" id="sticky-cta" aria-hidden="true">
+  <div class="sticky-cta__text" id="sticky-text"></div>
+  <a class="btn btn--primary" data-cta="primary" tabindex="-1"></a>
+</div>
+
+<div class="toast-region" id="toasts" role="status" aria-live="polite"></div>
+
+<!-- DEMO ONLY: preview the invite states. Remove in production. -->
+<div class="demo-bar">
+  <div class="demo-bar__inner" role="group" aria-label="Preview state (demo only)">
+    <span class="demo-bar__label">Preview</span>
+    <button type="button" data-state="valid" aria-pressed="true">Invite</button>
+    <button type="button" data-state="expired" aria-pressed="false">Time's up</button>
+    <button type="button" data-state="invalid" aria-pressed="false">Invalid code</button>
+    <button type="button" data-state="signed_in" aria-pressed="false">Signed in</button>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+/* =========================================================
+   CONFIG — keep in sync with the backend affiliate settings
+   ========================================================= */
+const CONFIG = {
+  ratePct: 20,
+  referralWindowHours: 24,
+  holdDays: 30,
+  minWithdrawalCents: 1000,
+  payoutBusinessDays: 15,
+  examplePurchaseCents: 5000, // the brief's "$50 coin pack → $10" example
+  currency: 'USD',
+  locale: 'en-US',
+  routes: { signup: '/signup', login: '/login', home: '/', affiliate: '/account/affiliate' },
+  demo: true, // DEMO ONLY: intercepts navigation and shows where each link goes
+};
+
+/* Pricing shown on the page. Keep in sync with the pricing API. */
+const PLANS = [
+  { name: 'Monthly Pro', icon: 'zap', tile: '', per100: '$4.33', price: '$12.99 / month', billing: 'Billed monthly', coins: 300, videos: 6, images: 20,
+    features: { effects: true, faceSwap: false, priority: false, resolution: false, templates: false } },
+  { name: 'Quarterly Pro', icon: 'flame', tile: 'tile--pink', per100: '$2.67', price: '$13.33 / month', billing: 'Billed $39.99 every 3 months', coins: 1500, videos: 30, images: 100,
+    features: { effects: true, faceSwap: false, priority: false, resolution: false, templates: false } },
+  { name: 'Annual Pro', icon: 'crown', tile: 'tile--gold', per100: '$1.35', price: '$5.75 / month', billing: 'Billed $69.99 yearly', coins: 5200, videos: 104, images: 346, recommended: true, save: 'Save 60%',
+    features: { effects: true, faceSwap: true, priority: true, resolution: true, templates: true } },
+];
+const FEATURE_LABELS = { effects: 'Unlock all effects', faceSwap: 'Free face swap creation', priority: 'Priority video creation', resolution: 'Highest resolution', templates: 'Daily template updates' };
+const COIN_PACKS = [
+  { coins: 6000, per100: '$1.33' },
+  { coins: 1500, per100: '$2.67' },
+  { coins: 300, per100: '$4.33' },
+];
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const ic = (name, cls = '') => `<svg class="i ${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+const money = (cents) => new Intl.NumberFormat(CONFIG.locale, { style: 'currency', currency: CONFIG.currency, minimumFractionDigits: cents % 100 ? 2 : 0 }).format(cents / 100);
+const money2 = (cents) => new Intl.NumberFormat(CONFIG.locale, { style: 'currency', currency: CONFIG.currency }).format(cents / 100);
+const pad = (n) => String(n).padStart(2, '0');
+
+/* =========================================================
+   INVITE STATUS
+   Production: the server handles GET /?ref=CODE. It validates the code,
+   records the click, and sets a first-party httpOnly cookie
+   (e.g. spl_ref = code + click time, Max-Age 24h, SameSite=Lax) so the
+   referral survives email verification and Google/OAuth sign-up.
+   It then embeds the result in the page, for example:
+     window.__INVITE__ = { status: 'valid', code: 'SPICY-A7F4K2', expiresAt: 1790900000000 }
+   status: 'valid' | 'invalid' | 'signed_in'  ('expired' is set client-side
+   when the timer runs out). Responses for ?ref= URLs must not be cached by a CDN.
+   The sign-up link does not need the code: attribution comes from the cookie.
+   ========================================================= */
+function readInvite() {
+  if (window.__INVITE__) return { ...window.__INVITE__ };
+  const code = (new URLSearchParams(location.search).get('ref') || 'SPICY-A7F4K2').trim().toUpperCase(); // demo fallback
+  const valid = /^SPICY-[A-Z0-9]{6}$/.test(code);
+  return { status: valid ? 'valid' : 'invalid', code, expiresAt: Date.now() + CONFIG.referralWindowHours * 3600 * 1000 };
+}
+let invite = readInvite();
+
+/* Copy for each state, in one place */
+const STATES = {
+  valid: {
+    kicker: "You've been invited", tone: 'teal',
+    h1: 'Your friend thinks you\'d make <span class="grad-text">amazing videos</span>',
+    sub: 'SpicyLab turns your ideas into AI-generated videos in seconds. Create your free account to accept the invite.',
+    band: 'Your invite is waiting', bandSub: 'Create your free account and make your first AI video today.',
+    primary: { label: 'Create free account', route: 'signup' },
+    earn: { label: 'Create an account to get your link', route: 'signup' },
+  },
+  expired: {
+    kicker: 'Your invite timer ran out', tone: 'gold',
+    h1: 'Your friend thinks you\'d make <span class="grad-text">amazing videos</span>',
+    sub: 'SpicyLab turns your ideas into AI-generated videos in seconds. Restart your invite, or sign up without it.',
+    band: 'Still want in?', bandSub: 'You can always create a free account and start making videos.',
+    primary: { label: 'Create free account', route: 'signup' },
+    earn: { label: 'Create an account to get your link', route: 'signup' },
+  },
+  invalid: {
+    kicker: 'Join SpicyLab', tone: 'teal',
+    h1: 'Turn your ideas into <span class="grad-text">amazing videos</span>',
+    sub: 'SpicyLab turns your ideas into AI-generated videos in seconds. Create a free account to get started.',
+    band: 'Ready when you are', bandSub: 'Create your free account and make your first AI video today.',
+    primary: { label: 'Create free account', route: 'signup' },
+    earn: { label: 'Create an account to get your link', route: 'signup' },
+  },
+  signed_in: {
+    kicker: "You're signed in", tone: 'violet',
+    h1: 'Welcome back to <span class="grad-text">SpicyLab</span>',
+    sub: 'Invite links only work for brand-new accounts, so nothing changes on yours. Jump back in, or share your own link.',
+    band: 'Your next video is waiting', bandSub: 'Pick up right where you left off.',
+    primary: { label: 'Go to SpicyLab', route: 'home' },
+    earn: { label: 'Open my affiliate dashboard', route: 'affiliate' },
+  },
+};
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function fillConfigText() {
+  const text = {
+    rate: `${CONFIG.ratePct}%`,
+    window: `${CONFIG.referralWindowHours} hours`,
+    hold: `${CONFIG.holdDays} calendar days`,
+    holdShort: `${CONFIG.holdDays} days`,
+    min: money(CONFIG.minWithdrawalCents),
+    payout: `${CONFIG.payoutBusinessDays} business days`,
+  };
+  $$('[data-cfg]').forEach((el) => { if (text[el.dataset.cfg]) el.textContent = text[el.dataset.cfg]; });
+  $('#ex-purchase').textContent = money2(CONFIG.examplePurchaseCents);
+  $('#ex-earn').textContent = money2(Math.round(CONFIG.examplePurchaseCents * CONFIG.ratePct / 100));
+}
+
+function renderPlans() {
+  $('#plans').innerHTML = PLANS.map((p) => `
+    <article class="plan${p.recommended ? ' ring' : ''}" aria-label="${esc(p.name)}">
+      ${p.recommended ? `<span class="ribbon ribbon--plan">${ic('crown')}Recommended<span class="save">${esc(p.save)}</span></span>` : ''}
+      <h3 class="plan__name"><span class="tile tile--sm ${p.tile}">${ic(p.icon)}</span>${esc(p.name)}</h3>
+      <p class="plan__price">${esc(p.per100)} <span>/ 100 coins</span></p>
+      <p class="plan__bill"><strong>${esc(p.price)}</strong>${esc(p.billing)}</p>
+      <div class="minis">
+        <div class="mini"><svg class="coin" aria-hidden="true"><use href="#coin"/></svg><span><b class="gold">${p.coins}</b><small>Coins</small></span></div>
+        <div class="mini"><span class="mini__icon mini__icon--v">${ic('video')}</span><span><b class="lav">≈${p.videos}</b><small>Videos</small></span></div>
+        <div class="mini"><span class="mini__icon mini__icon--img">${ic('image')}</span><span><b class="sky">≈${p.images}</b><small>Images</small></span></div>
+      </div>
+      <div class="ticket" aria-hidden="true"></div>
+      <ul class="flist">
+        ${Object.entries(FEATURE_LABELS).map(([k, label]) => p.features[k]
+          ? `<li><span class="cmark">${ic('check')}</span>${esc(label)}</li>`
+          : `<li class="no"><span class="cmark cmark--no">${ic('x')}</span><span><span class="sr-only">Not included: </span>${esc(label)}</span></li>`).join('')}
+      </ul>
+    </article>`).join('');
+  $('#packs').innerHTML = `<span class="packs__label">Prefer coins? Top up any time:</span>` +
+    COIN_PACKS.map((c) => `<span class="pack"><svg class="coin" aria-hidden="true"><use href="#coin"/></svg>${c.coins.toLocaleString(CONFIG.locale)} coins <span>${esc(c.per100)} / 100</span></span>`).join('');
+}
+
+function countdownParts() {
+  const ms = Math.max(0, (invite.expiresAt || 0) - Date.now());
+  const total = Math.floor(ms / 1000);
+  return { ms, h: Math.floor(total / 3600), m: Math.floor((total % 3600) / 60), s: total % 60 };
+}
+
+function inviteCardHtml(st) {
+  const s = invite.status;
+  const login = `<p class="inv-alt">Already have an account? <a href="${CONFIG.routes.login}" data-nav="login">Log in</a></p>`;
+  if (s === 'valid') {
+    const { h, m, s: sec } = countdownParts();
+    return `
+      <span class="ribbon">${ic('gift')}Your invite</span>
+      <div class="inv-head">
+        <span class="tile tile--teal">${ic('check')}</span>
+        <div class="inv-head__text"><p class="inv-title">Invite saved</p><p class="inv-code">Code <strong>${esc(invite.code)}</strong></p></div>
+        <span class="badge" data-tone="teal">${ic('check')}Applied</span>
+      </div>
+      <div class="ticket" aria-hidden="true"></div>
+      <p class="inv-label" id="cd-label">Create your account within</p>
+      <div class="cd" role="timer" aria-labelledby="cd-label">
+        <span class="cd__unit"><span class="cd__num h" data-cd="h">${pad(h)}</span><span class="cd__lbl">hours</span></span>
+        <span class="cd__colon" aria-hidden="true">:</span>
+        <span class="cd__unit"><span class="cd__num m" data-cd="m">${pad(m)}</span><span class="cd__lbl">minutes</span></span>
+        <span class="cd__colon" aria-hidden="true">:</span>
+        <span class="cd__unit"><span class="cd__num s" data-cd="s">${pad(sec)}</span><span class="cd__lbl">seconds</span></span>
+      </div>
+      <a class="btn btn--primary btn--xl" data-cta="primary" id="hero-cta"></a>
+      ${login}
+      <p class="inv-note">Invites only apply to brand-new accounts.</p>`;
+  }
+  if (s === 'expired') {
+    return `
+      <span class="ribbon">${ic('gift')}Your invite</span>
+      <div class="inv-head">
+        <span class="tile tile--gold">${ic('clock')}</span>
+        <div class="inv-head__text"><p class="inv-title">Your ${CONFIG.referralWindowHours} hours are up</p><p class="inv-code">Code <strong>${esc(invite.code)}</strong></p></div>
+      </div>
+      <div class="ticket" aria-hidden="true"></div>
+      <p class="inv-text">Open the invite link again to restart the timer, or create an account without the invite.</p>
+      <div class="inv-actions">
+        <button type="button" class="btn btn--primary btn--xl" id="hero-cta" data-restart>${ic('refresh')}Restart my invite</button>
+        <a class="btn btn--ghost" data-cta="primary"></a>
+      </div>
+      ${login}`;
+  }
+  if (s === 'invalid') {
+    return `
+      <span class="ribbon">${ic('gift')}Invite</span>
+      <div class="inv-head">
+        <span class="tile tile--pink">${ic('alert')}</span>
+        <div class="inv-head__text"><p class="inv-title">This invite link isn't valid</p><p class="inv-code">It may be mistyped or no longer active.</p></div>
+      </div>
+      <div class="ticket" aria-hidden="true"></div>
+      <p class="inv-text">You can still create a free account and start making videos.</p>
+      <a class="btn btn--primary btn--xl" data-cta="primary" id="hero-cta"></a>
+      ${login}`;
+  }
+  return `
+    <span class="ribbon">${ic('user-check')}Signed in</span>
+    <div class="inv-head">
+      <span class="tile">${ic('user-check')}</span>
+      <div class="inv-head__text"><p class="inv-title">You already have an account</p><p class="inv-code">This invite won't be added to it.</p></div>
+    </div>
+    <div class="ticket" aria-hidden="true"></div>
+    <p class="inv-text">Want to invite your own friends? Your personal link is waiting in your affiliate dashboard.</p>
+    <div class="inv-actions">
+      <a class="btn btn--primary btn--xl" data-cta="primary" id="hero-cta"></a>
+      <a class="btn btn--ghost" href="${CONFIG.routes.affiliate}" data-nav="affiliate">${ic('link')}Get my invite link</a>
+    </div>`;
+}
+
+function render() {
+  const st = STATES[invite.status];
+  const kicker = $('#hero-kicker');
+  kicker.dataset.tone = st.tone;
+  kicker.lastElementChild.textContent = st.kicker;
+  $('#hero-title').innerHTML = st.h1;
+  $('#hero-sub').textContent = st.sub;
+  $('#band-title').textContent = st.band;
+  $('#band-sub').textContent = st.bandSub;
+
+  const card = $('#invite-card');
+  card.classList.toggle('ring--muted', invite.status === 'expired' || invite.status === 'invalid');
+  card.innerHTML = inviteCardHtml(st);
+  $('#scribble').hidden = invite.status !== 'valid';
+
+  $$('[data-cta="primary"]').forEach((a) => {
+    if (invite.status === 'expired' && a.closest('#invite-card')) { a.textContent = 'Sign up without the invite'; }
+    else a.textContent = st.primary.label;
+    a.href = CONFIG.routes[st.primary.route];
+    a.dataset.nav = st.primary.route;
+  });
+  $$('[data-cta="earn"]').forEach((a) => { a.textContent = st.earn.label; a.href = CONFIG.routes[st.earn.route]; a.dataset.nav = st.earn.route; });
+
+  $('#topnav').innerHTML = invite.status === 'signed_in'
+    ? `<a class="btn btn--primary btn--sm" href="${CONFIG.routes.home}" data-nav="home">Go to SpicyLab</a>`
+    : `<a class="btn btn--ghost btn--sm" href="${CONFIG.routes.login}" data-nav="login">Log in</a><a class="btn btn--primary btn--sm" href="${CONFIG.routes.signup}" data-nav="signup">Sign up</a>`;
+
+  const step1 = $('#step-1');
+  const done = invite.status === 'valid';
+  step1.classList.toggle('is-done', done);
+  $('#step-1-badge').innerHTML = done ? `<span class="badge" data-tone="teal">${ic('check')}Done</span>` : '<span class="step__n">Step 1</span>';
+  $('#step-1-text').textContent = done
+    ? 'Done! Your invite is saved on this browser.'
+    : 'When a friend shares their SpicyLab link, opening it saves the invite on your browser.';
+
+  updateTimers();
+  observeHeroCta();
+}
+
+function updateTimers() {
+  const { ms, h, m, s } = countdownParts();
+  if (invite.status === 'valid' && ms <= 0) { invite.status = 'expired'; render(); return; }
+  const hEl = $('[data-cd="h"]');
+  if (hEl) { hEl.textContent = pad(h); $('[data-cd="m"]').textContent = pad(m); $('[data-cd="s"]').textContent = pad(s); }
+  const timer = invite.status === 'valid' ? `${pad(h)}:${pad(m)}:${pad(s)}` : '';
+  $('#band-timer').textContent = invite.status === 'valid' ? `Your invite is saved for ${h} more hour${h === 1 ? '' : 's'}.` : '';
+  const sticky = {
+    valid: `<strong>Invite saved</strong>${timer} left to sign up`,
+    expired: '<strong>Invite timer ran out</strong>You can still sign up',
+    invalid: '<strong>Join SpicyLab</strong>Free to create an account',
+    signed_in: "<strong>You're signed in</strong>Jump back into SpicyLab",
+  }[invite.status];
+  $('#sticky-text').innerHTML = sticky;
+}
+
+/* Show the sticky phone CTA once the hero button scrolls away */
+let stickyQueued = false;
+function updateSticky() {
+  stickyQueued = false;
+  const bar = $('#sticky-cta');
+  const target = $('#hero-cta');
+  const show = !!target && target.getBoundingClientRect().bottom < 0;
+  if (bar.classList.contains('is-shown') === show) return;
+  bar.classList.toggle('is-shown', show);
+  bar.setAttribute('aria-hidden', String(!show));
+  bar.querySelector('a').tabIndex = show ? 0 : -1;
+}
+function observeHeroCta() { updateSticky(); }
+window.addEventListener('scroll', () => { if (!stickyQueued) { stickyQueued = true; requestAnimationFrame(updateSticky); } }, { passive: true });
+window.addEventListener('resize', updateSticky);
+
+/* =========================================================
+   INTERACTIONS
+   ========================================================= */
+function toast(message) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `${ic('check')}<span>${esc(message)}</span>`;
+  $('#toasts').appendChild(t);
+  setTimeout(() => t.remove(), 3600);
+}
+
+const NAV_HINT = {
+  signup: () => invite.status === 'valid' ? `Opens sign-up. Invite ${invite.code} is attached through the referral cookie.` : 'Opens sign-up.',
+  login: () => 'Opens log in. Logging in to an existing account does not apply the invite.',
+  home: () => 'Opens the SpicyLab app.',
+  affiliate: () => 'Opens the affiliate dashboard with the member\'s own invite link.',
+};
+
+document.addEventListener('click', (e) => {
+  if (e.target.closest('[data-restart]')) {
+    // Production: reload the ?ref= URL so the server records a new click and resets the window.
+    invite = { ...invite, status: 'valid', expiresAt: Date.now() + CONFIG.referralWindowHours * 3600 * 1000 };
+    render();
+    toast('Invite restarted. You have 24 hours to sign up.');
+    $('#hero-cta').focus();
+    return;
+  }
+  const link = e.target.closest('a[data-nav]');
+  if (link && CONFIG.demo) {
+    e.preventDefault();
+    const hint = NAV_HINT[link.dataset.nav];
+    toast(`Demo: ${hint ? hint() : `Opens ${link.getAttribute('href')}.`}`);
+  }
+});
+
+// DEMO ONLY
+$$('.demo-bar [data-state]').forEach((b) => b.addEventListener('click', () => {
+  $$('.demo-bar [data-state]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  const s = b.dataset.state;
+  invite = { ...invite, status: s, code: s === 'invalid' ? 'SPICY-??' : 'SPICY-A7F4K2', expiresAt: s === 'valid' ? Date.now() + CONFIG.referralWindowHours * 3600 * 1000 : Date.now() };
+  render();
+}));
+
+fillConfigText();
+renderPlans();
+render();
+setInterval(updateTimers, 1000);
+})();
+</script>
+</body>
+</html>
