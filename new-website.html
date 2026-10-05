@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playflux AI | Interface redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#02061F;--panel:#060A22;--raised:#0C0831;--field:#0A1A3C;--control:#07142D;--bubble:#201448;
+  --line:#171244;--line-2:#2E2865;--line-active:#5430BA;--focus:#8C5DF8;--selected:#D639FC;
+  --violet:#731FE2;--orchid:#B637F8;--magenta:#FF39DC;--pink:#F047BA;--peri:#6A74FE;--lav:#C381FF;
+  --aqua:#29DECA;--mint:#19B89D;--fuchsia:#E044FF;--pending:#8F8BD0;--gold:#FECB00;--gold-t:#FFD32C;--danger:#FF5C8A;
+  --t1:#FFFFFF;--t2:#CBC6DB;--t3:#AEB1DC;--t4:#AAA7C4;--t5:#8984AC;
+  --grad-cta:linear-gradient(90deg,#F047BA 0%,#A33EF0 55%,#6A74FE 100%);
+  --grad-approve:linear-gradient(90deg,#F827CF,#8F36F2);
+  --grad-violet:linear-gradient(90deg,#731FE2,#B637F8);
+  --grad-text:linear-gradient(90deg,#C381FF,#FF39DC 60%,#FFB2FF);
+  --grad-ring:linear-gradient(90deg,#00E8FF,#F01EE6);
+  --display:"Bricolage Grotesque","Plus Jakarta Sans",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--t1);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(900px 600px at 8% -5%,rgba(115,31,226,.30),transparent 60%),radial-gradient(800px 600px at 100% 15%,rgba(255,57,220,.14),transparent 60%),radial-gradient(1000px 700px at 50% 100%,rgba(106,116,254,.12),transparent 60%);background-attachment:fixed}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.grad-text{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+/* Board */
+.board{max-width:1540px;margin:0 auto;padding:56px 40px 120px}
+.board-head{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:end;margin-bottom:80px}
+.board-brand{display:flex;align-items:center;gap:12px;margin-bottom:30px;font-family:var(--display);font-weight:700;font-size:19px}
+.board-head h1{font-family:var(--display);font-weight:800;font-size:76px;line-height:.95;letter-spacing:-.035em}
+.board-head p{color:var(--t3);font-size:17px;max-width:580px;margin-top:22px}
+.jump{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.jump a{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;border:1px solid var(--line-2);background:rgba(6,10,34,.7);font-weight:600;font-size:14px;color:var(--t2);transition:border-color .2s,color .2s,transform .2s}
+.jump a:hover{border-color:var(--focus);color:#fff;transform:translateY(-1px)}
+.jump a .i{width:16px;height:16px;color:var(--lav)}
+.swatches{display:flex;gap:6px;justify-content:flex-end;margin-top:20px}
+.swatches span{width:36px;height:36px;border-radius:11px;border:1px solid rgba(255,255,255,.08)}
+
+.shot{margin-bottom:104px;scroll-margin-top:24px}
+.shot-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:22px}
+.shot-head h2{font-family:var(--display);font-weight:700;font-size:34px;letter-spacing:-.02em;line-height:1.1}
+.shot-head p{color:var(--t4);font-size:15px;margin-top:6px;max-width:640px}
+.shot-tag{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--lav);padding:8px 14px;border-radius:999px;background:rgba(115,31,226,.15);border:1px solid rgba(140,93,248,.35);white-space:nowrap}
+.shot-tag .i{width:15px;height:15px}
+.scroller{overflow-x:auto;border-radius:32px}
+.frame{min-width:1320px;border-radius:32px;border:1px solid var(--line-2);background:var(--bg);overflow:hidden;position:relative;box-shadow:0 60px 140px -60px rgba(115,31,226,.75),inset 0 1px 0 rgba(255,255,255,.05)}
+.app{display:grid;grid-template-columns:256px 1fr;min-height:900px}
+
+/* Sidebar */
+.side{background:linear-gradient(180deg,#080C29,#04071C);border-right:1px solid var(--line);padding:18px 14px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 6px 14px}
+.brand b{font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:-.01em}
+.brand .collapse{margin-left:auto;color:var(--t5);width:30px;height:30px;border-radius:9px;display:grid;place-items:center;border:1px solid var(--line)}
+.brand .collapse .i{width:16px;height:16px}
+.logo{width:34px;height:34px;border-radius:11px;background:var(--grad-cta);display:grid;place-items:center;box-shadow:0 8px 24px -6px rgba(240,71,186,.75);flex:none}
+.logo .i{width:16px;height:16px;fill:#fff;stroke:#fff}
+.side-sec{font-size:11.5px;font-weight:700;color:var(--t5);letter-spacing:.04em;padding:16px 10px 6px}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:12px;color:var(--t3);font-size:14px;font-weight:500;position:relative;transition:background .2s,color .2s}
+.nav a .i{color:var(--t5);transition:color .2s}
+.nav a:hover{background:rgba(115,31,226,.14);color:#fff}
+.nav a:hover .i{color:var(--lav)}
+.nav a.on{background:linear-gradient(90deg,rgba(115,31,226,.55),rgba(182,55,248,.12));color:#fff;font-weight:600;box-shadow:inset 0 0 0 1px rgba(140,93,248,.4)}
+.nav a.on .i{color:#FFB2FF}
+.nav a.on::before{content:"";position:absolute;left:-14px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:linear-gradient(180deg,#FF39DC,#B637F8)}
+.badge{margin-left:auto;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;line-height:1.5}
+.b-beta{background:rgba(115,31,226,.32);color:#D8B3FB;box-shadow:inset 0 0 0 1px rgba(182,55,248,.45)}
+.b-new{background:rgba(41,222,202,.14);color:var(--aqua);box-shadow:inset 0 0 0 1px rgba(41,222,202,.35)}
+.side-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-top:18px}
+.lang{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--control);border:1px solid var(--line);color:var(--t2);font-size:13.5px;font-weight:500}
+.lang .i{width:16px;height:16px;color:var(--t5)}
+.lang .i:last-child{margin-left:auto}
+.user{display:flex;gap:10px;align-items:center;padding:4px 4px}
+.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#FF39DC,#731FE2);display:grid;place-items:center;font-weight:800;font-size:15px;flex:none;box-shadow:0 0 0 2px #04071C,0 0 0 3px rgba(214,57,252,.6)}
+.user b{display:block;font-size:13.5px;font-weight:700}
+.user small{color:var(--t5);font-size:12px}
+.wallet{position:relative;overflow:hidden;border-radius:18px;padding:14px;background:radial-gradient(120px 80px at 90% 0%,rgba(255,57,220,.55),transparent 70%),linear-gradient(135deg,#2A0A8C,#731FE2 60%,#A42CF0);box-shadow:0 16px 36px -14px rgba(182,55,248,.8),inset 0 1px 0 rgba(255,255,255,.18)}
+.wallet-top{display:flex;align-items:center;justify-content:space-between}
+.wallet-bal{display:flex;align-items:center;gap:7px}
+.wallet-bal b{font-family:var(--display);font-size:22px;font-weight:800;line-height:1}
+.wallet-bal small{font-size:12px;color:#E9DDFF}
+.mini-buy{display:flex;align-items:center;gap:5px;padding:6px 11px;border-radius:999px;background:#fff;color:#3A0E8F;font-size:12px;font-weight:800}
+.mini-buy .i{width:13px;height:13px}
+.vip{display:flex;align-items:center;gap:8px;margin-top:12px;padding:7px 9px;border-radius:12px;background:rgba(2,6,31,.35)}
+.vip-chip{font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:7px;background:var(--gold);color:#2A1A00}
+.bar{flex:1;height:6px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#FFD32C,#FF39DC)}
+.togo{font-size:11px;color:#E9DDFF;white-space:nowrap}
+.togo b{color:#fff}
+.signout{display:flex;align-items:center;gap:10px;padding:8px 10px;color:var(--t5);font-size:13.5px;font-weight:500;border-top:1px solid var(--line);padding-top:14px}
+.signout .i{width:16px;height:16px}
+
+/* Main + top bar */
+.main{position:relative;padding:22px 34px 40px;background:radial-gradient(1000px 420px at 60% -12%,rgba(115,31,226,.22),transparent 60%),var(--bg)}
+.topbar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;margin-bottom:26px}
+.crumb{font-size:13.5px;color:var(--t5);font-weight:500}
+.crumb b{color:var(--t2);font-weight:600}
+.tabs{display:flex;gap:4px;padding:5px;border-radius:999px;background:rgba(7,20,45,.85);border:1px solid var(--line-2);grid-column:2}
+.tabs a{display:flex;align-items:center;gap:8px;padding:10px 22px;border-radius:999px;color:var(--t3);font-weight:600;font-size:14px;transition:color .2s,background .2s}
+.tabs a .i{width:16px;height:16px}
+.tabs a:hover{color:#fff;background:rgba(115,31,226,.15)}
+.tabs a.on{background:var(--grad-violet);color:#fff;box-shadow:0 10px 26px -10px rgba(182,55,248,.95),inset 0 1px 0 rgba(255,255,255,.2)}
+.top-actions{display:flex;align-items:center;gap:10px;justify-self:end;grid-column:3}
+.coin-chip{display:flex;align-items:center;gap:7px;padding:7px 12px 7px 8px;border-radius:999px;background:rgba(254,203,0,.08);border:1px solid rgba(254,203,0,.3);font-weight:800;font-size:13px;color:var(--gold-t)}
+.icon-btn{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:var(--control);border:1px solid var(--line-2);color:var(--t2);position:relative;flex:none}
+.icon-btn .dot{position:absolute;top:9px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--magenta);box-shadow:0 0 0 2px var(--control),0 0 10px var(--magenta)}
+.coin{width:18px;height:18px;border-radius:50%;flex:none;display:inline-block;background:radial-gradient(circle at 35% 30%,#FFF6B8 0%,#FECB00 45%,#C98A00 100%);box-shadow:inset 0 -2px 0 rgba(120,70,0,.35),0 0 12px rgba(254,203,0,.45)}
+.coin.lg{width:44px;height:44px;box-shadow:inset 0 -4px 0 rgba(120,70,0,.35),0 0 30px rgba(254,203,0,.55)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:700;font-size:14px;border-radius:14px;padding:11px 18px;transition:transform .15s,box-shadow .2s,filter .2s;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn .i{width:17px;height:17px}
+.btn-cta{background:var(--grad-cta);color:#fff;box-shadow:0 14px 34px -14px rgba(240,71,186,.9),inset 0 1px 0 rgba(255,255,255,.25)}
+.btn-cta:hover{filter:brightness(1.08)}
+.btn-soft{background:rgba(32,20,72,.75);border:1px solid var(--line-2);color:var(--t2)}
+.btn-soft:hover{border-color:var(--focus);color:#fff}
+.btn-white{background:#fff;color:#2A0A8C;box-shadow:0 12px 30px -12px rgba(255,255,255,.6)}
+.btn-gold{background:rgba(254,203,0,.08);border:1px solid rgba(254,203,0,.35);color:var(--gold-t)}
+
+/* Media art placeholders */
+.art{position:relative;overflow:hidden;background-color:#0A0630}
+.art.fig::before{content:"";position:absolute;left:50%;top:26%;width:30%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle at 40% 35%,rgba(255,255,255,.34),rgba(255,255,255,.08) 70%)}
+.art.fig::after{content:"";position:absolute;left:50%;top:56%;width:64%;height:60%;transform:translateX(-50%);border-radius:48% 48% 0 0;background:radial-gradient(ellipse at 50% 20%,rgba(255,255,255,.26),rgba(255,255,255,.05) 70%)}
+.a1{background:radial-gradient(60% 50% at 25% 25%,#FF39DC,transparent 65%),radial-gradient(55% 60% at 85% 75%,#6A74FE,transparent 65%),linear-gradient(160deg,#3A0C8E,#0A0630)}
+.a2{background:radial-gradient(55% 55% at 75% 20%,#00E8FF,transparent 65%),radial-gradient(60% 55% at 20% 85%,#731FE2,transparent 65%),linear-gradient(200deg,#0D2A6E,#060A22)}
+.a3{background:radial-gradient(60% 50% at 30% 70%,#FECB00,transparent 60%),radial-gradient(50% 50% at 80% 25%,#F047BA,transparent 65%),linear-gradient(160deg,#5A1590,#170830)}
+.a4{background:radial-gradient(60% 60% at 70% 70%,#F01EE6,transparent 60%),radial-gradient(50% 50% at 20% 20%,#C381FF,transparent 65%),linear-gradient(200deg,#2B0A6E,#08051F)}
+.a5{background:radial-gradient(55% 55% at 25% 30%,#29DECA,transparent 62%),radial-gradient(55% 55% at 80% 80%,#B637F8,transparent 62%),linear-gradient(160deg,#0B2D57,#0A0630)}
+.a6{background:radial-gradient(60% 55% at 80% 30%,#FF39DC,transparent 62%),radial-gradient(55% 55% at 15% 75%,#FECB00,transparent 60%),linear-gradient(160deg,#4A0E70,#10062A)}
+.a7{background:radial-gradient(55% 55% at 50% 15%,#6A74FE,transparent 62%),radial-gradient(60% 55% at 50% 95%,#FF39DC,transparent 60%),linear-gradient(180deg,#1C0B5A,#060A22)}
+.a8{background:radial-gradient(60% 60% at 20% 25%,#B637F8,transparent 60%),radial-gradient(55% 55% at 85% 70%,#00E8FF,transparent 62%),linear-gradient(200deg,#260A70,#050720)}
+
+/* Templates */
+.hero{position:relative;overflow:hidden;border-radius:28px;padding:42px 46px;display:grid;grid-template-columns:1.1fr 1fr;gap:30px;min-height:290px;border:1px solid rgba(255,255,255,.12);
+  background:radial-gradient(520px 320px at 82% 25%,rgba(255,57,220,.5),transparent 60%),radial-gradient(420px 280px at 6% 115%,rgba(0,232,255,.28),transparent 60%),linear-gradient(120deg,#1A0377,#4A0FC4 45%,#8E22F5)}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:34px 34px;-webkit-mask-image:radial-gradient(ellipse at 30% 50%,#000,transparent 70%);mask-image:radial-gradient(ellipse at 30% 50%,#000,transparent 70%)}
+.hero > *{position:relative}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:999px;background:rgba(2,6,31,.35);border:1px solid rgba(255,255,255,.18);font-size:13px;font-weight:600;color:#F3E8FF}
+.eyebrow .pill{background:var(--aqua);color:#03221F;font-weight:800;font-size:11px;padding:3px 9px;border-radius:999px}
+.hero h3{font-family:var(--display);font-weight:800;font-size:46px;line-height:1;letter-spacing:-.03em;margin:18px 0 14px}
+.hero h3 em{font-style:normal;background:linear-gradient(90deg,#FFD32C,#FFB2FF);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:#E4D6FF;font-size:16px;max-width:440px}
+.hero-cta{display:flex;gap:10px;margin-top:24px}
+.hero-cta .btn-ghost{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:#fff}
+.hero-cards{position:relative}
+.hero-card{position:absolute;width:210px;height:250px;border-radius:22px;border:3px solid rgba(255,255,255,.9);box-shadow:0 30px 60px -20px rgba(2,6,31,.8)}
+.hero-card.c1{right:230px;top:6px;transform:rotate(-7deg)}
+.hero-card.c2{right:14px;top:18px;transform:rotate(6deg)}
+.hero-card .lbl{position:absolute;left:12px;bottom:12px;font-size:12px;font-weight:800;padding:5px 10px;border-radius:999px;background:rgba(2,6,31,.7);backdrop-filter:blur(6px)}
+.hero-card.c2 .lbl{background:var(--grad-approve)}
+.hero-close{position:absolute !important;top:16px;right:16px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(2,6,31,.4);border:1px solid rgba(255,255,255,.2);z-index:2}
+.hero-close .i{width:16px;height:16px}
+.filters{display:flex;gap:4px;padding:5px;border-radius:18px;background:var(--panel);border:1px solid var(--line-2);width:max-content;margin:30px auto 14px}
+.chip{padding:9px 17px;border-radius:13px;font-size:13px;font-weight:700;color:var(--t4);transition:color .2s,background .2s}
+.chip:hover{color:#fff;background:rgba(115,31,226,.15)}
+.chip.on{background:var(--bubble);color:#fff;box-shadow:inset 0 0 0 1px var(--focus)}
+.chip.gold{color:var(--gold-t);background:rgba(254,203,0,.08);box-shadow:inset 0 0 0 1px rgba(254,203,0,.35)}
+.searchrow{display:flex;gap:10px;max-width:700px;margin:0 auto 28px}
+.search{flex:1;display:flex;align-items:center;gap:10px;padding:0 16px;height:46px;border-radius:15px;background:var(--field);border:1px solid var(--line-2);color:var(--t4);font-size:14px}
+.search .i{color:var(--t5)}
+.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
+.tcard{position:relative;aspect-ratio:3/4;border-radius:22px;border:1px solid var(--line-2);transition:transform .25s,box-shadow .25s}
+.tcard:hover{transform:translateY(-4px);box-shadow:0 24px 50px -24px rgba(182,55,248,.9)}
+.tcard.hot{border-color:transparent;box-shadow:0 0 0 2px var(--selected),0 22px 50px -20px rgba(214,57,252,.85)}
+.tcard.hot-b{border-color:transparent;box-shadow:0 0 0 2px var(--peri),0 22px 50px -20px rgba(106,116,254,.85)}
+.tags{position:absolute;top:10px;left:10px;right:52px;display:flex;flex-wrap:wrap;gap:5px;z-index:1}
+.tag{font-size:10.5px;font-weight:800;letter-spacing:.02em;padding:4px 8px;border-radius:8px;line-height:1.2;white-space:nowrap}
+.t-seed{background:#6A74FE;color:#fff}
+.t-v3hd{background:linear-gradient(90deg,#FECB00,#FFD32C);color:#2A1A00}
+.t-v3{background:rgba(2,6,31,.6);color:var(--gold-t);box-shadow:inset 0 0 0 1px rgba(254,203,0,.5)}
+.t-world{background:linear-gradient(90deg,#FF39DC,#B637F8);color:#fff}
+.t-new{background:var(--aqua);color:#03221F}
+.fav{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(2,6,31,.55);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(8px);z-index:1}
+.fav .i{width:16px;height:16px}
+.fav.on{background:var(--grad-approve);border-color:transparent;box-shadow:0 6px 18px -4px rgba(248,39,207,.9)}
+.fav.on .i{fill:#fff}
+.cap{position:absolute;left:0;right:0;bottom:0;padding:48px 14px 14px;background:linear-gradient(180deg,transparent,rgba(2,6,31,.94));z-index:1}
+.cap b{display:block;font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.cap small{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t3)}
+.cap small .i{width:13px;height:13px}
+.tcard .art{position:absolute;inset:0;border-radius:21px}
+
+/* Generator */
+.editor{display:grid;grid-template-columns:450px 1fr;gap:24px;align-items:start}
+.gen{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:26px;border:1px solid var(--line-2);background:linear-gradient(180deg,#0E0A3A,#060A22 40%);box-shadow:0 30px 80px -40px rgba(115,31,226,.7)}
+.preview{height:180px;border-radius:18px;box-shadow:0 0 0 1px rgba(214,57,252,.55),0 0 46px -6px rgba(182,55,248,.8)}
+.play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.45);backdrop-filter:blur(10px);z-index:2}
+.play .i{fill:#fff;stroke:#fff;width:20px;height:20px;margin-left:3px}
+.pv-chip{position:absolute;left:12px;top:12px;z-index:2;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px;background:rgba(2,6,31,.6);backdrop-filter:blur(6px);display:flex;align-items:center;gap:6px}
+.pv-chip i{width:7px;height:7px;border-radius:50%;background:var(--aqua);box-shadow:0 0 8px var(--aqua)}
+.modes{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px;border-radius:16px;background:var(--control);border:1px solid var(--line)}
+.mode{padding:9px 4px;border-radius:12px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.mode b{display:block;font-size:12.5px;font-weight:700;color:var(--t2)}
+.mode small{display:block;font-size:10.5px;color:var(--t5)}
+.mode.on{background:linear-gradient(180deg,#30177C,#1D0F55);box-shadow:inset 0 0 0 1px var(--focus),0 8px 22px -10px rgba(140,93,248,.9)}
+.mode.on b{color:#fff}.mode.on small{color:var(--lav)}
+.box{padding:12px 14px;border-radius:18px;background:rgba(7,20,45,.6);border:1px solid var(--line)}
+.row{display:flex;align-items:center;gap:10px}
+.lbl{font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.lbl .i{width:16px;height:16px;color:var(--lav)}
+.lbl small{display:block;font-size:11px;font-weight:500;color:var(--t5)}
+.hint{font-size:11px;color:var(--t5);margin-left:auto;text-align:right}
+.opts{display:flex;gap:6px;flex:1}
+.opt{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border-radius:12px;background:rgba(32,20,72,.65);color:var(--t3);font-weight:700;font-size:13px;transition:color .2s,background .2s}
+.opt:hover{color:#fff}
+.opt.on{background:var(--grad-violet);color:#fff;box-shadow:0 8px 22px -8px rgba(182,55,248,.95),inset 0 1px 0 rgba(255,255,255,.2)}
+.drops{display:grid;grid-template-columns:1fr 26px 1fr;align-items:center;gap:6px;margin-top:10px}
+.drop{height:150px;border-radius:16px;border:1.5px dashed rgba(140,93,248,.5);background:rgba(115,31,226,.07);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;font-size:13px;font-weight:700;transition:background .2s,border-color .2s}
+.drop:hover{background:rgba(115,31,226,.14);border-color:var(--orchid)}
+.drop small{display:block;font-size:11px;font-weight:500;color:var(--t5);margin-top:-6px}
+.drop-ic{width:46px;height:46px;border-radius:14px;background:var(--bubble);display:grid;place-items:center;position:relative;color:var(--lav)}
+.drop-ic .plus{position:absolute;right:-6px;bottom:-6px;width:20px;height:20px;border-radius:50%;background:var(--grad-cta);display:grid;place-items:center;box-shadow:0 0 0 3px #0A0D2E}
+.drop-ic .plus .i{width:12px;height:12px;stroke-width:3;color:#fff}
+.swap-ic{color:var(--t5);display:grid;place-items:center}
+.select{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:var(--control);border:1px solid var(--line-2);font-size:12.5px;font-weight:600;color:var(--t2)}
+.select .i{width:15px;height:15px;color:var(--t5)}
+.select .i:last-child{margin-left:auto}
+.continue{width:100%;padding:13px;border-radius:14px;font-weight:700;font-size:14px;background:linear-gradient(90deg,rgba(240,71,186,.2),rgba(106,116,254,.2));border:1px solid rgba(214,57,252,.45);display:flex;align-items:center;justify-content:center;gap:8px}
+.continue .i{width:16px;height:16px;color:#FFB2FF}
+.promptbar{display:flex;gap:6px}
+.promptbar .select{flex:1}
+.promptbar .icon-btn{width:40px;height:40px;border-radius:12px}
+.promptbar .icon-btn .i{width:16px;height:16px}
+.ta{min-height:136px;gap:12px;border-radius:16px;background:var(--field);border:1px solid var(--focus);box-shadow:0 0 0 4px rgba(140,93,248,.14);padding:14px;font-size:13.5px;color:var(--t4);display:flex;flex-direction:column}
+.ta-foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;font-size:12px;color:var(--t5)}
+.est{display:flex;align-items:center;gap:6px;font-weight:800;color:var(--gold-t)}
+.est .coin{width:15px;height:15px}
+.ratios{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:10px}
+.ratio{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:7px;height:62px;padding-bottom:9px;border-radius:12px;background:rgba(32,20,72,.65);font-size:11px;font-weight:700;color:var(--t3)}
+.ratio s{display:block;border:1.5px solid currentColor;border-radius:3px}
+.ratio.on{background:var(--grad-violet);color:#fff;box-shadow:0 8px 20px -8px rgba(182,55,248,.95)}
+.tog{width:46px;height:26px;border-radius:999px;background:var(--grad-approve);position:relative;flex:none;box-shadow:0 0 16px -4px rgba(248,39,207,.9)}
+.tog::after{content:"";position:absolute;right:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff}
+.gen-ctas{display:flex;flex-direction:column;gap:8px;padding-top:6px;border-top:1px solid var(--line)}
+.gen-ctas .btn{width:100%;height:52px;font-size:16px;border-radius:16px}
+.btn-gold .count{font-size:12px;padding:2px 8px;border-radius:999px;background:rgba(254,203,0,.15)}
+.hist{align-self:stretch;border-radius:26px;border:1px solid var(--line);background:rgba(6,10,34,.6);padding:20px 22px;min-height:1000px;display:flex;flex-direction:column}
+.hist-head{display:flex;align-items:center;gap:12px}
+.hist-head h4{font-family:var(--display);font-weight:700;font-size:20px;display:flex;align-items:center;gap:8px}
+.hist-head h4 .i{color:var(--lav)}
+.hist-head .note{margin-left:auto;font-size:12px;color:var(--t5);display:flex;align-items:center;gap:6px}
+.hist-head .note .i{width:14px;height:14px}
+.hist-filters{display:flex;gap:4px;margin-top:16px}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}
+.orb{width:120px;height:120px;border-radius:50%;display:grid;place-items:center;position:relative;margin-bottom:26px;background:radial-gradient(circle,rgba(182,55,248,.35),transparent 70%)}
+.orb::before{content:"";position:absolute;inset:0;border-radius:50%;padding:2px;background:conic-gradient(from 200deg,#00E8FF,#F01EE6,#731FE2,#00E8FF);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.orb-in{width:76px;height:76px;border-radius:24px;background:var(--grad-cta);display:grid;place-items:center;transform:rotate(-8deg);box-shadow:0 16px 40px -10px rgba(240,71,186,.9)}
+.orb-in .i{width:32px;height:32px;color:#fff;transform:rotate(8deg)}
+.empty h5{font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:-.02em}
+.empty p{color:var(--t4);font-size:14.5px;max-width:400px;margin-top:8px}
+.ghosts{display:grid;grid-template-columns:repeat(3,150px);gap:14px;margin-top:34px}
+.ghost{height:190px;border-radius:18px;border:1.5px dashed var(--line-2);background:linear-gradient(180deg,rgba(32,20,72,.35),transparent)}
+.ghost:nth-child(2){border-color:rgba(140,93,248,.45)}
+
+/* Modal */
+.stage{position:relative;padding:56px;display:grid;place-items:center;min-height:1000px;overflow:hidden;background:#01030F}
+.stage-bg{position:absolute;inset:0;display:grid;grid-template-columns:repeat(6,1fr);gap:18px;padding:40px;opacity:.42;filter:blur(18px)}
+.stage-bg div{border-radius:24px}
+.stage::after{content:"";position:absolute;inset:0;background:radial-gradient(800px 500px at 50% 45%,rgba(115,31,226,.25),rgba(1,3,15,.75) 70%)}
+.modal{position:relative;z-index:1;width:1000px;border-radius:32px;padding:30px;background:linear-gradient(180deg,#140C44,#070A24 45%);border:1px solid var(--line-2);box-shadow:0 60px 140px -30px rgba(0,0,0,.9),0 0 140px -50px rgba(214,57,252,.7),inset 0 1px 0 rgba(255,255,255,.07)}
+.modal-head{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.modal-head h3{font-family:var(--display);font-weight:800;font-size:32px;letter-spacing:-.025em}
+.modal-head .tag{font-size:12px;padding:5px 10px}
+.modal-head .icon-btn{margin-left:auto;border-radius:50%;width:44px;height:44px}
+.swapline{display:grid;grid-template-columns:1fr 44px 1fr 56px 1fr;align-items:start;gap:14px}
+.swapline > .mid{align-self:center;margin-top:-60px}
+.plus-c{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--bubble);border:1px solid var(--line-2);color:var(--t2)}
+.go-c{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--grad-violet);box-shadow:0 0 0 6px rgba(115,31,226,.18),0 14px 30px -8px rgba(182,55,248,.95)}
+.go-c .i{width:22px;height:22px}
+.slot{height:310px;border-radius:22px;padding:6px;border:1.5px solid var(--line-active);background:var(--control);position:relative}
+.slot.pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.thumb{border-radius:16px;height:100%}
+.mono{position:absolute;top:9px;left:9px;z-index:2;font-family:var(--mono);font-size:11.5px;font-weight:700;padding:4px 8px;border-radius:8px;background:rgba(2,6,31,.75);color:#fff;backdrop-filter:blur(6px)}
+.rm{position:absolute;top:9px;right:9px;z-index:2;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(2,6,31,.75);border:1px solid rgba(255,255,255,.18)}
+.rm .i{width:14px;height:14px}
+.scrub{position:absolute;left:14px;right:14px;bottom:14px;z-index:2;display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px}
+.scrub .bar{height:4px;background:rgba(255,255,255,.25)}
+.scrub .bar i{width:38%;background:#fff}
+.under{margin-top:10px}
+.addtile{width:96px;height:96px;border-radius:18px;border:1.5px dashed rgba(140,93,248,.55);background:rgba(115,31,226,.07);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:var(--mono);font-size:11.5px;color:var(--t3)}
+.addtile .i{color:var(--lav);width:20px;height:20px}
+.result{height:310px;border-radius:22px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;background:radial-gradient(circle at 50% 40%,rgba(182,55,248,.22),transparent 60%),var(--control)}
+.result::before{content:"";position:absolute;inset:0;border-radius:22px;padding:1.5px;background:linear-gradient(160deg,#FF39DC,#731FE2,#00E8FF);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.result .r-ic{width:56px;height:56px;border-radius:18px;background:var(--grad-cta);display:grid;place-items:center;box-shadow:0 12px 30px -10px rgba(240,71,186,.9)}
+.result .r-ic .i{width:26px;height:26px}
+.result b{font-family:var(--display);font-size:18px}
+.result small{color:var(--t5);font-size:12.5px;max-width:200px}
+.msec{display:flex;flex-direction:column;gap:10px;margin-top:22px}
+.msec .box{padding:12px 14px}
+.msec .opts .opt{padding:12px 10px;font-size:14px}
+.msec .opts.right{flex:none;margin-left:auto}
+.msec .opts.right .opt{width:74px;flex:none}
+.adv{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px}
+.adv .i{color:var(--lav)}
+.adv .i:last-child{margin-left:auto;color:var(--t5)}
+.upload{margin-top:22px;width:100%;height:62px;border-radius:999px;background:var(--grad-approve);display:flex;align-items:center;justify-content:center;gap:14px;font-weight:800;font-size:19px;box-shadow:0 22px 50px -18px rgba(248,39,207,.95),inset 0 1px 0 rgba(255,255,255,.3)}
+.upload .i{width:22px;height:22px}
+.upload .ch{font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.18);display:flex;align-items:center;gap:6px}
+.upload .ch .coin{width:14px;height:14px}
+.fine{margin-top:16px;text-align:center;font-size:12.5px;color:var(--t5);line-height:1.7}
+.fine .i{width:14px;height:14px;vertical-align:-2px;margin-right:4px;color:var(--aqua)}
+
+/* Settings shell */
+.settings{display:grid;grid-template-columns:230px minmax(0,1fr);gap:34px;max-width:1120px;margin:6px auto 0}
+.subnav{display:flex;flex-direction:column;gap:3px;padding:8px;border-radius:22px;background:var(--panel);border:1px solid var(--line);align-self:start;position:sticky;top:20px}
+.subnav a{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:14px;color:var(--t3);font-weight:600;font-size:14px;transition:background .2s,color .2s}
+.subnav a .i{width:17px;height:17px;color:var(--t5)}
+.subnav a:hover{background:rgba(115,31,226,.12);color:#fff}
+.subnav a.on{background:var(--bubble);color:#fff;box-shadow:inset 0 0 0 1px var(--line-active)}
+.subnav a.on .i{color:#FFB2FF}
+.subnav hr{border:0;border-top:1px solid var(--line);margin:6px 8px}
+.subnav a.danger,.subnav a.danger .i{color:var(--danger)}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:24px}
+.page-head h1{font-family:var(--display);font-weight:800;font-size:44px;letter-spacing:-.03em;line-height:1.05}
+.page-head p{color:var(--t4);font-size:15px;margin-top:6px}
+.page-head p b{color:#fff}
+.card{border-radius:24px;background:linear-gradient(180deg,#0B0E30,#060A22);border:1px solid var(--line-2);padding:24px}
+.card-title{font-family:var(--display);font-weight:700;font-size:19px;display:flex;align-items:center;gap:10px}
+
+/* Credits */
+.c-top{display:grid;grid-template-columns:330px minmax(0,1fr);gap:18px}
+.balance{position:relative;overflow:hidden;border-radius:24px;padding:24px;display:flex;flex-direction:column;background:radial-gradient(240px 180px at 100% 0%,rgba(255,57,220,.6),transparent 70%),radial-gradient(200px 160px at 0% 100%,rgba(0,232,255,.3),transparent 70%),linear-gradient(140deg,#2A0A8C,#731FE2 60%,#A42CF0);box-shadow:0 30px 60px -30px rgba(182,55,248,.9),inset 0 1px 0 rgba(255,255,255,.2)}
+.balance .k{font-size:13px;font-weight:700;color:#E9DDFF}
+.balance .v{display:flex;align-items:center;gap:14px;margin:12px 0 4px}
+.balance .v b{font-family:var(--display);font-weight:800;font-size:72px;line-height:.9;letter-spacing:-.04em}
+.balance .v span{font-size:15px;font-weight:600;color:#E9DDFF;align-self:flex-end;margin-bottom:6px}
+.balance p{font-size:13.5px;color:#E9DDFF;margin-bottom:18px}
+.balance .btn{margin-top:auto;align-self:flex-start}
+.vipcard .vip-head{display:flex;align-items:center;gap:12px;margin-bottom:30px}
+.crown{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(254,203,0,.12);color:var(--gold-t);box-shadow:inset 0 0 0 1px rgba(254,203,0,.35)}
+.lvl{font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;background:var(--bubble);color:var(--lav);box-shadow:inset 0 0 0 1px var(--line-active)}
+.vip-next{margin-left:auto;text-align:right;font-size:12.5px;color:var(--t4)}
+.vip-next b{display:block;font-family:var(--display);font-size:20px;color:#fff}
+.steps{position:relative;display:grid;grid-template-columns:repeat(6,1fr);text-align:center}
+.steps::before{content:"";position:absolute;top:20px;left:8.33%;right:8.33%;height:4px;border-radius:9px;background:var(--line-2)}
+.steps::after{content:"";position:absolute;top:20px;left:8.33%;width:5%;height:4px;border-radius:9px;background:var(--grad-ring)}
+.step{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:9px;font-size:12.5px;font-weight:700;color:var(--t4)}
+.node{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:15px;background:var(--panel);border:2px solid var(--tc,var(--line-2));color:var(--tc,var(--t4))}
+.step.on .node{background:var(--grad-cta);border:0;color:#fff;box-shadow:0 0 0 6px rgba(240,71,186,.18),0 10px 26px -6px rgba(240,71,186,.9)}
+.step.on{color:#fff}
+.step small{display:block;font-size:11px;font-weight:600;color:var(--t5);margin-top:-6px}
+.step.on small{color:#FFB2FF}
+.vipcard .foot{margin-top:24px;padding-top:16px;border-top:1px solid var(--line);font-size:13.5px;color:var(--t4);display:flex;align-items:center;gap:8px}
+.vipcard .foot .i{width:16px;height:16px;color:var(--lav)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:18px 0}
+.action{display:flex;align-items:center;gap:14px;padding:18px 20px;border-radius:22px;background:linear-gradient(180deg,#0B0E30,#060A22);border:1px solid var(--line-2);transition:border-color .2s,transform .2s}
+.action:hover{border-color:var(--focus);transform:translateY(-2px)}
+.a-ic{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;flex:none}
+.a-ic.pink{background:var(--grad-cta);box-shadow:0 10px 24px -10px rgba(240,71,186,.9)}
+.a-ic.aqua{background:linear-gradient(135deg,#29DECA,#6A74FE);box-shadow:0 10px 24px -10px rgba(41,222,202,.8)}
+.a-ic .i{width:22px;height:22px}
+.action b{display:block;font-size:15.5px;font-weight:700}
+.action small{color:var(--t4);font-size:13px}
+.arrow-c{margin-left:auto;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--bubble);color:var(--lav)}
+.arrow-c .i{width:16px;height:16px}
+.tx{padding:0;overflow:hidden}
+.tx-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--line)}
+.tx-cols{display:grid;grid-template-columns:1.2fr 2fr 1fr 1fr;padding:12px 24px;font-size:12px;font-weight:700;color:var(--t5);border-bottom:1px solid var(--line);background:rgba(7,20,45,.4)}
+.tx-empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:44px 24px 40px}
+.tx-ic{width:60px;height:60px;border-radius:20px;display:grid;place-items:center;background:var(--bubble);color:var(--lav);margin-bottom:14px;box-shadow:inset 0 0 0 1px var(--line-active)}
+.tx-ic .i{width:26px;height:26px}
+.tx-empty b{font-family:var(--display);font-size:20px}
+.tx-empty p{color:var(--t4);font-size:14px;margin:4px 0 18px}
+
+/* Affiliate */
+.aff-hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:0;border-radius:26px;overflow:hidden;border:1px solid rgba(214,57,252,.4);margin-bottom:18px}
+.aff-left{position:relative;padding:28px 30px;background:radial-gradient(300px 220px at 0% 0%,rgba(255,57,220,.45),transparent 70%),linear-gradient(140deg,#3A0C8E,#5A14C8 55%,#8E22F5)}
+.pct{font-family:var(--display);font-weight:800;font-size:112px;line-height:.85;letter-spacing:-.05em;background:linear-gradient(180deg,#FFFFFF,#FFB2FF);-webkit-background-clip:text;background-clip:text;color:transparent}
+.aff-left h3{font-family:var(--display);font-weight:700;font-size:24px;margin:12px 0 8px}
+.aff-left p{color:#EADCFF;font-size:14px;max-width:440px}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.fact{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;background:rgba(2,6,31,.35);border:1px solid rgba(255,255,255,.2);font-size:12.5px;font-weight:700}
+.fact .i{width:14px;height:14px;color:var(--gold-t)}
+.aff-right{padding:28px 30px;background:linear-gradient(180deg,#0E0A3A,#070A24)}
+.aff-right h4{font-size:13px;font-weight:700;color:var(--t5);margin-bottom:16px}
+.how{display:flex;flex-direction:column;gap:14px}
+.how-step{display:flex;gap:14px;align-items:flex-start}
+.how-n{width:34px;height:34px;border-radius:11px;flex:none;display:grid;place-items:center;font-family:var(--display);font-weight:800;background:var(--bubble);color:var(--lav);box-shadow:inset 0 0 0 1px var(--line-active)}
+.how-step:last-child .how-n{background:var(--grad-cta);color:#fff;box-shadow:0 8px 20px -8px rgba(240,71,186,.9)}
+.how-step b{display:block;font-size:14.5px}
+.how-step small{color:var(--t4);font-size:13px}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:14px;font-weight:700;margin-bottom:8px}
+.input{display:flex;align-items:center;gap:10px;height:50px;padding:0 16px;border-radius:15px;background:var(--field);border:1px solid var(--line-2);font-size:14.5px;color:#fff}
+.input .i{width:18px;height:18px;color:var(--t5)}
+.input .i:last-child{margin-left:auto}
+.input.monof{font-family:var(--mono);font-size:13.5px;color:var(--t5)}
+.input.focus{border-color:var(--focus);box-shadow:0 0 0 4px rgba(140,93,248,.14)}
+.token{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#19B89D;font-size:12px;font-weight:800;color:#03221F;flex:none}
+.help{font-size:12.5px;color:var(--t5);margin-top:8px}
+.form-foot{display:flex;align-items:center;gap:16px;margin-top:8px;padding-top:20px;border-top:1px solid var(--line)}
+.form-foot small{color:var(--t5);font-size:12.5px}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v18M17 3v18M3 12h18M3 7.5h4M3 16.5h4M17 7.5h4M17 16.5h4"/></symbol><symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></symbol><symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 3v4M17 5h4M5 17v4M3 19h4"/></symbol><symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol><symbol id="i-bot" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4M8 16h.01M16 16h.01"/></symbol><symbol id="i-workflow" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect x="13" y="13" width="8" height="8" rx="2"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol><symbol id="i-card" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></symbol><symbol id="i-orders" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></symbol><symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/></symbol><symbol id="i-handshake" viewBox="0 0 24 24"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.9-3.9a3 3 0 0 0-4.2 0l-.9.9a1 1 0 1 1-3-3l2.8-2.8a5.8 5.8 0 0 1 7.1-.9l.5.3a2 2 0 0 0 1.4.3L21 4"/><path d="m21 3 1 11h-2M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3M3 4h8"/></symbol><symbol id="i-code" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></symbol><symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></symbol><symbol id="i-headset" viewBox="0 0 24 24"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol><symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-chevup" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></symbol><symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol><symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol><symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-crown" viewBox="0 0 24 24"><path d="M2.5 7 6 17h12l3.5-10-5.5 4-4-7-4 7z"/><path d="M6 21h12"/></symbol><symbol id="i-upright" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol><symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7z"/></symbol><symbol id="i-wand" viewBox="0 0 24 24"><path d="m15 4-11 11 3 3L18 7z"/><path d="m13 6 3 3M19 2v3M17.5 3.5h3M21 9v2M20 10h2M10 2v2M9 3h2"/></symbol><symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol><symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol><symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol><symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></symbol><symbol id="i-crop" viewBox="0 0 24 24"><path d="M6 2v14a2 2 0 0 0 2 2h14M18 22V8a2 2 0 0 0-2-2H2"/></symbol><symbol id="i-timer" viewBox="0 0 24 24"><path d="M10 2h4M12 14l3-3"/><circle cx="12" cy="14" r="8"/></symbol><symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></symbol><symbol id="i-bookmark" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></symbol><symbol id="i-book" viewBox="0 0 24 24"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2zM22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></symbol><symbol id="i-swap" viewBox="0 0 24 24"><path d="m16 3 4 4-4 4M20 7H4M8 21l-4-4 4-4M4 17h16"/></symbol><symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol><symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></symbol><symbol id="i-receipt" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1z"/><path d="M8 8h8M8 12h8M8 16h5"/></symbol><symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol><symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol><symbol id="i-coins" viewBox="0 0 24 24"><circle cx="8" cy="8" r="6"/><path d="M18.1 10.4A6 6 0 1 1 10.3 18M7 6h1v4"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></symbol><symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></symbol></svg>
+<div class="board">
+<header class="board-head"><div><div class="board-brand"><span class="logo"><svg class="i " aria-hidden="true"><use href="#i-play"/></svg></span>Playflux AI</div><h1>Interface<br><span class="grad-text">redesign</span></h1><p>Five core screens rebuilt on the Agent palette: deep navy surfaces, electric violet controls, and pink-to-periwinkle gradients saved for the actions that matter.</p></div><div><nav class="jump"><a href="#templates"><svg class="i " aria-hidden="true"><use href="#i-layers"/></svg>Explore templates</a><a href="#generator"><svg class="i " aria-hidden="true"><use href="#i-film"/></svg>Video generator</a><a href="#swap"><svg class="i " aria-hidden="true"><use href="#i-sparkles"/></svg>Swap character</a><a href="#credits"><svg class="i " aria-hidden="true"><use href="#i-coins"/></svg>Credits</a><a href="#affiliate"><svg class="i " aria-hidden="true"><use href="#i-handshake"/></svg>Affiliate program</a></nav><div class="swatches"><span style="background:#02061F" title="#02061F"></span><span style="background:#060A22" title="#060A22"></span><span style="background:#201448" title="#201448"></span><span style="background:#731FE2" title="#731FE2"></span><span style="background:#B637F8" title="#B637F8"></span><span style="background:#FF39DC" title="#FF39DC"></span><span style="background:#F047BA" title="#F047BA"></span><span style="background:#6A74FE" title="#6A74FE"></span><span style="background:#29DECA" title="#29DECA"></span><span style="background:#FECB00" title="#FECB00"></span></div></div></header><section class="shot" id="templates"><div class="shot-head"><div><h2>Explore templates</h2><p>The Video tab, where people browse templates by model and jump straight into a workflow.</p></div><span class="shot-tag"><svg class="i " aria-hidden="true"><use href="#i-layers"/></svg>Home</span></div><div class="scroller"><div class="frame"><div class="app"><aside class="side"><div class="brand"><span class="logo"><svg class="i " aria-hidden="true"><use href="#i-play"/></svg></span><b>Playflux AI</b><button class="collapse" aria-label="Collapse sidebar"><svg class="i " aria-hidden="true"><use href="#i-panel"/></svg></button></div><div class="side-sec">Create</div><nav class="nav"><a href="#" class="on" aria-current="page"><svg class="i " aria-hidden="true"><use href="#i-film"/></svg>Video</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-image"/></svg>Images</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-sparkles"/></svg>Anime</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-pen"/></svg>Editor</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-bot"/></svg>Agent<span class="badge b-beta">Beta</span></a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-workflow"/></svg>Workflow</a></nav><div class="side-sec">Account</div><nav class="nav"><a href="#"><svg class="i " aria-hidden="true"><use href="#i-clock"/></svg>History</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-card"/></svg>My credits</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-orders"/></svg>My orders</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-gift"/></svg>Redeem gift cards</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-handshake"/></svg>Affiliate</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-code"/></svg>API<span class="badge b-new">New</span></a></nav><div class="side-sec">Help</div><nav class="nav"><a href="#"><svg class="i " aria-hidden="true"><use href="#i-help"/></svg>FAQ</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-headset"/></svg>Support</a></nav><div class="side-foot"><div class="lang"><svg class="i " aria-hidden="true"><use href="#i-globe"/></svg>English<svg class="i " aria-hidden="true"><use href="#i-chev"/></svg></div><div class="user"><span class="avatar">A</span><div><b>Aldrin Eyana</b><small>Member</small></div></div><div class="wallet"><div class="wallet-top"><div class="wallet-bal"><span class="coin"></span><b>0</b><small>credits</small></div><button class="mini-buy"><svg class="i " aria-hidden="true"><use href="#i-sparkles"/></svg>Buy</button></div><div class="vip"><span class="vip-chip">VIP 1</span><div class="bar"><i style="width:6%"></i></div><span class="togo"><b>$100</b> to go</span></div></div><a href="#" class="signout"><svg class="i " aria-hidden="true"><use href="#i-logout"/></svg>Sign out</a></div></aside><main class="main"><div class="topbar"><div></div><nav class="tabs"><a href="#"><svg class="i " aria-hidden="true"><use href="#i-image"/></svg>Image</a><a href="#" class="on"><svg class="i " aria-hidden="true"><use href="#i-film"/></svg>Video</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-sparkles"/></svg>Anime</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-clock"/></svg>History</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-pen"/></svg>Editor</a></nav><div class="top-actions"><div class="coin-chip"><span class="coin"></span>0 credits</div><button class="icon-btn" aria-label="Notifications"><svg class="i " aria-hidden="true"><use href="#i-bell"/></svg><span class="dot"></span></button></div></div><section class="hero"><button class="hero-close" aria-label="Dismiss"><svg class="i " aria-hidden="true"><use href="#i-x"/></svg></button><div><span class="eyebrow"><span class="pill">New</span>Precision image edit</span><h3>Change one detail.<br><em>Keep the whole shot.</em></h3><p>Swap a jacket, fix a hand or relight the sky. Everything you didn't select stays exactly as it was.</p><div class="hero-cta"><a href="#" class="btn btn-white">Open image edit<svg class="i " aria-hidden="true"><use href="#i-arrow"/></svg></a><a href="#" class="btn btn-ghost">See examples</a></div></div><div class="hero-cards"><div class="hero-card c1 art fig a5"><span class="lbl">Before</span></div><div class="hero-card c2 art fig a1"><span class="lbl">After</span></div></div></section><div class="filters"><button class="chip on">All</button><button class="chip gold">V3 HD</button><button class="chip">V3</button><button class="chip">Classic</button><button class="chip">World model</button><button class="chip">Seedance</button><button class="chip">V2</button><button class="chip">T2V</button></div><div class="searchrow"><div class="search"><svg class="i " aria-hidden="true"><use href="#i-search"/></svg>Search names or tags</div><a href="#" class="btn btn-soft"><svg class="i " aria-hidden="true"><use href="#i-help"/></svg>Quick guide</a></div><div class="grid"><article class="tcard hot"><div class="art fig a1"></div><div class="tags"><span class="tag t-seed">Seedance</span></div><button class="fav on" aria-label="Save template"><svg class="i " aria-hidden="true"><use href="#i-heart"/></svg></button><div class="cap"><b>Swap character</b><small><svg class="i " aria-hidden="true"><use href="#i-layers"/></svg>2 images + 1 video</small></div></article><article class="tcard "><div class="art fig a2"></div><div class="tags"><span class="tag t-seed">Seedance</span></div><button class="fav" aria-label="Save template"><svg class="i " aria-hidden="true"><use href="#i-heart"/></svg></button><div class="cap"><b>Dance remix</b><small><svg class="i " aria-hidden="true"><use href="#i-layers"/></svg>1 image + 1 video</small></div></article><article class="tcard "><div class="art fig a3"></div><div class="tags"><span class="tag t-v3hd">V3 HD</span><span class="tag t-v3">V3</span></div><button class="fav" aria-label="Save template"><svg class="i " aria-hidden="true"><use href="#i-heart"/></svg></button><div class="cap"><b>Talking avatar</b><small><svg class="i " aria-hidden="true"><use href="#i-layers"/></svg>1 image + audio</small></div></article><article class="tcard "><div class="art fig a4"></div><div class="tags"><span class="tag t-world">World model</span></div><button class="fav" aria-label="Save template"><svg class="i " aria-hidden="true"><use href="#i-heart"/></svg></button><div class="cap"><b>Walk-through world</b><small><svg class="i " aria-hidden="true"><use href="#i-layers"/></svg>Prompt only</small></div></article><article class="tcard hot-b"><div class="art fig a5"></div><div class="tags"><span class="tag t-v3">V3</span><span class="tag t-v3hd">V3 HD</span></div><button class="fav" aria-label="Save template"><svg class="i " aria-hidden="true"><use href="#i-heart"/></svg></button><div class="cap"><b>Outfit change</b><small><svg class="i " aria-hidden="true"><use href="#i-layers"/></svg>2 images</small></div></article><article class="tcard "><div class="art fig a6"></div><div class="tags"><span class="tag t-v3hd">V3 HD</span><span class="tag t-seed">Seedance</span><span class="tag t-v3">V3</span></div><button class="fav" aria-label="Save template"><svg class="i " aria-hidden="true"><use href="#i-heart"/></svg></button><div class="cap"><b>Start/end frame</b><small><svg class="i " aria-hidden="true"><use href="#i-layers"/></svg>First and last frame</small></div></article><article class="tcard "><div class="art fig a7"></div><div class="tags"><span class="tag t-world">World model</span><span class="tag t-new">New</span></div><button class="fav" aria-label="Save template"><svg class="i " aria-hidden="true"><use href="#i-heart"/></svg></button><div class="cap"><b>Product spin</b><small><svg class="i " aria-hidden="true"><use href="#i-layers"/></svg>1 image</small></div></article><article class="tcard "><div class="art fig a8"></div><div class="tags"><span class="tag t-v3hd">V3 HD</span></div><button class="fav" aria-label="Save template"><svg class="i " aria-hidden="true"><use href="#i-heart"/></svg></button><div class="cap"><b>Camera orbit</b><small><svg class="i " aria-hidden="true"><use href="#i-layers"/></svg>1 image</small></div></article><article class="tcard "><div class="art fig a2"></div><div class="tags"><span class="tag t-v3hd">V3 HD</span><span class="tag t-new">New</span></div><button class="fav on" aria-label="Save template"><svg class="i " aria-hidden="true"><use href="#i-heart"/></svg></button><div class="cap"><b>Lip sync</b><small><svg class="i " aria-hidden="true"><use href="#i-layers"/></svg>1 video + audio</small></div></article><article class="tcard "><div class="art fig a4"></div><div class="tags"><span class="tag t-v3hd">V3 HD</span><span class="tag t-world">World model</span></div><button class="fav" aria-label="Save template"><svg class="i " aria-hidden="true"><use href="#i-heart"/></svg></button><div class="cap"><b>Style transfer</b><small><svg class="i " aria-hidden="true"><use href="#i-layers"/></svg>1 video + style</small></div></article></div></main></div></div></div></section><section class="shot" id="generator"><div class="shot-head"><div><h2>Video generator</h2><p>Reference-driven generation with model, ratio, quality and duration controls, plus a 60-day history.</p></div><span class="shot-tag"><svg class="i " aria-hidden="true"><use href="#i-film"/></svg>Editor</span></div><div class="scroller"><div class="frame"><div class="app"><aside class="side"><div class="brand"><span class="logo"><svg class="i " aria-hidden="true"><use href="#i-play"/></svg></span><b>Playflux AI</b><button class="collapse" aria-label="Collapse sidebar"><svg class="i " aria-hidden="true"><use href="#i-panel"/></svg></button></div><div class="side-sec">Create</div><nav class="nav"><a href="#"><svg class="i " aria-hidden="true"><use href="#i-film"/></svg>Video</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-image"/></svg>Images</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-sparkles"/></svg>Anime</a><a href="#" class="on" aria-current="page"><svg class="i " aria-hidden="true"><use href="#i-pen"/></svg>Editor</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-bot"/></svg>Agent<span class="badge b-beta">Beta</span></a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-workflow"/></svg>Workflow</a></nav><div class="side-sec">Account</div><nav class="nav"><a href="#"><svg class="i " aria-hidden="true"><use href="#i-clock"/></svg>History</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-card"/></svg>My credits</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-orders"/></svg>My orders</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-gift"/></svg>Redeem gift cards</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-handshake"/></svg>Affiliate</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-code"/></svg>API<span class="badge b-new">New</span></a></nav><div class="side-sec">Help</div><nav class="nav"><a href="#"><svg class="i " aria-hidden="true"><use href="#i-help"/></svg>FAQ</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-headset"/></svg>Support</a></nav><div class="side-foot"><div class="lang"><svg class="i " aria-hidden="true"><use href="#i-globe"/></svg>English<svg class="i " aria-hidden="true"><use href="#i-chev"/></svg></div><div class="user"><span class="avatar">A</span><div><b>Aldrin Eyana</b><small>Member</small></div></div><div class="wallet"><div class="wallet-top"><div class="wallet-bal"><span class="coin"></span><b>0</b><small>credits</small></div><button class="mini-buy"><svg class="i " aria-hidden="true"><use href="#i-sparkles"/></svg>Buy</button></div><div class="vip"><span class="vip-chip">VIP 1</span><div class="bar"><i style="width:6%"></i></div><span class="togo"><b>$100</b> to go</span></div></div><a href="#" class="signout"><svg class="i " aria-hidden="true"><use href="#i-logout"/></svg>Sign out</a></div></aside><main class="main"><div class="topbar"><div></div><nav class="tabs"><a href="#"><svg class="i " aria-hidden="true"><use href="#i-image"/></svg>Image</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-film"/></svg>Video</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-sparkles"/></svg>Anime</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-clock"/></svg>History</a><a href="#" class="on"><svg class="i " aria-hidden="true"><use href="#i-pen"/></svg>Editor</a></nav><div class="top-actions"><div class="coin-chip"><span class="coin"></span>0 credits</div><button class="icon-btn" aria-label="Notifications"><svg class="i " aria-hidden="true"><use href="#i-bell"/></svg><span class="dot"></span></button></div></div><div class="editor"><div class="gen"><div class="preview art fig a7"><span class="pv-chip"><i></i>Preview</span><span class="play"><svg class="i " aria-hidden="true"><use href="#i-play"/></svg></span></div><div class="modes"><button class="mode on"><b>Reference</b><small>Images + video</small></button><button class="mode"><b>Text to video</b><small>Prompt only</small></button><button class="mode"><b>Start/end frame</b><small>First and last frame</small></button><button class="mode"><b>Extend video</b><small>Continue a video</small></button></div><div class="box row"><span class="lbl">Model</span><div class="opts"><button class="opt on">Seedance 2.0</button><button class="opt">Seedance 2.5</button></div></div><div class="box"><div class="row"><span class="lbl"><svg class="i " aria-hidden="true"><use href="#i-layers"/></svg>Reference</span><span class="hint">Up to 4 images, MP4 or MOV<br>Video and audio up to 15s</span></div><div class="drops"><button class="drop"><span class="drop-ic"><svg class="i " aria-hidden="true"><use href="#i-image"/></svg><span class="plus"><svg class="i " aria-hidden="true"><use href="#i-plus"/></svg></span></span>Reference image<small>PNG, JPG or WEBP</small></button><span class="swap-ic"><svg class="i " aria-hidden="true"><use href="#i-swap"/></svg></span><button class="drop"><span class="drop-ic"><svg class="i " aria-hidden="true"><use href="#i-film"/></svg><span class="plus"><svg class="i " aria-hidden="true"><use href="#i-plus"/></svg></span></span>Reference video<small>Up to 15 seconds</small></button></div><div class="select" style="margin-top:10px"><svg class="i " aria-hidden="true"><use href="#i-film"/></svg>Or choose a demo video<svg class="i " aria-hidden="true"><use href="#i-chev"/></svg></div></div><button class="continue"><svg class="i " aria-hidden="true"><use href="#i-clock"/></svg>Continue from history</button><div class="promptbar"><div class="select"><svg class="i " aria-hidden="true"><use href="#i-wand"/></svg>Hide prompt<svg class="i " aria-hidden="true"><use href="#i-chevup"/></svg></div><button class="icon-btn" aria-label="Saved prompts"><svg class="i " aria-hidden="true"><use href="#i-bookmark"/></svg></button><button class="icon-btn" aria-label="Prompt guide"><svg class="i " aria-hidden="true"><use href="#i-book"/></svg></button></div><div class="ta">Describe the motion, camera move and mood. For example: she turns toward the camera as neon light sweeps across the room.<div class="ta-foot"><span>0 / 2000</span><span class="est"><span class="coin"></span>About 1,800 credits</span></div></div><div class="box"><span class="lbl"><svg class="i " aria-hidden="true"><use href="#i-crop"/></svg>Ratio</span><div class="ratios"><button class="ratio on"><s style="width:10px;height:17px"></s>9:16</button><button class="ratio"><s style="width:19px;height:11px"></s>16:9</button><button class="ratio"><s style="width:14px;height:14px"></s>1:1</button><button class="ratio"><s style="width:17px;height:13px"></s>4:3</button><button class="ratio"><s style="width:13px;height:17px"></s>3:4</button><button class="ratio"><s style="width:21px;height:9px"></s>21:9</button></div></div><div class="box row"><span class="lbl"><svg class="i " aria-hidden="true"><use href="#i-zap"/></svg><span>Quality<small>Fast</small></span></span><div class="opts" style="flex:none;margin-left:auto;width:170px"><button class="opt on">Fast</button><button class="opt">HQ</button></div></div><div class="box row"><span class="lbl"><svg class="i " aria-hidden="true"><use href="#i-timer"/></svg>Duration</span><div class="opts"><button class="opt on">5s</button><button class="opt">8s</button><button class="opt">10s</button><button class="opt">15s</button></div></div><div class="box row"><span class="lbl"><svg class="i " aria-hidden="true"><use href="#i-volume"/></svg>This model generates sound by default</span><span class="tog" role="switch" aria-checked="true" style="margin-left:auto"></span></div><div class="gen-ctas"><button class="btn btn-cta"><svg class="i " aria-hidden="true"><use href="#i-wand"/></svg>Generate</button><button class="btn btn-gold"><span class="coin"></span>Buy credits<span class="count">0 left</span></button></div></div><div class="hist"><div class="hist-head"><h4><svg class="i " aria-hidden="true"><use href="#i-clock"/></svg>History</h4><span class="note"><svg class="i " aria-hidden="true"><use href="#i-info"/></svg>History is kept for 60 days, then deleted</span></div><div class="hist-filters"><button class="chip on">All</button><button class="chip">Videos</button><button class="chip">Images</button><button class="chip">Favorites</button></div><div class="empty"><div class="orb"><div class="orb-in"><svg class="i " aria-hidden="true"><use href="#i-film"/></svg></div></div><h5>Your first video lands here</h5><p>Pick a mode, add a reference and press Generate. Every result is saved here for 60 days.</p><div class="ghosts"><div class="ghost"></div><div class="ghost"></div><div class="ghost"></div></div></div></div></div></main></div></div></div></section><section class="shot" id="swap"><div class="shot-head"><div><h2>Swap character</h2><p>The template modal: combine character images with a driving video, pick a model and ratio, then run it.</p></div><span class="shot-tag"><svg class="i " aria-hidden="true"><use href="#i-sparkles"/></svg>Modal</span></div><div class="scroller"><div class="frame"><div class="stage"><div class="stage-bg"><div class="a1"></div><div class="a2"></div><div class="a3"></div><div class="a4"></div><div class="a5"></div><div class="a6"></div><div class="a7"></div><div class="a8"></div><div class="a3"></div><div class="a1"></div><div class="a6"></div><div class="a2"></div></div><div class="modal" role="dialog" aria-label="Swap character"><div class="modal-head"><h3>Swap character</h3><span class="tag t-v3hd">V3 HD</span><button class="icon-btn" aria-label="Close"><svg class="i " aria-hidden="true"><use href="#i-x"/></svg></button></div><div class="swapline"><div><div class="slot pair"><div class="thumb art fig a1"><span class="mono">@Image1</span></div><div class="thumb art fig a6"><span class="mono">@Image2</span></div></div><div class="under"><button class="addtile"><svg class="i " aria-hidden="true"><use href="#i-plus"/></svg>2/10</button></div></div><div class="mid"><span class="plus-c"><svg class="i " aria-hidden="true"><use href="#i-plus"/></svg></span></div><div><div class="slot"><div class="thumb art fig a2"><span class="mono">@Video1</span><button class="rm" aria-label="Remove video"><svg class="i " aria-hidden="true"><use href="#i-x"/></svg></button><div class="scrub"><span>00:03</span><div class="bar"><i></i></div><span>00:08</span></div></div></div><div class="under"><div class="select" style="padding:13px 14px;font-size:14px"><svg class="i " aria-hidden="true"><use href="#i-film"/></svg>Choose a demo video<svg class="i " aria-hidden="true"><use href="#i-chev"/></svg></div></div></div><div class="mid"><span class="go-c"><svg class="i " aria-hidden="true"><use href="#i-arrow"/></svg></span></div><div class="result"><span class="r-ic"><svg class="i " aria-hidden="true"><use href="#i-sparkles"/></svg></span><b>Your swap appears here</b><small>The character from your images, moving like the person in your video</small></div></div><div class="msec"><div class="box row"><span class="lbl"><svg class="i " aria-hidden="true"><use href="#i-zap"/></svg>Select model</span><div class="opts" style="margin-left:12px"><button class="opt">Seedance 2.5</button><button class="opt">Seedance 2.0</button><button class="opt on">V3 HD</button><button class="opt">V3 <span class="tag t-new">New</span></button></div></div><div class="box row"><span class="lbl"><svg class="i " aria-hidden="true"><use href="#i-crop"/></svg>Ratio</span><div class="opts right"><button class="opt">16:9</button><button class="opt">9:16</button><button class="opt">1:1</button><button class="opt">4:3</button><button class="opt on">3:4</button></div></div><div class="box adv"><svg class="i " aria-hidden="true"><use href="#i-sliders"/></svg>Advanced<svg class="i " aria-hidden="true"><use href="#i-chev"/></svg></div></div><button class="upload"><svg class="i " aria-hidden="true"><use href="#i-wand"/></svg>Upload<span class="ch"><span class="coin"></span>600 credits/s</span><span class="ch">480p</span></button><p class="fine"><svg class="i " aria-hidden="true"><use href="#i-shield"/></svg>Failed generations are refunded automatically.<br>All generations must be consensual. No underage content is allowed.</p></div></div></div></div></section><section class="shot" id="credits"><div class="shot-head"><div><h2>Credits</h2><p>Balance, VIP progress, quick actions and the transaction log in one view.</p></div><span class="shot-tag"><svg class="i " aria-hidden="true"><use href="#i-coins"/></svg>Account</span></div><div class="scroller"><div class="frame"><div class="app"><aside class="side"><div class="brand"><span class="logo"><svg class="i " aria-hidden="true"><use href="#i-play"/></svg></span><b>Playflux AI</b><button class="collapse" aria-label="Collapse sidebar"><svg class="i " aria-hidden="true"><use href="#i-panel"/></svg></button></div><div class="side-sec">Create</div><nav class="nav"><a href="#"><svg class="i " aria-hidden="true"><use href="#i-film"/></svg>Video</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-image"/></svg>Images</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-sparkles"/></svg>Anime</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-pen"/></svg>Editor</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-bot"/></svg>Agent<span class="badge b-beta">Beta</span></a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-workflow"/></svg>Workflow</a></nav><div class="side-sec">Account</div><nav class="nav"><a href="#"><svg class="i " aria-hidden="true"><use href="#i-clock"/></svg>History</a><a href="#" class="on" aria-current="page"><svg class="i " aria-hidden="true"><use href="#i-card"/></svg>My credits</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-orders"/></svg>My orders</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-gift"/></svg>Redeem gift cards</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-handshake"/></svg>Affiliate</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-code"/></svg>API<span class="badge b-new">New</span></a></nav><div class="side-sec">Help</div><nav class="nav"><a href="#"><svg class="i " aria-hidden="true"><use href="#i-help"/></svg>FAQ</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-headset"/></svg>Support</a></nav><div class="side-foot"><div class="lang"><svg class="i " aria-hidden="true"><use href="#i-globe"/></svg>English<svg class="i " aria-hidden="true"><use href="#i-chev"/></svg></div><div class="user"><span class="avatar">A</span><div><b>Aldrin Eyana</b><small>Member</small></div></div><div class="wallet"><div class="wallet-top"><div class="wallet-bal"><span class="coin"></span><b>0</b><small>credits</small></div><button class="mini-buy"><svg class="i " aria-hidden="true"><use href="#i-sparkles"/></svg>Buy</button></div><div class="vip"><span class="vip-chip">VIP 1</span><div class="bar"><i style="width:6%"></i></div><span class="togo"><b>$100</b> to go</span></div></div><a href="#" class="signout"><svg class="i " aria-hidden="true"><use href="#i-logout"/></svg>Sign out</a></div></aside><main class="main"><div class="topbar"><div class="crumb">Account / <b>Credits</b></div><div class="top-actions"><div class="coin-chip"><span class="coin"></span>0 credits</div><button class="icon-btn" aria-label="Notifications"><svg class="i " aria-hidden="true"><use href="#i-bell"/></svg><span class="dot"></span></button></div></div><div class="settings"><nav class="subnav"><a href="#" class="on"><svg class="i " aria-hidden="true"><use href="#i-card"/></svg>My credits</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-orders"/></svg>My orders</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-gift"/></svg>Redeem gift cards</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-handshake"/></svg>Affiliate</a><hr><a href="#" class="danger"><svg class="i " aria-hidden="true"><use href="#i-trash"/></svg>Delete account</a></nav><div><div class="page-head"><div><h1>Credits</h1><p>Your balance: <b>0 credits</b></p></div><a href="#" class="btn btn-cta"><svg class="i " aria-hidden="true"><use href="#i-plus"/></svg>Buy credits</a></div><div class="c-top"><div class="balance"><span class="k">Available balance</span><div class="v"><span class="coin lg"></span><b>0</b><span>credits</span></div><p>Top up to start generating videos, images and anime.</p><a href="#" class="btn btn-white"><svg class="i " aria-hidden="true"><use href="#i-sparkles"/></svg>Top up now</a></div><div class="card vipcard"><div class="vip-head"><span class="crown"><svg class="i " aria-hidden="true"><use href="#i-crown"/></svg></span><div><div class="card-title">VIP level</div></div><span class="lvl">Free</span><div class="vip-next">Next level<b>$100 to Bronze</b></div></div><div class="steps"><div class="step on"><span class="node">1</span>Free<small>You're here</small></div><div class="step"><span class="node" style="--tc:#E59A6A">2</span>Bronze</div><div class="step"><span class="node" style="--tc:#CBC6DB">3</span>Silver</div><div class="step"><span class="node" style="--tc:#FECB00">4</span>Gold</div><div class="step"><span class="node" style="--tc:#C381FF">5</span>Platinum</div><div class="step"><span class="node" style="--tc:#00E8FF">6</span>Diamond</div></div><div class="foot"><svg class="i " aria-hidden="true"><use href="#i-star"/></svg>Keep purchasing to unlock higher VIP levels and exclusive benefits.</div></div></div><div class="actions"><a href="#" class="action"><span class="a-ic pink"><svg class="i " aria-hidden="true"><use href="#i-coins"/></svg></span><div><b>Purchase credits</b><small>Choose a pack and top up instantly</small></div><span class="arrow-c"><svg class="i " aria-hidden="true"><use href="#i-upright"/></svg></span></a><a href="#" class="action"><span class="a-ic aqua"><svg class="i " aria-hidden="true"><use href="#i-headset"/></svg></span><div><b>Support</b><small>Questions about billing or credits</small></div><span class="arrow-c"><svg class="i " aria-hidden="true"><use href="#i-upright"/></svg></span></a></div><div class="card tx"><div class="tx-head"><div class="card-title"><svg class="i " aria-hidden="true"><use href="#i-receipt"/></svg>Recent transactions</div><div class="select"><svg class="i " aria-hidden="true"><use href="#i-calendar"/></svg>All time<svg class="i " aria-hidden="true"><use href="#i-chev"/></svg></div></div><div class="tx-cols"><span>Date</span><span>Description</span><span>Amount</span><span>Status</span></div><div class="tx-empty"><span class="tx-ic"><svg class="i " aria-hidden="true"><use href="#i-receipt"/></svg></span><b>No transactions yet</b><p>Purchases and credit usage will show up here.</p><a href="#" class="btn btn-soft"><svg class="i " aria-hidden="true"><use href="#i-sparkles"/></svg>Get started</a></div></div></div></div></main></div></div></div></section><section class="shot" id="affiliate"><div class="shot-head"><div><h2>Affiliate program</h2><p>The commission offer up front, with a short how-it-works and the payout form below.</p></div><span class="shot-tag"><svg class="i " aria-hidden="true"><use href="#i-handshake"/></svg>Account</span></div><div class="scroller"><div class="frame"><div class="app"><aside class="side"><div class="brand"><span class="logo"><svg class="i " aria-hidden="true"><use href="#i-play"/></svg></span><b>Playflux AI</b><button class="collapse" aria-label="Collapse sidebar"><svg class="i " aria-hidden="true"><use href="#i-panel"/></svg></button></div><div class="side-sec">Create</div><nav class="nav"><a href="#"><svg class="i " aria-hidden="true"><use href="#i-film"/></svg>Video</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-image"/></svg>Images</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-sparkles"/></svg>Anime</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-pen"/></svg>Editor</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-bot"/></svg>Agent<span class="badge b-beta">Beta</span></a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-workflow"/></svg>Workflow</a></nav><div class="side-sec">Account</div><nav class="nav"><a href="#"><svg class="i " aria-hidden="true"><use href="#i-clock"/></svg>History</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-card"/></svg>My credits</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-orders"/></svg>My orders</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-gift"/></svg>Redeem gift cards</a><a href="#" class="on" aria-current="page"><svg class="i " aria-hidden="true"><use href="#i-handshake"/></svg>Affiliate</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-code"/></svg>API<span class="badge b-new">New</span></a></nav><div class="side-sec">Help</div><nav class="nav"><a href="#"><svg class="i " aria-hidden="true"><use href="#i-help"/></svg>FAQ</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-headset"/></svg>Support</a></nav><div class="side-foot"><div class="lang"><svg class="i " aria-hidden="true"><use href="#i-globe"/></svg>English<svg class="i " aria-hidden="true"><use href="#i-chev"/></svg></div><div class="user"><span class="avatar">A</span><div><b>Aldrin Eyana</b><small>Member</small></div></div><div class="wallet"><div class="wallet-top"><div class="wallet-bal"><span class="coin"></span><b>0</b><small>credits</small></div><button class="mini-buy"><svg class="i " aria-hidden="true"><use href="#i-sparkles"/></svg>Buy</button></div><div class="vip"><span class="vip-chip">VIP 1</span><div class="bar"><i style="width:6%"></i></div><span class="togo"><b>$100</b> to go</span></div></div><a href="#" class="signout"><svg class="i " aria-hidden="true"><use href="#i-logout"/></svg>Sign out</a></div></aside><main class="main"><div class="topbar"><div class="crumb">Account / <b>Affiliate</b></div><div class="top-actions"><div class="coin-chip"><span class="coin"></span>0 credits</div><button class="icon-btn" aria-label="Notifications"><svg class="i " aria-hidden="true"><use href="#i-bell"/></svg><span class="dot"></span></button></div></div><div class="settings"><nav class="subnav"><a href="#"><svg class="i " aria-hidden="true"><use href="#i-card"/></svg>My credits</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-orders"/></svg>My orders</a><a href="#"><svg class="i " aria-hidden="true"><use href="#i-gift"/></svg>Redeem gift cards</a><a href="#" class="on"><svg class="i " aria-hidden="true"><use href="#i-handshake"/></svg>Affiliate</a><hr><a href="#" class="danger"><svg class="i " aria-hidden="true"><use href="#i-trash"/></svg>Delete account</a></nav><div><div class="page-head"><div><h1>Affiliate program</h1><p>Earn 20% from each referral's first successful payment. Paid in USDC or USDT.</p></div></div><div class="aff-hero"><div class="aff-left"><div class="pct">20%</div><h3>First-payment commission</h3><p>Earn 20% of each referral's first successful payment in real cash. Repeat payments don't earn commission.</p><div class="facts"><span class="fact"><svg class="i " aria-hidden="true"><use href="#i-wallet"/></svg>$50 minimum payout</span><span class="fact"><svg class="i " aria-hidden="true"><use href="#i-calendar"/></svg>Paid at the start of every month</span><span class="fact"><svg class="i " aria-hidden="true"><use href="#i-link"/></svg>USDC or USDT (ERC-20)</span></div></div><div class="aff-right"><h4>How it works</h4><div class="how"><div class="how-step"><span class="how-n">1</span><div><b>Join and add your wallet</b><small>Pick a payout token and paste your Ethereum address</small></div></div><div class="how-step"><span class="how-n">2</span><div><b>Share your link</b><small>Friends sign up through your personal referral link</small></div></div><div class="how-step"><span class="how-n">3</span><div><b>Earn 20%</b><small>Get paid when their first payment goes through</small></div></div></div></div></div><div class="card"><div class="card-title" style="margin-bottom:20px"><svg class="i " aria-hidden="true"><use href="#i-wallet"/></svg>Payout details</div><div class="field"><label>Payout token</label><div class="input"><span class="token">T</span>USDT (ERC-20)<svg class="i " aria-hidden="true"><use href="#i-chev"/></svg></div><p class="help">Paid as USDC or USDT on the Ethereum chain (ERC-20).</p></div><div class="field"><label>Ethereum wallet address</label><div class="input monof focus">Enter your ETH wallet (0x...)</div><p class="help">An Ethereum (ERC-20) address. Payouts are sent here. You can change it later.</p></div><div class="form-foot"><a href="#" class="btn btn-cta"><svg class="i " aria-hidden="true"><use href="#i-handshake"/></svg>Join the affiliate program</a><small>You can update your wallet anytime.</small></div></div></div></div></main></div></div></div></section>
+</div>
+</body>
+</html>
