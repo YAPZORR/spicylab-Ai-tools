@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Unipix · History</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ============ Tokens ============ */
+  :root {
+    --bg:          #0B0A1F;
+    --panel:       rgba(30, 26, 70, 0.55);
+    --border:      rgba(160, 140, 255, 0.16);
+    --border-hi:   rgba(190, 170, 255, 0.34);
+    --text:        #F5F3FF;
+    --muted:       #A7A1C8;
+    --violet:      #7C5CFF;
+    --magenta:     #B44CF0;
+    --pink:        #EC4899;
+    --grad:        linear-gradient(90deg, #7C5CFF 0%, #B44CF0 52%, #EC4899 100%);
+    --gold:        #FFC531;
+    --hot:         linear-gradient(90deg, #FF3D6E 0%, #FF8A3D 100%);
+    --header-h:    68px;
+    --ring:        0 0 0 2px #0B0A1F, 0 0 0 4px #B44CF0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { min-height: 100%; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(900px 520px at 12% -12%, rgba(124, 92, 255, 0.22), transparent 62%),
+      radial-gradient(760px 480px at 92% -6%, rgba(236, 72, 153, 0.13), transparent 60%),
+      radial-gradient(1200px 700px at 50% 120%, rgba(91, 58, 220, 0.16), transparent 60%),
+      var(--bg);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* faint star field, like the generator page */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8% 22%,  rgba(255,255,255,.55), transparent 60%),
+      radial-gradient(1px 1px     at 22% 68%, rgba(255,255,255,.35), transparent 60%),
+      radial-gradient(2px 2px     at 37% 40%, rgba(196,170,255,.45), transparent 60%),
+      radial-gradient(1px 1px     at 54% 82%, rgba(255,255,255,.30), transparent 60%),
+      radial-gradient(1.5px 1.5px at 66% 30%, rgba(255,255,255,.40), transparent 60%),
+      radial-gradient(2px 2px     at 79% 64%, rgba(236,140,220,.40), transparent 60%),
+      radial-gradient(1px 1px     at 91% 18%, rgba(255,255,255,.45), transparent 60%),
+      radial-gradient(1.5px 1.5px at 95% 88%, rgba(255,255,255,.30), transparent 60%);
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  svg { display: block; flex-shrink: 0; }
+
+  :focus-visible { outline: none; box-shadow: var(--ring); }
+
+  /* ============ Header ============ */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding-top: env(safe-area-inset-top, 0px);
+    background: linear-gradient(180deg, rgba(22, 18, 54, 0.88) 0%, rgba(14, 12, 38, 0.74) 100%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: 0 12px 32px -24px rgba(124, 92, 255, 0.5);
+  }
+
+  /* gradient hairline along the bottom edge */
+  .site-header::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(124, 92, 255, 0.75) 22%,
+      rgba(180, 76, 240, 0.75) 50%,
+      rgba(236, 72, 153, 0.75) 78%,
+      transparent 100%);
+  }
+
+  .header-inner {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "brand nav actions";
+    align-items: center;
+    column-gap: 28px;
+    height: var(--header-h);
+    padding: 0 28px;
+  }
+
+  /* ---- Brand ---- */
+  .brand {
+    grid-area: brand;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 14px;
+  }
+
+  .brand-mark {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+    background:
+      radial-gradient(circle at 50% 35%, rgba(70, 130, 255, 0.45), transparent 70%),
+      linear-gradient(160deg, #241D5C 0%, #120F33 100%);
+    border: 1px solid var(--border-hi);
+    box-shadow: 0 6px 20px -6px rgba(70, 120, 255, 0.6), inset 0 1px 0 rgba(255,255,255,.12);
+  }
+
+  /* Swap this src for the real logo asset (SVG or 2x PNG) */
+  .brand-mark img {
+    width: 27px;
+    height: auto;
+    filter: drop-shadow(0 2px 6px rgba(40, 110, 255, 0.55));
+  }
+
+  .brand-name {
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+  }
+
+  /* ---- Main nav: segmented glass bar, gradient active tab ---- */
+  .main-nav {
+    grid-area: nav;
+    justify-self: start;
+    display: flex;
+    gap: 4px;
+    padding: 5px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid var(--border);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 15px;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    white-space: nowrap;
+    transition: color .18s ease, background-color .18s ease;
+  }
+
+  .nav-link svg { width: 16px; height: 16px; }
+
+  .nav-link:hover { color: var(--text); background: rgba(255, 255, 255, 0.06); }
+
+  .nav-link.is-active {
+    color: #fff;
+    font-weight: 600;
+    background: var(--grad);
+    box-shadow:
+      0 8px 22px -8px rgba(180, 76, 240, 0.85),
+      inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  }
+
+  /* HOT badge – the one thing that moves on its own */
+  .badge-hot {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    height: 18px;
+    padding: 0 7px 0 5px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #fff;
+    background: var(--hot);
+    box-shadow: 0 0 10px rgba(255, 77, 109, 0.5);
+    animation: hot-glow 2.4s ease-in-out infinite;
+  }
+  .badge-hot svg { width: 10px; height: 10px; }
+
+  @keyframes hot-glow {
+    0%, 100% { box-shadow: 0 0 8px  rgba(255, 77, 109, 0.45); }
+    50%      { box-shadow: 0 0 18px rgba(255, 128, 72, 0.85); }
+  }
+
+  /* ---- Right-side actions ---- */
+  .header-actions {
+    grid-area: actions;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* coin balance + top-up */
+  .coin-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 40px;
+    padding: 0 5px 0 6px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255, 197, 49, 0.11) 0%, rgba(255, 197, 49, 0.03) 100%);
+    border: 1px solid rgba(255, 197, 49, 0.28);
+    box-shadow: 0 0 22px -8px rgba(255, 197, 49, 0.4);
+  }
+
+  .coin {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 800;
+    color: #8A5600;
+    background: radial-gradient(circle at 35% 30%, #FFE795 0%, #FFC531 48%, #DE9700 100%);
+    box-shadow:
+      inset 0 -2px 0 rgba(140, 80, 0, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      0 0 12px rgba(255, 197, 49, 0.45);
+  }
+  .coin::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(160, 95, 0, 0.45);
+  }
+
+  .coin-amount {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .coin-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 30px;
+    padding: 0 13px 0 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--grad);
+    box-shadow: 0 6px 16px -6px rgba(236, 72, 153, 0.75), inset 0 1px 0 rgba(255,255,255,.25);
+    transition: transform .15s ease, filter .15s ease;
+  }
+  .coin-add svg { width: 14px; height: 14px; }
+  .coin-add:hover { transform: translateY(-1px); filter: brightness(1.12); }
+
+  /* avatar with gradient ring */
+  .avatar {
+    width: 40px;
+    height: 40px;
+    padding: 2px;
+    border-radius: 50%;
+    background: var(--grad);
+    box-shadow: 0 0 16px -4px rgba(180, 76, 240, 0.65);
+    transition: transform .15s ease;
+  }
+  .avatar:hover { transform: scale(1.05); }
+  .avatar-inner {
+    display: grid;
+    place-items: end center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #1D1945;
+    color: #9E97C8;
+  }
+  .avatar-inner svg { width: 36px; height: 36px; margin-bottom: -7px; }
+
+  /* language */
+  .lang-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    transition: background-color .18s ease, border-color .18s ease;
+  }
+  .lang-btn:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--border-hi); }
+  .lang-btn svg { width: 16px; height: 16px; color: var(--muted); }
+  .lang-btn .chev { width: 14px; height: 14px; }
+
+  /* ============ Page area (empty History page) ============ */
+  main { min-height: calc(100vh - var(--header-h)); }
+
+  /* ============ Responsive ============ */
+  @media (max-width: 1100px) {
+    .header-inner {
+      grid-template-columns: auto 1fr;
+      grid-template-areas:
+        "brand actions"
+        "nav   nav";
+      row-gap: 10px;
+      height: auto;
+      padding: 12px 20px;
+    }
+    .header-actions { justify-self: end; }
+    .main-nav {
+      justify-self: stretch;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .main-nav::-webkit-scrollbar { display: none; }
+    .nav-link { flex: 1 0 auto; justify-content: center; }
+  }
+
+  @media (max-width: 600px) {
+    .header-inner { padding: 10px 14px; column-gap: 12px; }
+    .header-actions { gap: 8px; }
+    .brand { gap: 10px; }
+    .brand-name { font-size: 18px; }
+    .coin-pill { gap: 8px; height: 38px; }
+    .avatar { width: 36px; height: 36px; }
+    .avatar-inner svg { width: 32px; height: 32px; margin-bottom: -6px; }
+    .brand-mark { width: 38px; height: 38px; border-radius: 12px; }
+    .brand-mark img { width: 24px; }
+    .coin-add .label,
+    .lang-btn .lang-label,
+    .lang-btn .chev { display: none; }
+    .coin-add { width: 28px; height: 28px; padding: 0; justify-content: center; }
+    .lang-btn { width: 36px; height: 36px; padding: 0; justify-content: center; }
+    .nav-link { padding: 0 10px; gap: 6px; font-size: 13px; }
+    .nav-link > svg { display: none; }
+  }
+
+  @media (max-width: 360px) {
+    .brand-name { display: none; }
+    .nav-link { padding: 0 7px; font-size: 12.5px; }
+    .badge-hot svg { display: none; }
+    .badge-hot { padding: 0 6px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+
+    <a class="brand" href="#" aria-label="Unipix home">
+      <span class="brand-mark">
+        <img src="data:image/png;base64,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" alt="">
+      </span>
+      <span class="brand-name">Unipix</span>
+    </a>
+
+    <nav class="main-nav" aria-label="Main">
+      <a class="nav-link" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        <span>Explore</span>
+      </a>
+
+      <a class="nav-link" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>
+        <span>AI Tools</span>
+      </a>
+
+      <a class="nav-link" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></svg>
+        <span>Training</span>
+        <span class="badge-hot">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+          HOT
+        </span>
+      </a>
+
+      <a class="nav-link is-active" href="#" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+        <span>History</span>
+      </a>
+    </nav>
+
+    <div class="header-actions">
+      <div class="coin-pill">
+        <span class="coin" aria-hidden="true">$</span>
+        <span class="coin-amount" aria-label="Coin balance: 1,225">1,225</span>
+        <a class="coin-add" href="#" aria-label="Buy more coins">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          <span class="label">Top up</span>
+        </a>
+      </div>
+
+      <button class="avatar" type="button" aria-label="Account menu">
+        <span class="avatar-inner">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="8" r="4.5"/><path d="M3 22a9 9 0 0 1 18 0z"/></svg>
+        </span>
+      </button>
+
+      <button class="lang-btn" type="button" aria-label="Language: English">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+        <span class="lang-label">English</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+
+  </div>
+</header>
+
+<main></main>
+
+</body>
+</html>
