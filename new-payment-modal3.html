@@ -623,7 +623,7 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offse
 /* =====================================================================
    OPTION F — bento
    ===================================================================== */
-.f-modal{position:relative;width:1160px;display:grid;grid-template-columns:350px minmax(0,1fr) minmax(0,1fr);
+.f-modal{position:relative;width:1160px;display:grid;grid-template-columns:388px minmax(0,1fr) minmax(0,1fr);
   grid-template-areas:"pick price coins" "pick feat feat" "guide pay pay" "note note note";gap:12px;padding:16px;border-radius:30px;border:1px solid rgba(190,165,255,.18);background:#0a0820;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 60px 120px -30px rgba(0,0,0,.85)}
 .close--float{top:-14px;right:-14px;width:38px;height:38px;background:var(--modal);border-color:var(--line-2);box-shadow:0 10px 24px -8px rgba(0,0,0,.7)}
@@ -761,6 +761,43 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offse
 .f--m .fh-scroll::-webkit-scrollbar{display:none}
 .f--m .fh-grid{width:max-content;grid-template-columns:none;grid-auto-columns:214px;grid-template-rows:repeat(3,minmax(54px,1fr))}
 .f--m .fh{scroll-snap-align:start;font-size:13px}
+
+/* F — larger, more obvious plan options in the picker */
+.f-pick .f-opts{flex:1;margin-top:0;padding-top:22px;gap:14px}
+.f-opt{position:relative;cursor:pointer;flex:1;grid-template-columns:auto auto minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:12px;row-gap:14px;align-content:center;
+  padding:20px 18px;border-radius:20px;border:1px solid rgba(190,165,255,.2);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02))}
+.f-opt>.radio{grid-row:1 / span 2;width:26px;height:26px;font-size:14px}
+.f-opt-chip{position:relative;grid-row:1 / span 2;width:42px;height:42px;border-radius:12px;font-size:20px}
+.f-opt>.radio{grid-row:1 / span 2;width:24px;height:24px;font-size:13px;border:2px solid rgba(255,255,255,.42)}
+.f-opt>.radio.is-on{border:0;box-shadow:0 0 0 4px rgba(196,60,242,.24),0 0 16px rgba(196,60,242,.75)}
+.f-opt:hover>.radio:not(.is-on){border-color:rgba(255,255,255,.7)}
+.f-opt:not(.is-on) .f-opt-chip{opacity:.85}
+.f-opt-id{gap:6px}
+.f-opt-id b{font-size:18px;font-weight:750;letter-spacing:-.01em;color:#fff}
+.f-opt-id>span:last-child{font-size:13.5px;color:var(--text-2)}
+.f-opt-p b{font-size:29px;font-weight:700}
+.f-opt-p span{font-size:12px}
+.f-opt-meter{grid-column:3 / -1}
+.f-opt-meter .bar{height:6px}
+.f-opt-meter .t{font-size:12px}
+.f-opt:hover{border-color:rgba(190,165,255,.38)}
+.f-opt.is-on{border:2px solid transparent;
+  background:radial-gradient(90% 120% at 0% 0%,rgba(123,77,255,.45),transparent 60%) padding-box,linear-gradient(135deg,rgba(123,77,255,.32),rgba(196,60,242,.2) 60%,rgba(236,74,169,.16)) padding-box,linear-gradient(#15102f,#15102f) padding-box,var(--grad-ring) border-box;
+  box-shadow:0 0 0 5px rgba(196,60,242,.12),0 22px 44px -18px rgba(196,60,242,.9)}
+.f-opt.is-on .f-opt-p b{color:#fff;text-shadow:0 0 24px rgba(236,74,169,.55)}
+.f-opt-flag{position:absolute;z-index:2;top:-11px;right:16px;display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap;color:#3b2200;
+  background:linear-gradient(90deg,#ffe08a,#ffb238);box-shadow:0 6px 16px -6px rgba(255,178,56,.8)}
+.f-opt-flag .ico{font-size:12px}
+
+.f--m .f-pick .f-opts{flex:none;padding-top:22px;gap:14px}
+.f--m .f-opt{padding:16px 14px;column-gap:12px;row-gap:12px}
+.f--m .f-opt-chip{width:40px;height:40px;border-radius:11px;font-size:19px}
+.f--m .f-opt>.radio{width:22px;height:22px;font-size:12px}
+.f--m .f-opt-id b{font-size:16.5px}
+.f--m .f-opt-id>span:last-child{font-size:12.5px}
+.f--m .f-opt-p b{font-size:26px}
+.f--m .f-opt-p span{font-size:11px}
+.f--m .f-opt-meter .t{font-size:11px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 </style>
@@ -2561,21 +2598,27 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offse
       <p>Unlock unlimited creativity with the plan that fits you.</p>
       <div class="f-trust-in"><span class="avatars"><span class="avatar avatar--v"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--p"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--g"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--c"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span></span><div><span>Trusted by <b>1M+</b> creators worldwide</span><span class="r"><span class="stars"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg></span><b>1000+</b> ratings</span></div></div>
       <div class="f-opts" role="radiogroup" aria-label="Plans">
-          <div class="f-opt is-on" role="radio" aria-checked="true">
+          <div class="f-opt f-opt--monthly is-on" role="radio" aria-checked="true">
+            
             <span class="radio is-on"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg></span>
-            <div class="f-opt-id"><b>Monthly Pro</b><span><span class="coin" style="--s:13px" aria-hidden="true"></span>300 coins</span></div>
+            <span class="chip f-opt-chip chip--violet"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-zap"/></svg></span>
+            <div class="f-opt-id"><b>Monthly Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>300 coins</span></div>
             <div class="f-opt-p"><b>$4.33</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:42.9%"></i></span><span class="t">6 of 14 benefits</span></div>
           </div>
-          <div class="f-opt" role="radio" aria-checked="false">
+          <div class="f-opt f-opt--quarterly" role="radio" aria-checked="false">
+            
             <span class="radio"></span>
-            <div class="f-opt-id"><b>Quarterly Pro</b><span><span class="coin" style="--s:13px" aria-hidden="true"></span>1,500 coins</span></div>
+            <span class="chip f-opt-chip chip--pink"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-flame"/></svg></span>
+            <div class="f-opt-id"><b>Quarterly Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>1,500 coins</span></div>
             <div class="f-opt-p"><b>$2.67</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:64.3%"></i></span><span class="t">9 of 14 benefits</span></div>
           </div>
-          <div class="f-opt" role="radio" aria-checked="false">
+          <div class="f-opt f-opt--annual" role="radio" aria-checked="false">
+            <span class="f-opt-flag"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-crown"/></svg>Best value</span>
             <span class="radio"></span>
-            <div class="f-opt-id"><b>Annual Pro</b><span class="best">Best value</span><span><span class="coin" style="--s:13px" aria-hidden="true"></span>5,200 coins</span></div>
+            <span class="chip f-opt-chip chip--gold"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-crown"/></svg></span>
+            <div class="f-opt-id"><b>Annual Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>5,200 coins</span></div>
             <div class="f-opt-p"><b>$1.35</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:100.0%"></i></span><span class="t">14 of 14 benefits</span></div>
           </div>
@@ -2630,21 +2673,27 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offse
       <p>Unlock unlimited creativity with the plan that fits you.</p>
       <div class="f-trust-in"><span class="avatars"><span class="avatar avatar--v"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--p"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--g"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--c"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span></span><div><span>Trusted by <b>1M+</b> creators worldwide</span><span class="r"><span class="stars"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg></span><b>1000+</b> ratings</span></div></div>
       <div class="f-opts" role="radiogroup" aria-label="Plans">
-          <div class="f-opt" role="radio" aria-checked="false">
+          <div class="f-opt f-opt--monthly" role="radio" aria-checked="false">
+            
             <span class="radio"></span>
-            <div class="f-opt-id"><b>Monthly Pro</b><span><span class="coin" style="--s:13px" aria-hidden="true"></span>300 coins</span></div>
+            <span class="chip f-opt-chip chip--violet"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-zap"/></svg></span>
+            <div class="f-opt-id"><b>Monthly Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>300 coins</span></div>
             <div class="f-opt-p"><b>$4.33</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:42.9%"></i></span><span class="t">6 of 14 benefits</span></div>
           </div>
-          <div class="f-opt is-on" role="radio" aria-checked="true">
+          <div class="f-opt f-opt--quarterly is-on" role="radio" aria-checked="true">
+            
             <span class="radio is-on"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg></span>
-            <div class="f-opt-id"><b>Quarterly Pro</b><span><span class="coin" style="--s:13px" aria-hidden="true"></span>1,500 coins</span></div>
+            <span class="chip f-opt-chip chip--pink"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-flame"/></svg></span>
+            <div class="f-opt-id"><b>Quarterly Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>1,500 coins</span></div>
             <div class="f-opt-p"><b>$2.67</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:64.3%"></i></span><span class="t">9 of 14 benefits</span></div>
           </div>
-          <div class="f-opt" role="radio" aria-checked="false">
+          <div class="f-opt f-opt--annual" role="radio" aria-checked="false">
+            <span class="f-opt-flag"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-crown"/></svg>Best value</span>
             <span class="radio"></span>
-            <div class="f-opt-id"><b>Annual Pro</b><span class="best">Best value</span><span><span class="coin" style="--s:13px" aria-hidden="true"></span>5,200 coins</span></div>
+            <span class="chip f-opt-chip chip--gold"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-crown"/></svg></span>
+            <div class="f-opt-id"><b>Annual Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>5,200 coins</span></div>
             <div class="f-opt-p"><b>$1.35</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:100.0%"></i></span><span class="t">14 of 14 benefits</span></div>
           </div>
@@ -2699,21 +2748,27 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offse
       <p>Unlock unlimited creativity with the plan that fits you.</p>
       <div class="f-trust-in"><span class="avatars"><span class="avatar avatar--v"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--p"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--g"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--c"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span></span><div><span>Trusted by <b>1M+</b> creators worldwide</span><span class="r"><span class="stars"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg></span><b>1000+</b> ratings</span></div></div>
       <div class="f-opts" role="radiogroup" aria-label="Plans">
-          <div class="f-opt" role="radio" aria-checked="false">
+          <div class="f-opt f-opt--monthly" role="radio" aria-checked="false">
+            
             <span class="radio"></span>
-            <div class="f-opt-id"><b>Monthly Pro</b><span><span class="coin" style="--s:13px" aria-hidden="true"></span>300 coins</span></div>
+            <span class="chip f-opt-chip chip--violet"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-zap"/></svg></span>
+            <div class="f-opt-id"><b>Monthly Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>300 coins</span></div>
             <div class="f-opt-p"><b>$4.33</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:42.9%"></i></span><span class="t">6 of 14 benefits</span></div>
           </div>
-          <div class="f-opt" role="radio" aria-checked="false">
+          <div class="f-opt f-opt--quarterly" role="radio" aria-checked="false">
+            
             <span class="radio"></span>
-            <div class="f-opt-id"><b>Quarterly Pro</b><span><span class="coin" style="--s:13px" aria-hidden="true"></span>1,500 coins</span></div>
+            <span class="chip f-opt-chip chip--pink"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-flame"/></svg></span>
+            <div class="f-opt-id"><b>Quarterly Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>1,500 coins</span></div>
             <div class="f-opt-p"><b>$2.67</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:64.3%"></i></span><span class="t">9 of 14 benefits</span></div>
           </div>
-          <div class="f-opt is-on" role="radio" aria-checked="true">
+          <div class="f-opt f-opt--annual is-on" role="radio" aria-checked="true">
+            <span class="f-opt-flag"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-crown"/></svg>Best value</span>
             <span class="radio is-on"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg></span>
-            <div class="f-opt-id"><b>Annual Pro</b><span class="best">Best value</span><span><span class="coin" style="--s:13px" aria-hidden="true"></span>5,200 coins</span></div>
+            <span class="chip f-opt-chip chip--gold"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-crown"/></svg></span>
+            <div class="f-opt-id"><b>Annual Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>5,200 coins</span></div>
             <div class="f-opt-p"><b>$1.35</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:100.0%"></i></span><span class="t">14 of 14 benefits</span></div>
           </div>
@@ -2772,21 +2827,27 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offse
       <p>Unlock unlimited creativity with the plan that fits you.</p>
       <div class="f-trust-in"><span class="avatars"><span class="avatar avatar--v"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--p"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--g"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--c"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span></span><div><span>Trusted by <b>1M+</b> creators worldwide</span><span class="r"><span class="stars"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg></span><b>1000+</b> ratings</span></div></div>
       <div class="f-opts" role="radiogroup" aria-label="Plans">
-          <div class="f-opt is-on" role="radio" aria-checked="true">
+          <div class="f-opt f-opt--monthly is-on" role="radio" aria-checked="true">
+            
             <span class="radio is-on"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg></span>
-            <div class="f-opt-id"><b>Monthly Pro</b><span><span class="coin" style="--s:13px" aria-hidden="true"></span>300 coins</span></div>
+            <span class="chip f-opt-chip chip--violet"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-zap"/></svg></span>
+            <div class="f-opt-id"><b>Monthly Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>300 coins</span></div>
             <div class="f-opt-p"><b>$4.33</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:42.9%"></i></span><span class="t">6 of 14 benefits</span></div>
           </div>
-          <div class="f-opt" role="radio" aria-checked="false">
+          <div class="f-opt f-opt--quarterly" role="radio" aria-checked="false">
+            
             <span class="radio"></span>
-            <div class="f-opt-id"><b>Quarterly Pro</b><span><span class="coin" style="--s:13px" aria-hidden="true"></span>1,500 coins</span></div>
+            <span class="chip f-opt-chip chip--pink"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-flame"/></svg></span>
+            <div class="f-opt-id"><b>Quarterly Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>1,500 coins</span></div>
             <div class="f-opt-p"><b>$2.67</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:64.3%"></i></span><span class="t">9 of 14 benefits</span></div>
           </div>
-          <div class="f-opt" role="radio" aria-checked="false">
+          <div class="f-opt f-opt--annual" role="radio" aria-checked="false">
+            <span class="f-opt-flag"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-crown"/></svg>Best value</span>
             <span class="radio"></span>
-            <div class="f-opt-id"><b>Annual Pro</b><span class="best">Best value</span><span><span class="coin" style="--s:13px" aria-hidden="true"></span>5,200 coins</span></div>
+            <span class="chip f-opt-chip chip--gold"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-crown"/></svg></span>
+            <div class="f-opt-id"><b>Annual Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>5,200 coins</span></div>
             <div class="f-opt-p"><b>$1.35</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:100.0%"></i></span><span class="t">14 of 14 benefits</span></div>
           </div>
@@ -2841,21 +2902,27 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offse
       <p>Unlock unlimited creativity with the plan that fits you.</p>
       <div class="f-trust-in"><span class="avatars"><span class="avatar avatar--v"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--p"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--g"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--c"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span></span><div><span>Trusted by <b>1M+</b> creators worldwide</span><span class="r"><span class="stars"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg></span><b>1000+</b> ratings</span></div></div>
       <div class="f-opts" role="radiogroup" aria-label="Plans">
-          <div class="f-opt" role="radio" aria-checked="false">
+          <div class="f-opt f-opt--monthly" role="radio" aria-checked="false">
+            
             <span class="radio"></span>
-            <div class="f-opt-id"><b>Monthly Pro</b><span><span class="coin" style="--s:13px" aria-hidden="true"></span>300 coins</span></div>
+            <span class="chip f-opt-chip chip--violet"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-zap"/></svg></span>
+            <div class="f-opt-id"><b>Monthly Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>300 coins</span></div>
             <div class="f-opt-p"><b>$4.33</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:42.9%"></i></span><span class="t">6 of 14 benefits</span></div>
           </div>
-          <div class="f-opt is-on" role="radio" aria-checked="true">
+          <div class="f-opt f-opt--quarterly is-on" role="radio" aria-checked="true">
+            
             <span class="radio is-on"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg></span>
-            <div class="f-opt-id"><b>Quarterly Pro</b><span><span class="coin" style="--s:13px" aria-hidden="true"></span>1,500 coins</span></div>
+            <span class="chip f-opt-chip chip--pink"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-flame"/></svg></span>
+            <div class="f-opt-id"><b>Quarterly Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>1,500 coins</span></div>
             <div class="f-opt-p"><b>$2.67</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:64.3%"></i></span><span class="t">9 of 14 benefits</span></div>
           </div>
-          <div class="f-opt" role="radio" aria-checked="false">
+          <div class="f-opt f-opt--annual" role="radio" aria-checked="false">
+            <span class="f-opt-flag"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-crown"/></svg>Best value</span>
             <span class="radio"></span>
-            <div class="f-opt-id"><b>Annual Pro</b><span class="best">Best value</span><span><span class="coin" style="--s:13px" aria-hidden="true"></span>5,200 coins</span></div>
+            <span class="chip f-opt-chip chip--gold"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-crown"/></svg></span>
+            <div class="f-opt-id"><b>Annual Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>5,200 coins</span></div>
             <div class="f-opt-p"><b>$1.35</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:100.0%"></i></span><span class="t">14 of 14 benefits</span></div>
           </div>
@@ -2910,21 +2977,27 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offse
       <p>Unlock unlimited creativity with the plan that fits you.</p>
       <div class="f-trust-in"><span class="avatars"><span class="avatar avatar--v"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--p"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--g"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span><span class="avatar avatar--c"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-user"/></svg></span></span><div><span>Trusted by <b>1M+</b> creators worldwide</span><span class="r"><span class="stars"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-star"/></svg></span><b>1000+</b> ratings</span></div></div>
       <div class="f-opts" role="radiogroup" aria-label="Plans">
-          <div class="f-opt" role="radio" aria-checked="false">
+          <div class="f-opt f-opt--monthly" role="radio" aria-checked="false">
+            
             <span class="radio"></span>
-            <div class="f-opt-id"><b>Monthly Pro</b><span><span class="coin" style="--s:13px" aria-hidden="true"></span>300 coins</span></div>
+            <span class="chip f-opt-chip chip--violet"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-zap"/></svg></span>
+            <div class="f-opt-id"><b>Monthly Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>300 coins</span></div>
             <div class="f-opt-p"><b>$4.33</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:42.9%"></i></span><span class="t">6 of 14 benefits</span></div>
           </div>
-          <div class="f-opt" role="radio" aria-checked="false">
+          <div class="f-opt f-opt--quarterly" role="radio" aria-checked="false">
+            
             <span class="radio"></span>
-            <div class="f-opt-id"><b>Quarterly Pro</b><span><span class="coin" style="--s:13px" aria-hidden="true"></span>1,500 coins</span></div>
+            <span class="chip f-opt-chip chip--pink"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-flame"/></svg></span>
+            <div class="f-opt-id"><b>Quarterly Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>1,500 coins</span></div>
             <div class="f-opt-p"><b>$2.67</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:64.3%"></i></span><span class="t">9 of 14 benefits</span></div>
           </div>
-          <div class="f-opt is-on" role="radio" aria-checked="true">
+          <div class="f-opt f-opt--annual is-on" role="radio" aria-checked="true">
+            <span class="f-opt-flag"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-crown"/></svg>Best value</span>
             <span class="radio is-on"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg></span>
-            <div class="f-opt-id"><b>Annual Pro</b><span class="best">Best value</span><span><span class="coin" style="--s:13px" aria-hidden="true"></span>5,200 coins</span></div>
+            <span class="chip f-opt-chip chip--gold"><svg class="ico" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-crown"/></svg></span>
+            <div class="f-opt-id"><b>Annual Pro</b><span><span class="coin" style="--s:14px" aria-hidden="true"></span>5,200 coins</span></div>
             <div class="f-opt-p"><b>$1.35</b><span>/ 100 coins</span></div>
             <div class="f-opt-meter"><span class="bar"><i style="width:100.0%"></i></span><span class="t">14 of 14 benefits</span></div>
           </div>
