@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><title>SpicyLab | All Pricing Plans — Static Modal Showcase</title><style>
+    /* The palette comes from the supplied Figma SVG, Group 1597884622. */
+    :root {
+      color-scheme: dark;
+      --page: #0a0820;
+      --page-deep: #06081a;
+      --panel: #100c27;
+      --panel-lift: #15102f;
+      --panel-border: #2b2347;
+      --text: #f3f1ff;
+      --subtle: #d8d2f4;
+      --muted: #9c96c3;
+      --disabled: #6d6895;
+      --purple: #7b4dff;
+      --violet: #c43cf2;
+      --pink: #ec4aa9;
+      --pink-deep: #d23e9e;
+      --pink-lite: #ff73c8;
+      --gold: #fecb00;
+      --gold-bright: #ffd95a;
+      --blue: #3ec6f4;
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; min-height: 100%; margin: 0; }
+    body {
+      background: var(--page);
+      color: var(--text);
+      font-family: Inter, "Inter Display", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button { font: inherit; }
+    button:focus-visible, a:focus-visible {
+      outline: 2px solid #e675fb;
+      outline-offset: 3px;
+    }
+    button:disabled { cursor: default; }
+    .icon { display: block; height: 18px; width: 18px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    .canvas {
+      position: fixed; inset: 0; overflow: hidden;
+      background:
+        radial-gradient(ellipse 560px 620px at 0% 42%, rgba(103, 58, 203, .38), transparent 78%),
+        radial-gradient(ellipse 590px 550px at 100% 3%, rgba(49, 91, 186, .25), transparent 78%),
+        radial-gradient(ellipse 450px 300px at 86% 95%, rgba(120, 28, 107, .18), transparent 78%),
+        #100c23;
+    }
+    .canvas::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(9, 6, 23, .1), rgba(5, 6, 20, .62));
+      pointer-events: none;
+    }
+    .reopen {
+      position: absolute; left: 50%; top: 50%; z-index: 1; transform: translate(-50%, -50%);
+      background: linear-gradient(100deg, var(--pink-lite), var(--pink-deep));
+      border: 1px solid #ff80d0; border-radius: 11px; padding: 17px 30px;
+      color: white; font-size: 17px; font-weight: 750; cursor: pointer;
+      box-shadow: 0 12px 60px rgba(236,74,169,.22);
+    }
+    .reopen[hidden] { display: none; }
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 10;
+      display: grid; place-items: center; padding: 24px;
+      background: rgba(5, 4, 19, .46);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+    .modal-overlay[hidden] { display: none; }
+    .pricing-modal {
+      position: relative;
+      isolation: isolate;
+      width: min(1402px, 100%);
+      max-height: calc(100dvh - 48px);
+      overflow-x: hidden;
+      overflow-y: auto; /* Safety fallback only on small screens; no scrolling at 1920x1080. */
+      padding: 21px 24px 20px;
+      border: 1px solid rgba(126, 92, 192, .30);
+      border-radius: 28px;
+      background:
+        radial-gradient(ellipse 350px 150px at 10% -8%, rgba(121, 70, 241, .14), transparent 80%),
+        linear-gradient(180deg, rgba(14, 10, 36, .99), rgba(9, 7, 27, .99));
+      box-shadow: 0 35px 110px rgba(0,0,0,.65), 0 0 0 1px rgba(2,0,13,.65), 0 0 100px rgba(105, 42, 159, .10);
+      scrollbar-width: thin; scrollbar-color: #51416e #100c27;
+    }
+    .close-modal {
+      position: absolute; top: 16px; right: 17px; z-index: 5;
+      display: grid; place-items: center; height: 33px; width: 33px;
+      background: #1a1532; border: 1px solid rgba(178,160,239,.17);
+      border-radius: 50%; color: var(--muted); cursor: pointer;
+      transition: color .16s, background .16s, transform .16s;
+    }
+    .close-modal:hover { background: #3b2453; color: white; transform: rotate(90deg); }
+    .close-modal .icon { height: 17px; width: 17px; }
+
+    .modal-header { text-align: center; margin: 0 auto 16px; }
+    .modal-header h1 {
+      margin: 0; color: #fff; font-size: 42px; font-weight: 850;
+      letter-spacing: -.055em; line-height: 1.12;
+    }
+    .modal-header h1 span {
+      background: linear-gradient(100deg, #ec4aa9 2%, #c43cf2 94%);
+      background-clip: text; -webkit-background-clip: text; color: transparent;
+    }
+    .modal-header .subtitle {
+      font-size: 15px; font-weight: 460; line-height: 1.4;
+      color: var(--muted); margin: 7px 0 9px;
+    }
+    .trust-row { display: flex; justify-content: center; align-items: center; gap: 11px; }
+    .avatars { display: flex; align-items: center; padding-left: 3px; }
+    .avatar {
+      position: relative; display: grid; place-items: center; width: 24px; height: 24px; margin-left: -4px;
+      border: 2px solid var(--panel); border-radius: 50%;
+      background: linear-gradient(135deg, #a07bff, #6a3df0); color: white; box-shadow: 0 1px 0 rgba(255,255,255,.16);
+    }
+    .avatar:nth-child(2) { background: linear-gradient(135deg, #ff73c8, #d93f9f); }
+    .avatar:nth-child(3) { background: linear-gradient(135deg, #ffd95e, #f29a06); color: #513000; }
+    .avatar:nth-child(4) { background: linear-gradient(135deg, #7fdcff, #2f8cff); }
+    .avatar .icon { width: 12px; height: 12px; stroke-width: 1.9; }
+    .trust-copy { text-align: left; line-height: 1.19; color: var(--subtle); font-size: 12px; }
+    .trust-copy strong { color: white; font-weight: 750; }
+    .rating-line { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+    .stars { color: white; letter-spacing: 1px; font-size: 11px; }
+
+    .plan-tabs { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 13px; margin: 0 9px 14px; }
+    .plan-tab {
+      position: relative; height: 72px; display: flex; align-items: center; gap: 12px;
+      min-width: 0; padding: 12px 17px;
+      color: var(--text); text-align: left;
+      background: linear-gradient(180deg, rgba(255,255,255,.064), rgba(255,255,255,.028));
+      border: 1px solid rgba(190,165,255,.18);
+      border-radius: 16px; cursor: pointer;
+      transition: border-color .18s, transform .18s, box-shadow .18s, background .18s;
+    }
+    .plan-tab:hover { transform: translateY(-2px); border-color: rgba(190,165,255,.48); }
+    .plan-tab[aria-selected="true"] {
+      background: linear-gradient(112deg, rgba(123,77,255,.48) 0%, rgba(196,60,242,.19) 53%, rgba(236,74,169,.17) 100%), var(--panel-lift);
+      border-color: rgba(214,77,223,.64);
+      box-shadow: 0 9px 19px rgba(204,64,219,.25), 0 0 0 1px rgba(204,64,219,.14), inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .plan-icon { display: grid; place-items: center; width: 37px; height: 37px; flex: 0 0 37px; border-radius: 11px; color: white; background: linear-gradient(135deg, #a07bff, #6a3df0); }
+    .plan-icon .icon { width: 19px; height: 19px; }
+    .plan-tab[data-plan="quarterly"] .plan-icon { background: linear-gradient(135deg, #ff73c8, #d23e9e); }
+    .plan-tab[data-plan="annual"] .plan-icon { background: linear-gradient(135deg, #ffd95e, #e8a128); color: #543500; }
+    .plan-tab .identity { min-width: 0; display: flex; flex-direction: column; flex: 1 1 auto; gap: 3px; }
+    .plan-name { font-size: 14px; font-weight: 760; white-space: nowrap; letter-spacing: -.01em; }
+    .plan-coins { color: var(--muted); font-size: 10px; white-space: nowrap; display: flex; gap: 5px; align-items: center; }
+    .small-coin { display: inline-grid; place-items: center; width: 11px; height: 11px; flex: 0 0 11px; font-size: 8px; font-weight: 800; color: #7e4b00; border: 1px solid #ffd04a; border-radius: 50%; background: linear-gradient(145deg, #fff6c4, #ffbf1f 65%, #d68c00); }
+    .plan-cost { flex: 0 0 auto; display: flex; align-items: flex-start; flex-direction: column; gap: 3px; margin-left: auto; }
+    .plan-cost b { font-size: 23px; color: white; line-height: 1; letter-spacing: -.045em; }
+    .plan-cost small { font-size: 10px; white-space: nowrap; color: var(--muted); }
+    .best-value {
+      position: absolute; right: 12px; top: -10px; display: flex; align-items: center; gap: 4px;
+      height: 19px; padding: 0 9px; border-radius: 50px;
+      background: linear-gradient(180deg, #ffe08a, #ffbf1f); color: #3b2200;
+      box-shadow: 0 2px 9px rgba(255,187,39,.18); font-size: 10px; font-weight: 800; white-space: nowrap;
+    }
+    .best-value .icon { width: 11px; height: 11px; }
+
+    .plan-body {
+      background: rgba(6, 5, 21, .72); border: 1px solid rgba(78, 57, 128, .45);
+      border-radius: 21px; padding: 13px;
+    }
+    .summary-row { display: grid; grid-template-columns: .98fr 1.02fr; gap: 13px; margin-bottom: 12px; }
+    .price-panel, .metrics-panel { height: 89px; border-radius: 15px; }
+    .price-panel {
+      display: flex; flex-direction: column; justify-content: center; padding: 13px 20px;
+      border: 1px solid rgba(190,165,255,.13); background: rgba(21,16,47,.65);
+    }
+    .headline-price { display: flex; align-items: baseline; gap: 10px; white-space: nowrap; }
+    .headline-price strong { font-size: 39px; line-height: 1.08; font-weight: 850; letter-spacing: -.068em; color: #fff; }
+    .headline-price span { font-size: 11px; color: var(--muted); }
+    .billing { margin: 6px 0 0; color: var(--subtle); font-size: 12px; font-weight: 650; }
+    .metrics-panel {
+      display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px;
+      padding: 7px; border: 1px solid rgba(230,170,49,.27);
+      background: radial-gradient(ellipse at bottom right, rgba(231,143,45,.18), transparent 57%), rgba(19,15,38,.94);
+    }
+    .metric { display: flex; justify-content: center; align-items: center; gap: 9px; min-width: 0; padding: 6px 7px; border: 1px solid rgba(190,165,255,.1); background: rgba(8,7,28,.74); border-radius: 11px; }
+    .metric-icon { flex: 0 0 31px; height: 31px; width: 31px; display: grid; place-items: center; border-radius: 10px; }
+    .metric-icon .icon { width: 18px; height: 18px; }
+    .metric-icon.coin { border-radius: 50%; border: 2px solid #ffd95a; color: #fff1ab; background: radial-gradient(circle at 28% 26%, #ffe08a, #ffbf1f 60%, #bd7700 100%); box-shadow: inset 0 0 0 2px rgba(171,111,0,.35); }
+    .metric-icon.video { background: linear-gradient(140deg, #ff73c8, #d23e9e); color: white; }
+    .metric-icon.picture { background: linear-gradient(140deg, #a07bff, #6a3df0); color: white; }
+    .metric-label { display: flex; flex-direction: column; min-width: 0; gap: 1px; }
+    .metric-label b { white-space: nowrap; font-size: 25px; line-height: 1; letter-spacing: -.05em; font-weight: 780; }
+    .metric:first-child .metric-label b { color: #ffcf22; }
+    .metric-label small { color: var(--muted); font-size: 11px; line-height: 1.12; }
+
+    .benefits-panel { border: 1px solid rgba(190,165,255,.12); border-radius: 15px; background: rgba(19,15,42,.63); padding: 13px 14px 14px; }
+    .benefit-heading { display: flex; justify-content: space-between; gap: 10px; align-items: center; margin: 0 0 8px; font-size: 11px; color: #fff; font-weight: 710; }
+    .benefit-heading .count { font-size: 10px; color: var(--muted); font-weight: 460; }
+    .benefit-heading .count strong { color: #fff; font-weight: 730; }
+    .progress-track { display: grid; grid-template-columns: repeat(14,minmax(0,1fr)); gap: 6px; margin-bottom: 11px; }
+    .progress-track span { display: block; height: 5px; border-radius: 20px; background: #25203d; }
+    .progress-track span.on { background: linear-gradient(90deg, #c43cf2, #ec4aa9); box-shadow: 0 0 10px rgba(196,60,242,.45); }
+
+    /* The requested 4x4 arrangement: 14 benefits + an upgrade tile spanning two rows. */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      grid-template-rows: repeat(4, minmax(66px, auto));
+      column-gap: 10px; row-gap: 8px;
+    }
+    .benefit {
+      min-width: 0; min-height: 66px; display: flex; align-items: center; gap: 10px;
+      padding: 9px 11px; border-radius: 13px;
+      font-size: 12.5px; font-weight: 690; line-height: 1.26;
+      transition: background .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    .benefit.available {
+      color: #fff;
+      background: linear-gradient(154deg, rgba(100,29,78,.53), rgba(48,23,62,.83) 73%);
+      border: 1px solid rgba(236,74,169,.58);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+    }
+    .benefit.available:hover {
+      transform: translateY(-2px); border-color: #ef63ba;
+      background: linear-gradient(154deg, rgba(124,31,100,.64), rgba(62,24,83,.87) 73%);
+      box-shadow: 0 6px 20px rgba(236,74,169,.15);
+    }
+    .benefit.locked { color: var(--disabled); background: rgba(12,11,32,.38); border: 1px dashed rgba(109,104,149,.26); }
+    .benefit.locked:hover { border-color: rgba(148,118,192,.46); background: rgba(31,22,54,.54); }
+    .benefit-icon { flex: 0 0 31px; height: 31px; width: 31px; display: grid; place-items: center; border-radius: 9px; }
+    .available .benefit-icon { background: linear-gradient(145deg, #ff73c8 0%, #ec4aa9 58%, #d23e9e 100%); color: #fff; box-shadow: 0 3px 11px rgba(236,74,169,.24); }
+    .locked .benefit-icon { background: rgba(190,165,255,.045); color: #69658d; }
+    .benefit-icon .icon { width: 16px; height: 16px; stroke-width: 1.7; }
+    .benefit-label { min-width: 0; overflow-wrap: break-word; }
+    .benefit-status { margin-left: auto; flex: 0 0 15px; }
+    .benefit-status .icon { width: 14px; height: 14px; }
+    .available .benefit-status { display: grid; place-items: center; background: #fff; width: 18px; height: 18px; flex-basis: 18px; border-radius: 50%; color: #dd459f; }
+    .available .benefit-status .icon { height: 12px; width: 12px; stroke-width: 2.5; }
+    .locked .benefit-status { color: var(--disabled); opacity: .93; }
+    .upgrade-tile {
+      grid-row: 3 / span 2; grid-column: 4;
+      display: flex; justify-content: center; align-items: center; gap: 9px;
+      border: 1px solid rgba(206,140,23,.45); background: rgba(255,183,46,.07);
+      color: #ffca3d; font-size: 12px; line-height: 1.27; font-weight: 720;
+      text-align: left; border-radius: 13px; padding: 15px 16px;
+      transition: background .16s, border-color .16s, box-shadow .16s, transform .16s;
+    }
+    button.upgrade-tile { cursor: pointer; }
+    button.upgrade-tile:hover { transform: translateY(-2px); border-color: #ffc22e; background: rgba(255,194,46,.13); box-shadow: 0 8px 24px rgba(255,170,50,.13); }
+    .upgrade-tile .icon { width: 18px; height: 18px; flex: 0 0 18px; }
+    .upgrade-tile span { max-width: 170px; }
+
+    .payment-panel { margin-top: 12px; padding: 11px 14px 9px; border: 1px solid rgba(190,165,255,.13); background: rgba(21,16,47,.63); border-radius: 15px; }
+    .primary-pay {
+      position: relative; display: flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 37px; width: 100%; border: 1px solid rgba(255,172,227,.3); border-radius: 10px;
+      background: linear-gradient(96deg, #f257b6, #da3f9e); color: #fff; font-size: 12px; font-weight: 770;
+      cursor: pointer; transition: filter .18s, transform .18s, box-shadow .18s;
+    }
+    .primary-pay:hover { filter: brightness(1.08); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(236,74,169,.21); }
+    .price-pill { border-radius: 20px; padding: 3px 9px; background: rgba(255,255,255,.23); font-size: 11px; }
+    .pay-arrow { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 27px; height: 27px; border: 1px solid rgba(255,255,255,.3); border-radius: 50%; background: rgba(255,255,255,.13); }
+    .pay-arrow .icon { width: 14px; height: 14px; }
+    .alternative-pays { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-top: 6px; }
+    .alternative-pays button { display: flex; justify-content: center; align-items: center; gap: 7px; height: 30px; border-radius: 9px; background: rgba(21,46,80,.5); border: 1px solid rgba(62,198,244,.27); color: white; font-size: 11px; font-weight: 680; cursor: pointer; transition: filter .15s, border-color .15s; }
+    .alternative-pays button:hover { border-color: var(--blue); filter: brightness(1.19); }
+    .alternative-pays .crypto { background: rgba(76,48,27,.27); border-color: rgba(255,178,56,.27); }
+    .alternative-pays .crypto:hover { border-color: #ffb238; }
+    .alternative-pays .icon { width: 14px; height: 14px; }
+    .telegram-icon { color: #5ccfff; }
+    .bitcoin-icon { color: #ffb238; }
+    .secured { display: flex; align-items: center; justify-content: center; gap: 7px; height: 21px; padding-top: 4px; color: var(--subtle); font-size: 9px; font-weight: 570; }
+    .secured > .icon { width: 12px; height: 12px; color: #34d399; }
+    .payment-brand { display: inline-flex; align-items: center; justify-content: center; height: 13px; min-width: 26px; padding: 0 3px; border-radius: 3px; font-size: 8px; line-height: 1; font-weight: 900; font-style: italic; background: #fff; color: #1b2d80; }
+    .payment-brand.mastercard { letter-spacing: -3px; font-size: 17px; font-style: normal; color: #e23e37; }
+    .payment-brand.mastercard .second-circle { color: #f4a621; }
+    .payment-brand.apple { color: #111; font-size: 10px; font-style: normal; letter-spacing: -.05em; }
+    .payment-brand.paypal { color: #224d8d; font-style: italic; font-size: 8px; }
+
+    .telegram-guide {
+      display: flex; align-items: center; gap: 11px; margin-top: 11px; min-height: 52px;
+      border-radius: 13px; padding: 8px 12px; border: 1px solid rgba(190,165,255,.09);
+      background: linear-gradient(100deg, rgba(21,35,76,.71), rgba(42,22,66,.55));
+    }
+    .guide-art { display: grid; place-items: center; width: 38px; height: 38px; flex: 0 0 38px; border-radius: 10px; color: #d6efff; background: radial-gradient(circle at 50% 65%, #2fa4ed, #5235b1 65%, #8b5cf6); }
+    .guide-art .icon { width: 21px; height: 21px; }
+    .guide-copy { min-width: 0; flex: 1; }
+    .guide-kicker { display: flex; align-items: center; gap: 5px; color: var(--muted); font-size: 9px; line-height: 1.13; }
+    .new-pill { padding: 2px 5px; border-radius: 2px; color: #fff; font-size: 8px; font-weight: 830; background: linear-gradient(80deg, #e650b0, #a24ff6); }
+    .guide-copy h2 { font-size: 12px; margin: 2px 0; font-weight: 740; letter-spacing: -.008em; }
+    .guide-copy p { color: var(--muted); font-size: 10px; line-height: 1.3; margin: 0; }
+    .guide-link { display: flex; align-items: center; justify-content: center; flex: 0 0 auto; gap: 5px; height: 27px; padding: 0 10px; background: linear-gradient(90deg, #2f8cff, #7b4dff); border: 0; border-radius: 19px; color: #fff; font-size: 10px; font-weight: 720; cursor: pointer; transition: filter .16s; }
+    .guide-link:hover { filter: brightness(1.2); }
+    .guide-link .icon { width: 12px; height: 12px; }
+
+    .toast {
+      position: fixed; bottom: 20px; left: 50%; z-index: 50; transform: translateX(-50%) translateY(15px);
+      pointer-events: none; opacity: 0; transition: opacity .24s, transform .24s;
+      max-width: min(440px, 90vw); padding: 12px 17px; text-align: center;
+      border: 1px solid #79466b; border-radius: 11px; background: #211530;
+      color: white; font-size: 13px; box-shadow: 0 10px 32px rgba(0,0,0,.4);
+    }
+    .toast.visible { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    @media (max-width: 1040px) {
+      .modal-overlay { padding: 14px; }
+      .pricing-modal { padding: 19px 16px; max-height: calc(100dvh - 28px); }
+      .plan-tabs { margin-left: 0; margin-right: 0; gap: 9px; }
+      .plan-tab { padding: 11px; gap: 8px; }
+      .plan-cost b { font-size: 19px; }
+      .benefits-grid { column-gap: 7px; }
+      .benefit { gap: 7px; font-size: 10px; padding: 7px; }
+      .benefit-icon { width: 27px; height: 27px; flex-basis: 27px; }
+    }
+    @media (max-width: 750px) {
+      .pricing-modal { max-height: calc(100dvh - 28px); }
+      .modal-header h1 { font-size: 31px; }
+      .plan-tabs { grid-template-columns: 1fr; }
+      .plan-tab { height: 56px; }
+      .summary-row { grid-template-columns: 1fr; }
+      .benefits-grid { grid-template-columns: repeat(2,minmax(0,1fr)); grid-template-rows: none; }
+      .benefit, .upgrade-tile { min-height: 58px; grid-column: auto !important; grid-row: auto !important; }
+      .benefit { font-size: 11px; }
+      .upgrade-tile { justify-content: flex-start; }
+      .guide-copy p { display: none; }
+    }
+    @media (max-width: 430px) {
+      .modal-overlay { padding: 9px; }
+      .pricing-modal { padding: 17px 11px; max-height: calc(100dvh - 18px); border-radius: 18px; }
+      .benefits-panel { padding: 12px 8px; }
+      .benefits-grid { gap: 7px; }
+      .benefit { font-size: 10px; }
+      .benefit-icon { width: 24px; height: 24px; flex-basis: 24px; }
+      .benefit-status { display: none !important; }
+      .metric-label b { font-size: 19px; }
+      .metric { gap: 5px; }
+      .metric-icon { height: 24px; width: 24px; flex-basis: 24px; }
+      .billing { font-size: 11px; }
+      .guide-art { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+  
+    /* Static all-states overview: all 3 original 1402px modals on one scrollable page. */
+    body {
+      background:
+        radial-gradient(ellipse 620px 780px at 0% 12%, rgba(103, 58, 203, .35), transparent 80%),
+        radial-gradient(ellipse 660px 620px at 100% 0%, rgba(49, 91, 186, .23), transparent 80%),
+        radial-gradient(ellipse 560px 430px at 91% 92%, rgba(120, 28, 107, .19), transparent 80%),
+        #100c23;
+      background-attachment: fixed;
+      overflow-y: auto;
+    }
+    .all-plans-showcase {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: 38px;
+      padding: 44px 24px 72px;
+    }
+    .all-plans-showcase > .pricing-modal {
+      flex: 0 0 auto;
+      width: min(1402px, 100%);
+      max-height: none;
+      overflow: visible;
+    }
+    .all-plans-showcase .plan-tab { cursor: default; }
+    .all-plans-showcase .plan-tab:hover { transform: none; }
+    @media (max-width: 750px) {
+      .all-plans-showcase { padding: 20px 10px 36px; gap: 20px; }
+    }
+</style></head><body><svg aria-hidden="true" focusable="false" height="0" style="position:absolute;overflow:hidden" width="0">
+<defs>
+<symbol id="ic-user" viewbox="0 0 24 24"><circle cx="12" cy="8" r="3.3"></circle><path d="M5.8 20v-2.2a6.2 6.2 0 0 1 12.4 0V20"></path></symbol>
+<symbol id="ic-close" viewbox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"></path></symbol>
+<symbol id="ic-sparkle" viewbox="0 0 24 24"><path d="m12 2 1.7 6.3L20 10l-6.3 1.7L12 18l-1.7-6.3L4 10l6.3-1.7L12 2ZM19 16l.6 2.4L22 19l-2.4.6L19 22l-.6-2.4L16 19l2.4-.6L19 16ZM4.5 2l.5 2 2 .5-2 .5-.5 2-.5-2L2 4.5 4 4l.5-2Z"></path></symbol>
+<symbol id="ic-flash" viewbox="0 0 24 24"><path d="m13.5 2-9 11h7l-1 9 9-12h-7l1-8Z"></path></symbol>
+<symbol id="ic-flame" viewbox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-3.2-1.7-5.5-4-7-1 3-2 4-3 4-1-2-1.5-5-1-9-3 3-6 6.5-6 12a7 7 0 0 0 7 7Z"></path><path d="M10 18c0 1.4 1 2.5 2.2 2.5 1.7 0 2.8-1.4 2.8-3"></path></symbol>
+<symbol id="ic-crown" viewbox="0 0 24 24"><path d="m2.5 7 4.9 4.4L12 5l4.6 6.4L21.5 7l-2 11h-15l-2-11ZM5 21h14"></path></symbol>
+<symbol id="ic-check" viewbox="0 0 24 24"><path d="m5 12 4 4 10-10"></path></symbol>
+<symbol id="ic-lock" viewbox="0 0 24 24"><rect height="11" rx="2" width="14" x="5" y="10"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></symbol>
+<symbol id="ic-cube" viewbox="0 0 24 24"><path d="m12 2 9 5v10l-9 5-9-5V7l9-5ZM3.5 7.5 12 12l8.5-4.5M12 12v10"></path></symbol>
+<symbol id="ic-hd" viewbox="0 0 24 24"><rect height="14" rx="3" width="18" x="3" y="5"></rect><rect height="6" rx="1" width="12" x="6" y="9"></rect><path d="M9 10v4m-2-2h4m2-2v4m0-4h1.5c2.2 0 2.2 4 0 4H13"></path></symbol>
+<symbol id="ic-copy" viewbox="0 0 24 24"><rect height="13" rx="2" width="13" x="8" y="8"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"></path></symbol>
+<symbol id="ic-chip" viewbox="0 0 24 24"><rect height="12" rx="2" width="12" x="6" y="6"></rect><rect height="6" rx="1" width="6" x="9" y="9"></rect><path d="M9 2v4m6-4v4M9 18v4m6-4v4M2 9h4m-4 6h4m12-6h4m-4 6h4"></path></symbol>
+<symbol id="ic-face" viewbox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m13-5h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3m13-5v3a2 2 0 0 1-2 2h-3"></path><path d="M9 13a3 3 0 0 0 6 0M9 10h.01M15 10h.01"></path></symbol>
+<symbol id="ic-upload" viewbox="0 0 24 24"><path d="M12 15V3m0 0L7.5 7.5M12 3l4.5 4.5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"></path></symbol>
+<symbol id="ic-sound" viewbox="0 0 24 24"><path d="m4 9 4-0.1L13 5v14l-5-4H4V9ZM17 9a5 5 0 0 1 0 6m2-9a9 9 0 0 1 0 12"></path></symbol>
+<symbol id="ic-shield" viewbox="0 0 24 24"><path d="m12 2 8 4v6c0 5.1-3.2 8.3-8 10-4.8-1.7-8-4.9-8-10V6l8-4Z"></path></symbol>
+<symbol id="ic-time" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 6v6l4 3"></path></symbol>
+<symbol id="ic-story" viewbox="0 0 24 24"><circle cx="6" cy="18" r="2"></circle><circle cx="18" cy="5" r="2"></circle><circle cx="18" cy="16" r="2"></circle><path d="M8 18c6 0 4-13 8-13M8 18c4 0 4-2 8-2"></path></symbol>
+<symbol id="ic-film" viewbox="0 0 24 24"><rect height="16" rx="2" width="16" x="4" y="4"></rect><path d="M8 4v16m8-16v16M4 9h4m8 0h4M4 15h4m8 0h4"></path></symbol>
+<symbol id="ic-speed" viewbox="0 0 24 24"><path d="M4.6 18a9 9 0 1 1 14.8 0M12 13l4.5-4.5M9 18h6"></path><circle cx="12" cy="13" r="1.3"></circle></symbol>
+<symbol id="ic-image" viewbox="0 0 24 24"><rect height="18" rx="3" width="18" x="3" y="3"></rect><circle cx="9" cy="9" r="1.5"></circle><path d="m4 18 5-5 4 3 3-5 4 6"></path></symbol>
+<symbol id="ic-video" viewbox="0 0 24 24"><rect height="14" rx="4" width="18" x="3" y="5"></rect><path d="m10 9 5 3-5 3V9Z"></path></symbol>
+<symbol id="ic-forward" viewbox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"></path></symbol>
+<symbol id="ic-plane" viewbox="0 0 24 24"><path d="m21 3-6.8 18-3.8-7.4L3 10 21 3ZM10.4 13.6 21 3"></path></symbol>
+<symbol id="ic-secure" viewbox="0 0 24 24"><rect height="11" rx="2" width="14" x="5" y="10"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></symbol>
+<symbol id="ic-bitcoin" viewbox="0 0 24 24"><path d="M9 3v18m5-18v18M6 6h9a3 3 0 0 1 0 6H8m-2 0h10a3 3 0 0 1 0 6H6"></path></symbol>
+</defs>
+</svg><main aria-label="All three SpicyLab pricing modal previews" class="all-plans-showcase"><section aria-label="Monthly Pro pricing preview" class="pricing-modal" data-preview="monthly" id="pricingModal-monthly" role="region">
+
+<header class="modal-header">
+<h1 id="modalTitle-monthly">Choose your <span>plan</span></h1>
+<p class="subtitle" id="modalSubtitle-monthly">Unlock unlimited creativity with the plan that fits you.</p>
+<div class="trust-row">
+<div aria-hidden="true" class="avatars"><span class="avatar"><svg class="icon"><use href="#ic-user"></use></svg></span><span class="avatar"><svg class="icon"><use href="#ic-user"></use></svg></span><span class="avatar"><svg class="icon"><use href="#ic-user"></use></svg></span><span class="avatar"><svg class="icon"><use href="#ic-user"></use></svg></span></div>
+<div class="trust-copy"><div>Trusted by <strong>1M+</strong> creators worldwide</div><div class="rating-line"><span aria-hidden="true" class="stars">★★★★★</span><strong>1000+</strong> ratings</div></div>
+</div>
+</header>
+<nav aria-label="Subscription plan selection shown in this preview" class="plan-tabs">
+<div aria-selected="true" class="plan-tab" data-current="true" data-plan="monthly" type="button">
+<span class="plan-icon"><svg class="icon"><use href="#ic-flash"></use></svg></span>
+<span class="identity"><span class="plan-name">Monthly Pro</span><span class="plan-coins"><span class="small-coin">$</span>300 coins</span></span>
+<span class="plan-cost"><b>$4.33</b><small>/ 100 coins</small></span>
+</div>
+<div aria-selected="false" class="plan-tab" data-plan="quarterly" type="button">
+<span class="plan-icon"><svg class="icon"><use href="#ic-flame"></use></svg></span>
+<span class="identity"><span class="plan-name">Quarterly Pro</span><span class="plan-coins"><span class="small-coin">$</span>1,500 coins</span></span>
+<span class="plan-cost"><b>$2.67</b><small>/ 100 coins</small></span>
+</div>
+<div aria-selected="false" class="plan-tab" data-plan="annual" type="button">
+<span class="best-value"><svg class="icon"><use href="#ic-crown"></use></svg>Best value</span>
+<span class="plan-icon"><svg class="icon"><use href="#ic-crown"></use></svg></span>
+<span class="identity"><span class="plan-name">Annual Pro</span><span class="plan-coins"><span class="small-coin">$</span>5,200 coins</span></span>
+<span class="plan-cost"><b>$1.35</b><small>/ 100 coins</small></span>
+</div>
+</nav>
+<div class="plan-body" id="planContent-monthly">
+<div class="summary-row">
+<div class="price-panel">
+<div class="headline-price"><strong>$4.33</strong><span>/ 100 coins</span></div>
+<p class="billing">$12.99 per month - Billed monthly</p>
+</div>
+<div aria-label="Plan usage credits" class="metrics-panel">
+<div class="metric"><span aria-hidden="true" class="metric-icon coin">$</span><span class="metric-label"><b>300</b><small>Coins</small></span></div>
+<div class="metric"><span class="metric-icon video"><svg class="icon"><use href="#ic-video"></use></svg></span><span class="metric-label"><b>7</b><small>Videos</small></span></div>
+<div class="metric"><span class="metric-icon picture"><svg class="icon"><use href="#ic-image"></use></svg></span><span class="metric-label"><b>23</b><small>Images</small></span></div>
+</div>
+</div>
+<section aria-labelledby="benefitSectionHeading-monthly" class="benefits-panel">
+<div class="benefit-heading"><strong id="benefitSectionHeading-monthly">In Monthly Pro</strong><span class="count"><strong>6</strong> of 14 benefits</span></div>
+<div aria-hidden="true" class="progress-track"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+<div class="benefits-grid"><div class="benefit available" style="grid-column:1;grid-row:1;" title="Generate videos with custom prompts">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-sparkle"></use></svg></span>
+<span class="benefit-label">Generate videos with custom prompts</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:1;grid-row:2;" title="Video quality up to 720p HD">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-hd"></use></svg></span>
+<span class="benefit-label">Video quality up to 720p HD</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:1;grid-row:3;" title="Generate 2 tasks simultaneously">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-copy"></use></svg></span>
+<span class="benefit-label">Generate 2 tasks simultaneously</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:1;grid-row:4;" title="Standard processing">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-chip"></use></svg></span>
+<span class="benefit-label">Standard processing</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:2;grid-row:1;" title="Train your own AI model">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-cube"></use></svg></span>
+<span class="benefit-label">Train your own AI model</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:2;grid-row:2;" title="Image face swap">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-face"></use></svg></span>
+<span class="benefit-label">Image face swap</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:2;grid-row:3;" title="Upload face or pose references">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-upload"></use></svg></span>
+<span class="benefit-label">Upload face or pose references</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:2;grid-row:4;" title="Generate videos with sound">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-sound"></use></svg></span>
+<span class="benefit-label">Generate videos with sound</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:3;grid-row:1;" title="Enhanced adult content generation">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-shield"></use></svg></span>
+<span class="benefit-label">Enhanced adult content generation</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:3;grid-row:2;" title="Exclusive templates">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-crown"></use></svg></span>
+<span class="benefit-label">Exclusive templates</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:3;grid-row:3;" title="Early access to new templates">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-time"></use></svg></span>
+<span class="benefit-label">Early access to new templates</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:3;grid-row:4;" title="Storyline branching">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-story"></use></svg></span>
+<span class="benefit-label">Storyline branching</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:4;grid-row:1;" title="Video compilation generation">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-film"></use></svg></span>
+<span class="benefit-label">Video compilation generation</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:4;grid-row:2;" title="Video generation up to 60 FPS">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-speed"></use></svg></span>
+<span class="benefit-label">Video generation up to 60 FPS</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="upgrade-tile"><svg aria-hidden="true" class="icon"><use href="#ic-crown"></use></svg><span>8 more with Quarterly and Annual</span></div></div>
+</section>
+<section aria-label="Payment options" class="payment-panel">
+<button class="primary-pay" data-demo="card" type="button">Pay with card <span class="price-pill">$12.99</span><span class="pay-arrow"><svg class="icon"><use href="#ic-forward"></use></svg></span></button>
+<div class="alternative-pays">
+<button data-demo="Telegram" type="button"><svg class="icon telegram-icon"><use href="#ic-plane"></use></svg>Pay with Telegram</button>
+<button class="crypto" data-demo="crypto" type="button"><svg class="icon bitcoin-icon"><use href="#ic-bitcoin"></use></svg>Pay with crypto</button>
+</div>
+<div class="secured"><svg class="icon"><use href="#ic-secure"></use></svg>Secure payment <span class="payment-brand">VISA</span><span class="payment-brand mastercard">●<span class="second-circle">●</span></span><span class="payment-brand apple">● Pay</span><span class="payment-brand paypal">PayPal</span></div>
+</section>
+<aside aria-labelledby="telegramGuideHeading-monthly" class="telegram-guide">
+<div class="guide-art"><svg class="icon"><use href="#ic-plane"></use></svg></div>
+<div class="guide-copy"><div class="guide-kicker"><span class="new-pill">New</span> Prefer to pay with Telegram?</div><h2 id="telegramGuideHeading-monthly">How to Purchase Coins via Telegram</h2><p>Follow our step-by-step guide to complete your payment and unlock more AI creations instantly.</p></div>
+<button class="guide-link" data-demo="guide" type="button">Read the guide <svg class="icon"><use href="#ic-forward"></use></svg></button>
+</aside>
+</div>
+</section><section aria-label="Quarterly Pro pricing preview" class="pricing-modal" data-preview="quarterly" id="pricingModal-quarterly" role="region">
+
+<header class="modal-header">
+<h1 id="modalTitle-quarterly">Choose your <span>plan</span></h1>
+<p class="subtitle" id="modalSubtitle-quarterly">Unlock unlimited creativity with the plan that fits you.</p>
+<div class="trust-row">
+<div aria-hidden="true" class="avatars"><span class="avatar"><svg class="icon"><use href="#ic-user"></use></svg></span><span class="avatar"><svg class="icon"><use href="#ic-user"></use></svg></span><span class="avatar"><svg class="icon"><use href="#ic-user"></use></svg></span><span class="avatar"><svg class="icon"><use href="#ic-user"></use></svg></span></div>
+<div class="trust-copy"><div>Trusted by <strong>1M+</strong> creators worldwide</div><div class="rating-line"><span aria-hidden="true" class="stars">★★★★★</span><strong>1000+</strong> ratings</div></div>
+</div>
+</header>
+<nav aria-label="Subscription plan selection shown in this preview" class="plan-tabs">
+<div aria-selected="false" class="plan-tab" data-plan="monthly" type="button">
+<span class="plan-icon"><svg class="icon"><use href="#ic-flash"></use></svg></span>
+<span class="identity"><span class="plan-name">Monthly Pro</span><span class="plan-coins"><span class="small-coin">$</span>300 coins</span></span>
+<span class="plan-cost"><b>$4.33</b><small>/ 100 coins</small></span>
+</div>
+<div aria-selected="true" class="plan-tab" data-current="true" data-plan="quarterly" type="button">
+<span class="plan-icon"><svg class="icon"><use href="#ic-flame"></use></svg></span>
+<span class="identity"><span class="plan-name">Quarterly Pro</span><span class="plan-coins"><span class="small-coin">$</span>1,500 coins</span></span>
+<span class="plan-cost"><b>$2.67</b><small>/ 100 coins</small></span>
+</div>
+<div aria-selected="false" class="plan-tab" data-plan="annual" type="button">
+<span class="best-value"><svg class="icon"><use href="#ic-crown"></use></svg>Best value</span>
+<span class="plan-icon"><svg class="icon"><use href="#ic-crown"></use></svg></span>
+<span class="identity"><span class="plan-name">Annual Pro</span><span class="plan-coins"><span class="small-coin">$</span>5,200 coins</span></span>
+<span class="plan-cost"><b>$1.35</b><small>/ 100 coins</small></span>
+</div>
+</nav>
+<div class="plan-body" id="planContent-quarterly">
+<div class="summary-row">
+<div class="price-panel">
+<div class="headline-price"><strong>$2.67</strong><span>/ 100 coins</span></div>
+<p class="billing">$12.99 per month - Billed monthly</p>
+</div>
+<div aria-label="Plan usage credits" class="metrics-panel">
+<div class="metric"><span aria-hidden="true" class="metric-icon coin">$</span><span class="metric-label"><b>1500</b><small>Coins</small></span></div>
+<div class="metric"><span class="metric-icon video"><svg class="icon"><use href="#ic-video"></use></svg></span><span class="metric-label"><b>30</b><small>Videos</small></span></div>
+<div class="metric"><span class="metric-icon picture"><svg class="icon"><use href="#ic-image"></use></svg></span><span class="metric-label"><b>100</b><small>Images</small></span></div>
+</div>
+</div>
+<section aria-labelledby="benefitSectionHeading-quarterly" class="benefits-panel">
+<div class="benefit-heading"><strong id="benefitSectionHeading-quarterly">In Monthly Pro</strong><span class="count"><strong>6</strong> of 14 benefits</span></div>
+<div aria-hidden="true" class="progress-track"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+<div class="benefits-grid"><div class="benefit available" style="grid-column:1;grid-row:1;" title="Generate videos with custom prompts">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-sparkle"></use></svg></span>
+<span class="benefit-label">Generate videos with custom prompts</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:1;grid-row:2;" title="Video quality up to 1080p Full HD">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-hd"></use></svg></span>
+<span class="benefit-label">Video quality up to 1080p Full HD</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:1;grid-row:3;" title="Generate 5 tasks simultaneously">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-copy"></use></svg></span>
+<span class="benefit-label">Generate 5 tasks simultaneously</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:1;grid-row:4;" title="Priority processing">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-chip"></use></svg></span>
+<span class="benefit-label">Priority processing</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:2;grid-row:1;" title="Train your own AI model">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-cube"></use></svg></span>
+<span class="benefit-label">Train your own AI model</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:2;grid-row:2;" title="Image face swap">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-face"></use></svg></span>
+<span class="benefit-label">Image face swap</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:2;grid-row:3;" title="Upload face or pose references">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-upload"></use></svg></span>
+<span class="benefit-label">Upload face or pose references</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:2;grid-row:4;" title="Generate videos with sound">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-sound"></use></svg></span>
+<span class="benefit-label">Generate videos with sound</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:3;grid-row:1;" title="Enhanced adult content generation">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-shield"></use></svg></span>
+<span class="benefit-label">Enhanced adult content generation</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:3;grid-row:2;" title="Exclusive templates">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-crown"></use></svg></span>
+<span class="benefit-label">Exclusive templates</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:3;grid-row:3;" title="Early access to new templates">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-time"></use></svg></span>
+<span class="benefit-label">Early access to new templates</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:3;grid-row:4;" title="Storyline branching">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-story"></use></svg></span>
+<span class="benefit-label">Storyline branching</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:4;grid-row:1;" title="Video compilation generation">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-film"></use></svg></span>
+<span class="benefit-label">Video compilation generation</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="benefit locked" style="grid-column:4;grid-row:2;" title="Video generation up to 60 FPS">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-speed"></use></svg></span>
+<span class="benefit-label">Video generation up to 60 FPS</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-lock"></use></svg></span>
+</div><div class="upgrade-tile"><svg aria-hidden="true" class="icon"><use href="#ic-crown"></use></svg><span>5 more with Annual</span></div></div>
+</section>
+<section aria-label="Payment options" class="payment-panel">
+<button class="primary-pay" data-demo="card" type="button">Pay with card <span class="price-pill">$12.99</span><span class="pay-arrow"><svg class="icon"><use href="#ic-forward"></use></svg></span></button>
+<div class="alternative-pays">
+<button data-demo="Telegram" type="button"><svg class="icon telegram-icon"><use href="#ic-plane"></use></svg>Pay with Telegram</button>
+<button class="crypto" data-demo="crypto" type="button"><svg class="icon bitcoin-icon"><use href="#ic-bitcoin"></use></svg>Pay with crypto</button>
+</div>
+<div class="secured"><svg class="icon"><use href="#ic-secure"></use></svg>Secure payment <span class="payment-brand">VISA</span><span class="payment-brand mastercard">●<span class="second-circle">●</span></span><span class="payment-brand apple">● Pay</span><span class="payment-brand paypal">PayPal</span></div>
+</section>
+<aside aria-labelledby="telegramGuideHeading-quarterly" class="telegram-guide">
+<div class="guide-art"><svg class="icon"><use href="#ic-plane"></use></svg></div>
+<div class="guide-copy"><div class="guide-kicker"><span class="new-pill">New</span> Prefer to pay with Telegram?</div><h2 id="telegramGuideHeading-quarterly">How to Purchase Coins via Telegram</h2><p>Follow our step-by-step guide to complete your payment and unlock more AI creations instantly.</p></div>
+<button class="guide-link" data-demo="guide" type="button">Read the guide <svg class="icon"><use href="#ic-forward"></use></svg></button>
+</aside>
+</div>
+</section><section aria-label="Annual Pro pricing preview" class="pricing-modal" data-preview="annual" id="pricingModal-annual" role="region">
+
+<header class="modal-header">
+<h1 id="modalTitle-annual">Choose your <span>plan</span></h1>
+<p class="subtitle" id="modalSubtitle-annual">Unlock unlimited creativity with the plan that fits you.</p>
+<div class="trust-row">
+<div aria-hidden="true" class="avatars"><span class="avatar"><svg class="icon"><use href="#ic-user"></use></svg></span><span class="avatar"><svg class="icon"><use href="#ic-user"></use></svg></span><span class="avatar"><svg class="icon"><use href="#ic-user"></use></svg></span><span class="avatar"><svg class="icon"><use href="#ic-user"></use></svg></span></div>
+<div class="trust-copy"><div>Trusted by <strong>1M+</strong> creators worldwide</div><div class="rating-line"><span aria-hidden="true" class="stars">★★★★★</span><strong>1000+</strong> ratings</div></div>
+</div>
+</header>
+<nav aria-label="Subscription plan selection shown in this preview" class="plan-tabs">
+<div aria-selected="false" class="plan-tab" data-plan="monthly" type="button">
+<span class="plan-icon"><svg class="icon"><use href="#ic-flash"></use></svg></span>
+<span class="identity"><span class="plan-name">Monthly Pro</span><span class="plan-coins"><span class="small-coin">$</span>300 coins</span></span>
+<span class="plan-cost"><b>$4.33</b><small>/ 100 coins</small></span>
+</div>
+<div aria-selected="false" class="plan-tab" data-plan="quarterly" type="button">
+<span class="plan-icon"><svg class="icon"><use href="#ic-flame"></use></svg></span>
+<span class="identity"><span class="plan-name">Quarterly Pro</span><span class="plan-coins"><span class="small-coin">$</span>1,500 coins</span></span>
+<span class="plan-cost"><b>$2.67</b><small>/ 100 coins</small></span>
+</div>
+<div aria-selected="true" class="plan-tab" data-current="true" data-plan="annual" type="button">
+<span class="best-value"><svg class="icon"><use href="#ic-crown"></use></svg>Best value</span>
+<span class="plan-icon"><svg class="icon"><use href="#ic-crown"></use></svg></span>
+<span class="identity"><span class="plan-name">Annual Pro</span><span class="plan-coins"><span class="small-coin">$</span>5,200 coins</span></span>
+<span class="plan-cost"><b>$1.35</b><small>/ 100 coins</small></span>
+</div>
+</nav>
+<div class="plan-body" id="planContent-annual">
+<div class="summary-row">
+<div class="price-panel">
+<div class="headline-price"><strong>$1.35</strong><span>/ 100 coins</span></div>
+<p class="billing">$12.99 per month - Billed monthly</p>
+</div>
+<div aria-label="Plan usage credits" class="metrics-panel">
+<div class="metric"><span aria-hidden="true" class="metric-icon coin">$</span><span class="metric-label"><b>5200</b><small>Coins</small></span></div>
+<div class="metric"><span class="metric-icon video"><svg class="icon"><use href="#ic-video"></use></svg></span><span class="metric-label"><b>100</b><small>Videos</small></span></div>
+<div class="metric"><span class="metric-icon picture"><svg class="icon"><use href="#ic-image"></use></svg></span><span class="metric-label"><b>400</b><small>Images</small></span></div>
+</div>
+</div>
+<section aria-labelledby="benefitSectionHeading-annual" class="benefits-panel">
+<div class="benefit-heading"><strong id="benefitSectionHeading-annual">In Monthly Pro</strong><span class="count"><strong>6</strong> of 14 benefits</span></div>
+<div aria-hidden="true" class="progress-track"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div>
+<div class="benefits-grid"><div class="benefit available" style="grid-column:1;grid-row:1;" title="Generate videos with custom prompts">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-sparkle"></use></svg></span>
+<span class="benefit-label">Generate videos with custom prompts</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:1;grid-row:2;" title="Video quality up to 4K Ultra HD">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-hd"></use></svg></span>
+<span class="benefit-label">Video quality up to 4K Ultra HD</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:1;grid-row:3;" title="Generate 10 tasks simultaneously">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-copy"></use></svg></span>
+<span class="benefit-label">Generate 10 tasks simultaneously</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:1;grid-row:4;" title="Highest-priority processing">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-chip"></use></svg></span>
+<span class="benefit-label">Highest-priority processing</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:2;grid-row:1;" title="Train your own AI model">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-cube"></use></svg></span>
+<span class="benefit-label">Train your own AI model</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:2;grid-row:2;" title="Image face swap">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-face"></use></svg></span>
+<span class="benefit-label">Image face swap</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:2;grid-row:3;" title="Upload face or pose references">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-upload"></use></svg></span>
+<span class="benefit-label">Upload face or pose references</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:2;grid-row:4;" title="Generate videos with sound">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-sound"></use></svg></span>
+<span class="benefit-label">Generate videos with sound</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:3;grid-row:1;" title="Enhanced adult content generation">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-shield"></use></svg></span>
+<span class="benefit-label">Enhanced adult content generation</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:3;grid-row:2;" title="Exclusive templates">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-crown"></use></svg></span>
+<span class="benefit-label">Exclusive templates</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:3;grid-row:3;" title="Early access to new templates">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-time"></use></svg></span>
+<span class="benefit-label">Early access to new templates</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:3;grid-row:4;" title="Storyline branching">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-story"></use></svg></span>
+<span class="benefit-label">Storyline branching</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:4;grid-row:1;" title="Video compilation generation">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-film"></use></svg></span>
+<span class="benefit-label">Video compilation generation</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="benefit available" style="grid-column:4;grid-row:2;" title="Video generation up to 60 FPS">
+<span class="benefit-icon"><svg aria-hidden="true" class="icon"><use href="#ic-speed"></use></svg></span>
+<span class="benefit-label">Video generation up to 60 FPS</span>
+<span class="benefit-status"><svg aria-hidden="true" class="icon"><use href="#ic-check"></use></svg></span>
+</div><div class="upgrade-tile"><svg aria-hidden="true" class="icon"><use href="#ic-sparkle"></use></svg><span>Every benefit included</span></div></div>
+</section>
+<section aria-label="Payment options" class="payment-panel">
+<button class="primary-pay" data-demo="card" type="button">Pay with card <span class="price-pill">$12.99</span><span class="pay-arrow"><svg class="icon"><use href="#ic-forward"></use></svg></span></button>
+<div class="alternative-pays">
+<button data-demo="Telegram" type="button"><svg class="icon telegram-icon"><use href="#ic-plane"></use></svg>Pay with Telegram</button>
+<button class="crypto" data-demo="crypto" type="button"><svg class="icon bitcoin-icon"><use href="#ic-bitcoin"></use></svg>Pay with crypto</button>
+</div>
+<div class="secured"><svg class="icon"><use href="#ic-secure"></use></svg>Secure payment <span class="payment-brand">VISA</span><span class="payment-brand mastercard">●<span class="second-circle">●</span></span><span class="payment-brand apple">● Pay</span><span class="payment-brand paypal">PayPal</span></div>
+</section>
+<aside aria-labelledby="telegramGuideHeading-annual" class="telegram-guide">
+<div class="guide-art"><svg class="icon"><use href="#ic-plane"></use></svg></div>
+<div class="guide-copy"><div class="guide-kicker"><span class="new-pill">New</span> Prefer to pay with Telegram?</div><h2 id="telegramGuideHeading-annual">How to Purchase Coins via Telegram</h2><p>Follow our step-by-step guide to complete your payment and unlock more AI creations instantly.</p></div>
+<button class="guide-link" data-demo="guide" type="button">Read the guide <svg class="icon"><use href="#ic-forward"></use></svg></button>
+</aside>
+</div>
+</section></main><div aria-live="polite" class="toast" id="toast" role="status"></div><script>
+    // A static design showcase: all three panels are visible immediately.
+    // Payment CTAs remain preview-only, as in the original modal.
+    (() => {
+      const toast = document.getElementById('toast');
+      let timer;
+      document.querySelectorAll('[data-demo]').forEach(button => {
+        button.addEventListener('click', () => {
+          const type = button.dataset.demo;
+          toast.textContent = type === 'guide'
+            ? 'Guide link preview — connect the original Telegram purchase guide URL.'
+            : `Payment UI preview only — connect the ${type} checkout to enable purchases.`;
+          toast.classList.add('visible');
+          clearTimeout(timer);
+          timer=setTimeout(() => toast.classList.remove('visible'), 3500);
+        });
+      });
+    })();
+</script></body></html>
