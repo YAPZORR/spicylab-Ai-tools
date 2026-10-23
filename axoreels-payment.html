@@ -1,0 +1,285 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SpicyLab — Membership Modal States (1485 × 991)</title><style>
+:root{color-scheme:dark;--page:#0c0501;--bg:#120805;--surface:#1e0e08;--surface-light:#341706;--line:#4A2813;--bright:#FF7818;--warm:#FF4E1C;--gold:#FECB00;--green:#AAFFD2;--text:#fff8f2;--muted:#D8BFB3;--faint:#A98B7D;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-synthesis:none}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}body{margin:0;min-width:320px;background:radial-gradient(ellipse 700px 400px at 0 -40px,#42210d 0,transparent 85%),radial-gradient(ellipse 700px 490px at 100% 55%,#311808 0,transparent 80%),#0c0501;color:var(--text)}
+a{color:inherit;text-decoration:none}a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.showcase{padding:44px 20px 110px}.showcase-intro{max-width:1485px;margin:0 auto 20px;display:flex;justify-content:space-between;align-items:center;gap:16px}.showcase-intro .left span{font-size:11px;font-weight:900;letter-spacing:.18em;color:#FFB066}.showcase-intro .left h1{font-size:24px;line-height:1.2;letter-spacing:-.04em;margin:6px 0 0}.showcase-intro .right{font-size:12px;color:#D7AB92;text-align:right}.scene-label{max-width:1485px;margin:40px auto 13px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#D9AC8B;letter-spacing:.13em;font-weight:800}.scene-label:first-of-type{margin-top:14px}.scene-label span:last-child{color:#896757;letter-spacing:0;font-weight:650}
+/* Each desktop modal below is exactly 1485px wide x 991px high. */
+.modal-frame{position:relative;margin:0 auto;width:1485px;height:991px;border:1px solid #703313;border-radius:25px;overflow:hidden;background:linear-gradient(135deg,#1e0c05 0%,#100703 45%,#180804 100%);box-shadow:0 30px 65px #0008,0 0 60px #FF78181b}
+.modal-frame::before{content:"";pointer-events:none;position:absolute;inset:0;background:radial-gradient(ellipse 52% 35% at 40% -14%,#FF78181f,transparent 76%),radial-gradient(ellipse 36% 48% at 99% 55%,#FF78180a,transparent 84%)}
+.modal-interior{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;gap:11px;padding:24px 30px 24px;min-width:0}
+.modal-header{display:flex;align-items:center;justify-content:space-between;gap:20px;flex:0 0 64px}.heading-copy{min-width:0}.kicker{display:flex;align-items:center;gap:9px;font-size:9px;color:#FFB066;font-weight:900;letter-spacing:.17em}.kicker i{display:block;width:17px;height:2px;background:var(--bright)}
+.modal-header h2{font-size:31px;letter-spacing:-.058em;line-height:1;margin:5px 0 2px;font-weight:900}.modal-header h2 em{color:var(--bright);font-style:normal}.modal-header p{font-size:11px;color:#c7a89a;margin:5px 0 0}.trusted{display:flex;align-items:center;gap:10px;color:#cdb8af;font-size:11px;white-space:nowrap;line-height:1.5}.trusted strong{color:#fff}.trusted-people{display:flex;padding-left:7px}.trusted-people b{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;border:2px solid #180904;margin-left:-7px;background:#6d36da;color:#fff;font-size:12px}.trusted-people b:nth-child(2){background:#d61f74}.trusted-people b:nth-child(3){background:#FECB00;color:#381b05}.trusted-people b:nth-child(4){background:#1A74CB}.rating{color:#FECB00;letter-spacing:2px}
+.tabs{flex:0 0 72px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.plan-tab{position:relative;min-width:0;display:flex;align-items:center;gap:11px;border:1px solid #522b18;background:linear-gradient(130deg,#2b140b,#180a06 73%);border-radius:13px;padding:11px 16px;transition:border-color .2s,background .2s,transform .2s}.plan-tab:hover{transform:translateY(-1px);border-color:#ba541b}.plan-tab.selected{border-color:#ff7818;background:linear-gradient(125deg,#51240b,#321406 78%);box-shadow:0 0 17px #FF4E1C25,inset 0 1px #ffffff15}.plan-tab.selected:after{content:"";position:absolute;height:3px;left:25px;right:25px;bottom:-1px;border-radius:2px;background:linear-gradient(90deg,transparent,#FF7818,transparent)}
+.tab-symbol{flex:0 0 39px;width:39px;height:39px;border-radius:11px;background:linear-gradient(130deg,#7b340e,#bb5215);color:#ffdeb0;display:grid;place-items:center}.tab-symbol svg{width:19px;height:19px}.quarterly .tab-symbol{background:linear-gradient(130deg,#99165c,#ec4899);color:#fff}.annual .tab-symbol{background:linear-gradient(130deg,#ffdf73,#eeb500);color:#382300}.tab-info{display:flex;flex:1;flex-direction:column;gap:5px;min-width:0}.tab-info b{font-size:13px;line-height:1.1;white-space:nowrap}.tab-info small{font-size:10px;color:#C5A898}.tab-price{text-align:right;display:flex;flex-direction:column;gap:4px;flex-shrink:0}.tab-price b{font-size:22px;letter-spacing:-.05em;line-height:1}.tab-price small{font-size:9px;color:#A98B7D}.best-value{position:absolute;top:-10px;right:12px;background:linear-gradient(110deg,#ffe289,#FECB00);color:#402600;padding:4px 9px;border-radius:99px;display:flex;align-items:center;gap:4px;font-size:9px;font-weight:900}.best-value svg{height:12px;width:12px}
+.summary-band{flex:0 0 104px;border-radius:15px;border:1px solid #673114;padding:11px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,2.1fr);gap:10px;background:linear-gradient(110deg,#341607,#1d0c06 56%,#331305)}
+.pricing-tile{min-width:0;display:flex;justify-content:space-between;align-items:center;gap:18px;border-radius:10px;border:1px solid #482719;background:linear-gradient(140deg,#230e06,#170906);padding:13px 20px}.current-tier{color:#F6A566;letter-spacing:.13em;font-weight:850;font-size:9px}.pricing-tile h3{font-size:22px;letter-spacing:-.05em;line-height:1.03;margin:5px 0}.pricing-tile p{font-size:11px;line-height:1.25;margin:0;color:#CDAF9F}.price-lockup{text-align:right;flex-shrink:0}.price-lockup strong{font-size:35px;letter-spacing:-.067em;line-height:1;font-weight:900;display:block}.price-lockup span{font-size:10px;color:#CDAF9F;display:block;margin-top:7px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;min-width:0}.stat{min-width:0;display:flex;gap:14px;align-items:center;border:1px solid #6b351b;background:linear-gradient(135deg,#351606,#1b0b06);border-radius:11px;padding:13px 19px}.stat-symbol{display:grid;place-items:center;color:#FF7818;flex:0 0 30px}.stat-symbol svg{width:26px;height:26px}.stat:first-child .stat-symbol{color:#FECB00}.stat:last-child .stat-symbol{color:#EC4899}.stat-text strong{font-size:31px;line-height:1;letter-spacing:-.06em;display:block;white-space:nowrap}.stat-text span{font-size:12px;color:#d2b3a1;display:block;margin-top:6px}
+.benefits-panel{border:1px solid #4d2916;border-radius:15px;min-height:0;flex:1;display:flex;flex-direction:column;gap:7px;background:linear-gradient(135deg,#1c0c06,#110703 74%);padding:14px 19px;overflow:hidden}
+.benefits-bar{height:42px;flex:0 0 42px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding-bottom:10px;border-bottom:1px solid #3a2118}.small-label{color:#FFA45E;font-size:9px;letter-spacing:.15em;font-weight:850}.benefits-bar h3{font-size:18px;line-height:1.1;letter-spacing:-.04em;margin:4px 0 0}.benefits-bar h3 em{font-style:normal;color:#FFB066}.benefits-progress{display:flex;align-items:center;gap:14px}.benefits-progress>span{display:flex;align-items:baseline;white-space:nowrap;gap:4px}.benefits-progress strong{font-size:23px;font-weight:900;letter-spacing:-.05em;color:#fff}.benefits-progress>span span{font-size:11px;color:#CDAF9F}.meter{display:flex;gap:3px;width:166px}.meter i{display:block;flex:1;height:5px;border-radius:10px;background:#40271b}.meter i.on{background:linear-gradient(90deg,#FF4E1C,#FF7818)}
+.performance-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;flex:0 0 102px;min-height:0}.power-tile{min-width:0;position:relative;padding:12px 15px 10px;display:flex;flex-direction:column;border:1px solid #954010;border-radius:12px;background:linear-gradient(135deg,#522007,#361205 68%,#421506);overflow:hidden}.power-tile:after,.benefit-card:after{content:"";position:absolute;width:135px;height:140px;border-radius:50%;border:1px solid #ff781833;right:-27px;top:-97px;box-shadow:0 0 0 28px #FF781809;pointer-events:none}.power-top{display:flex;align-items:center;gap:6px;position:relative;z-index:1}.power-icon{color:#FF8F3A;display:flex}.power-icon svg{width:14px;height:14px}.power-top>span:nth-child(2){color:#FFCEA7;font-size:10px;font-weight:900;letter-spacing:.10em}.power-check{margin-left:auto;display:flex;align-items:center;gap:4px;color:#AAFFD2;font-size:10px;font-weight:800}.power-check svg{width:12px;height:12px}.power-value{font-size:28px;letter-spacing:-.055em;margin-top:8px;line-height:1;font-weight:900;position:relative;z-index:1}.power-description{font-size:11px;color:#EBC0A9;margin-top:8px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;position:relative;z-index:1}
+.feature-section{min-height:0;flex:0 0 auto}.feature-heading{height:19px;margin-bottom:6px;display:flex;justify-content:space-between;gap:14px;align-items:center}.feature-heading strong{font-size:12px;letter-spacing:-.015em}.feature-heading span{color:#ae8f7d;font-size:10px}.included-grid,.locked-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.plan-monthly .benefit-card{min-height:100px}.plan-monthly .locked-card{min-height:84px}
+.benefit-card{position:relative;min-width:0;min-height:82px;padding:13px;display:flex;align-items:flex-start;gap:11px;border:1px solid #9a4716;background:linear-gradient(118deg,#481b08,#351306 72%,#3e1506);border-radius:11px;overflow:hidden;transition:border-color .2s,transform .2s}.benefit-card:hover{border-color:#ff7818;transform:translateY(-1px)}.benefit-icon{display:grid;place-items:center;width:33px;height:33px;flex:0 0 33px;border-radius:9px;background:#ff78181b;border:1px solid #FF78184b;color:#ff993f}.benefit-icon svg{height:18px;width:18px}.benefit-card[data-tone="pink"] .benefit-icon{color:#F7A8D8}.benefit-card[data-tone="purple"] .benefit-icon{color:#D6AAFF}.benefit-card[data-tone="blue"] .benefit-icon{color:#38E2FF}.benefit-card[data-tone="gold"] .benefit-icon{color:#FECB00}.benefit-text{position:relative;z-index:1;min-width:0}.benefit-text h4{margin:0;color:#fff5ed;font-weight:780;line-height:1.25;font-size:12.8px;letter-spacing:-.016em;overflow-wrap:anywhere}.available{display:inline-flex;align-items:center;gap:6px;margin-top:8px;color:#AAFFD2;font-size:10px;font-weight:830}.available-tick{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#10432c}.available-tick svg{width:11px;height:11px;stroke-width:3.2}
+.locked-section{margin-top:2px}.locked-card{display:flex;align-items:flex-start;min-width:0;gap:11px;min-height:69px;padding:11px 13px;border:1px dashed #572a16;border-radius:12px;background:#150905}.locked-icon{flex:0 0 31px;width:31px;height:31px;border-radius:9px;background:#22120a;border:1px solid #402517;display:grid;place-items:center;color:#705748}.locked-icon svg{width:17px;height:17px}.locked-text{min-width:0}.locked-text h4{margin:0;color:#9d8171;font-weight:730;font-size:12.2px;line-height:1.25;overflow-wrap:anywhere}.locked-text span{display:flex;align-items:center;gap:5px;color:#927465;font-size:10px;margin-top:7px}.locked-text span svg{width:12px;height:12px}.all-unlocked{margin-top:4px;display:flex;align-items:center;gap:9px;border-radius:9px;background:#12402b44;color:#AAFFD2;border:1px solid #2d7048;padding:11px 14px;font-size:12px;font-weight:750}.all-unlocked-icon{width:19px;height:19px;display:grid;place-items:center;border-radius:50%;background:#0F3B33}.all-unlocked-icon svg{width:13px;height:13px}
+.modal-checkout{border:1px solid #6b3219;border-radius:13px;display:flex;align-items:center;justify-content:space-between;padding:10px 16px 10px 19px;gap:20px;flex:0 0 66px;background:linear-gradient(100deg,#281207,#1a0b06)}.checkout-kicker{display:block;color:#F7A866;letter-spacing:.13em;font-size:9px;font-weight:900}.checkout-name{font-size:15px;margin-top:3px;letter-spacing:-.025em}.checkout-name strong{color:#fff;font-weight:890}.payment-caption{font-size:10px;color:#D8BFB3;display:block;margin-top:4px}.dot-separator{color:#ff7818}.purchase-button{min-width:268px;padding:13px 18px;background:linear-gradient(100deg,#FF4E1C,#FF7818);box-shadow:0 5px 20px #FF4E1C28;color:#fff;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;gap:16px;border-radius:9px;border:1px solid #ff9858}.purchase-button span{font-size:20px;font-weight:400;line-height:0}
+/* Responsive previews: desktop modal sizes stay fixed at 1485 x 991; smaller screens reflow. */
+@media(max-width:1525px){.showcase{padding-left:15px;padding-right:15px}.modal-frame{width:100%;height:auto;min-height:991px}.modal-interior{height:auto;min-height:991px}.benefits-panel{overflow:visible}.modal-frame{overflow:visible}}
+@media(max-width:1150px){.modal-frame,.modal-interior{min-height:0}.modal-interior{padding:20px}.pricing-tile{gap:8px;padding:10px 12px}.summary-band{grid-template-columns:1fr 1.8fr}.stat{gap:7px;padding:10px}.stat-text strong{font-size:24px}.performance-grid{flex-basis:111px}.included-grid,.locked-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.benefits-panel{padding:16px}.tabs{gap:8px}.plan-tab{padding:9px}.tab-price b{font-size:18px}.trusted{font-size:10px}}
+@media(max-width:790px){.showcase{padding:16px 9px 45px}.showcase-intro{display:block}.showcase-intro .right{display:none}.scene-label{margin:28px auto 10px}.modal-frame{border-radius:18px}.modal-interior{gap:10px;padding:17px}.modal-header{flex-basis:auto}.modal-header h2{font-size:29px}.trusted{display:none}.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));flex-basis:auto;gap:6px}.plan-tab{padding:12px 9px;border-radius:10px;gap:6px}.tab-symbol{display:none}.tab-info b{font-size:12px;white-space:normal}.tab-info small{font-size:9px}.tab-price{text-align:left}.tab-price b{font-size:18px}.tab-price small{font-size:9px}.plan-tab{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;min-height:92px}.best-value{top:-10px;right:4px;font-size:8px;padding:3px 5px}.summary-band{grid-template-columns:1fr;flex-basis:auto}.pricing-tile{min-height:93px}.stat-grid{min-height:85px}.stat{min-height:81px}.stat-text strong{font-size:21px}.stat-text span{font-size:10px}.benefits-panel{flex:auto}.benefits-bar{height:auto;flex-basis:auto}.benefits-bar h3{font-size:17px}.benefits-progress{gap:6px}.benefits-progress strong{font-size:19px}.benefits-progress>span span{font-size:10px}.meter{width:90px}.performance-grid{grid-template-columns:1fr;flex-basis:auto}.power-tile{min-height:105px}.included-grid,.locked-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.benefit-card{min-height:100px}.locked-card{min-height:78px}.feature-heading{margin-top:4px}.modal-checkout{flex-basis:auto;gap:10px;flex-wrap:wrap}.purchase-button{flex:1;min-width:150px}.checkout-name{font-size:14px}}
+@media(max-width:530px){.modal-interior{padding:13px}.modal-header h2{font-size:27px}.modal-header p{font-size:10px}.kicker{font-size:8px}.plan-tab{min-height:83px}.tab-info b{font-size:11px}.tab-price b{font-size:17px}.pricing-tile{display:flex;gap:6px;padding:12px}.pricing-tile h3{font-size:18px}.pricing-tile p{font-size:10px}.price-lockup strong{font-size:25px}.stat-grid{gap:6px}.stat{display:block;padding:10px 8px;min-height:85px}.stat-symbol svg{width:19px;height:19px}.stat-text strong{font-size:20px;margin-top:5px}.stat-text span{margin-top:3px}.benefits-panel{padding:12px 9px;gap:9px}.benefits-bar{display:block}.benefits-progress{margin-top:9px;justify-content:space-between}.benefits-bar h3{font-size:16px}.meter{width:150px}.performance-grid{gap:7px}.power-tile{min-height:101px}.included-grid,.locked-grid{grid-template-columns:1fr;gap:7px}.benefit-card{min-height:73px}.locked-card{min-height:65px}.feature-heading span{display:none}.modal-checkout{display:block}.purchase-button{margin-top:13px;width:100%}.scene-label{font-size:10px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
+</style></head><body><main class="showcase">
+<header class="showcase-intro"><div class="left"><span>SPICYLAB / MODAL DESIGN STATES</span><h1>Membership plans · Full-page showcase</h1></div><div class="right">3 complete modal layouts &nbsp;·&nbsp; 1485 × 991 px per modal<br>All benefits visible without switching tabs</div></header>
+<div class="scene-label"><span>01 / MONTHLY PRO</span><span>1485 × 991 DESKTOP MODAL</span></div>
+<article class="modal-frame plan-monthly" id="monthly" aria-labelledby="monthly-title">
+      <div class="modal-interior">
+        <header class="modal-header"><div class="heading-copy"><span class="kicker"><i></i>SPICYLAB MEMBERSHIP</span>
+            <h2 id="monthly-title">Choose your <em>plan.</em></h2><p>Unlock more creative power with the plan that fits you.</p></div>
+          <div class="trusted"><div class="trusted-people" aria-hidden="true"><b>✦</b><b>✦</b><b>✦</b><b>✦</b></div><div>Trusted by <strong>1M+</strong> creators worldwide<br><span class="rating">★★★★★</span> <strong>1000+</strong> ratings</div></div>
+        </header>
+        <nav class="tabs" aria-label="Plan showcase navigation"><a class="plan-tab monthly selected" href="#monthly" aria-current="location">
+     <span class="tab-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 9 5 3-5 3V9Z"/></svg></span><span class="tab-info"><b>Monthly Pro</b><small>300 coins</small></span>
+     <span class="tab-price"><b>$4.33</b><small>/100 coins</small></span></a><a class="plan-tab quarterly " href="#quarterly" >
+     <span class="tab-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m13 2-9 11h7l-1 9 10-12h-7l1-8Z"/></svg></span><span class="tab-info"><b>Quarterly Pro</b><small>1,500 coins</small></span>
+     <span class="tab-price"><b>$2.67</b><small>/100 coins</small></span></a><a class="plan-tab annual " href="#annual" >
+     <span class="best-value"><svg viewBox="0 0 24 24"><path d="m2 7 5 4 5-8 5 8 5-4-2 12H4L2 7Zm2 15h16"/></svg>Best value</span><span class="tab-symbol"><svg viewBox="0 0 24 24"><path d="m2 7 5 4 5-8 5 8 5-4-2 12H4L2 7Zm2 15h16"/></svg></span><span class="tab-info"><b>Annual Pro</b><small>5,200 coins</small></span>
+     <span class="tab-price"><b>$1.35</b><small>/100 coins</small></span></a></nav>
+        <section class="summary-band" aria-label="Monthly Pro pricing and credit overview">
+          <div class="pricing-tile"><div><span class="current-tier">01 / 03 &nbsp; SELECTED MEMBERSHIP</span><h3>Monthly Pro</h3><p>Create your way with the essentials</p></div>
+             <div class="price-lockup"><strong>$4.33</strong><span>/ 100 coins</span></div></div>
+          <div class="stat-grid">
+             <div class="stat"><span class="stat-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15 8H9.8a2 2 0 0 0 0 4h4.4a2 2 0 1 1 0 4H9m3-11v12"/></svg></span><div class="stat-text"><strong>300</strong><span>Coins</span></div></div>
+             <div class="stat"><span class="stat-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 9 5 3-5 3V9Z"/></svg></span><div class="stat-text"><strong>7</strong><span>Videos</span></div></div>
+             <div class="stat"><span class="stat-symbol"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 6"/></svg></span><div class="stat-text"><strong>23</strong><span>Images</span></div></div>
+          </div>
+        </section>
+        <section class="benefits-panel" aria-label="All membership benefits for Monthly Pro">
+          <div class="benefits-bar"><div><span class="small-label">YOUR PLAN BENEFITS</span><h3>Everything you get with <em>Monthly Pro</em></h3></div>
+             <div class="benefits-progress"><span><strong>7</strong><span>/ 15 included</span></span><div class="meter"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div></div>
+          </div>
+          <div class="performance-grid" aria-label="Included creation performance benefits">
+            <article class="power-tile"><div class="power-top"><span class="power-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 9 5 3-5 3V9Z"/></svg></span><span>VIDEO QUALITY</span><span class="power-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> Included</span></div>
+        <strong class="power-value">720p HD</strong><span class="power-description">Video quality up to 720p HD</span></article>
+            <article class="power-tile"><div class="power-top"><span class="power-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="12" height="12" rx="2"/><path d="M9 20h8a3 3 0 0 0 3-3V9"/></svg></span><span>PARALLEL TASKS</span><span class="power-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> Included</span></div>
+        <strong class="power-value">2 at once</strong><span class="power-description">Generate 2 tasks simultaneously</span></article>
+            <article class="power-tile"><div class="power-top"><span class="power-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m13 2-9 11h7l-1 9 10-12h-7l1-8Z"/></svg></span><span>PROCESSING SPEED</span><span class="power-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> Included</span></div>
+        <strong class="power-value">Standard</strong><span class="power-description">Standard processing</span></article>
+          </div>
+          <section class="feature-section included-section" aria-label="Included benefits for Monthly Pro">
+            <div class="feature-heading"><strong>Included benefits</strong><span>4 creative tools included</span></div>
+            <div class="included-grid"><article class="benefit-card" data-tone="pink">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4 20 11-11 4 4L8 24M16 3v4m-2-2h4M6 2v4M4 4h4m13 9v4m-2-2h4"/></svg></span>
+      <div class="benefit-text"><h4>Generate videos with custom prompts</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="purple">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 2.6 7.4L22 12l-7.4 2.6L12 22l-2.6-7.4L2 12l7.4-2.6L12 2Z"/></svg></span>
+      <div class="benefit-text"><h4>AI Undress</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="blue">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h4m6 0h4v4m0 7v4h-4m-6 0H5v-4M5 9V8m4 3h.01M15 11h.01M9 15c2 2 4 2 6 0"/></svg></span>
+      <div class="benefit-text"><h4>Image face swap</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="gold">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 9 5v10l-9 5-9-5V7l9-5Zm-9 5 9 5 9-5m-9 5v10"/></svg></span>
+      <div class="benefit-text"><h4>Train your own AI model</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article></div>
+          </section>
+          <section class="feature-section locked-section" aria-label="Benefits not included in Monthly Pro">
+        <div class="feature-heading"><strong>Not included in this plan</strong><span>8 locked benefits</span></div>
+        <div class="locked-grid"><article class="locked-card">
+      <span class="locked-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 6"/></svg></span>
+      <div class="locked-text"><h4>Upload face or pose references</h4><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Not in this plan</span></div>
+    </article><article class="locked-card">
+      <span class="locked-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 9H2v6h3l5 4V5L5 9Zm9-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg></span>
+      <div class="locked-text"><h4>Generate videos with sound</h4><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Not in this plan</span></div>
+    </article><article class="locked-card">
+      <span class="locked-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M7 3v18M17 3v18M2 9h5m-5 6h5m10-6h5m-5 6h5"/></svg></span>
+      <div class="locked-text"><h4>Video compilation generation</h4><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Not in this plan</span></div>
+    </article><article class="locked-card">
+      <span class="locked-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 18a9 9 0 1 1 14 0M12 13l4-4M9 20h6"/></svg></span>
+      <div class="locked-text"><h4>Video generation up to 60 FPS</h4><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Not in this plan</span></div>
+    </article><article class="locked-card">
+      <span class="locked-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-3.2 8-9 10-5.8-2-9-5-9-10V6l9-4Z"/></svg></span>
+      <div class="locked-text"><h4>Enhanced adult content generation</h4><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Not in this plan</span></div>
+    </article><article class="locked-card">
+      <span class="locked-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m2 7 5 4 5-8 5 8 5-4-2 12H4L2 7Zm2 15h16"/></svg></span>
+      <div class="locked-text"><h4>Exclusive templates</h4><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Not in this plan</span></div>
+    </article><article class="locked-card">
+      <span class="locked-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg></span>
+      <div class="locked-text"><h4>Early access to new templates</h4><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Not in this plan</span></div>
+    </article><article class="locked-card">
+      <span class="locked-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 18c5 0 2-12 8-12M8 18h8"/></svg></span>
+      <div class="locked-text"><h4>Storyline branching</h4><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Not in this plan</span></div>
+    </article></div>
+      </section>
+        </section>
+        <footer class="modal-checkout"><div><span class="checkout-kicker">READY TO CREATE</span><div class="checkout-name">Continue with <strong>Monthly Pro</strong></div><span class="payment-caption">Secure payment <span class="dot-separator">·</span> Card <span class="dot-separator">·</span> Telegram <span class="dot-separator">·</span> Crypto</span></div>
+         <div class="purchase-button" aria-label="Checkout UI preview">Continue with Monthly Pro <span>→</span></div></footer>
+      </div>
+    </article>
+<div class="scene-label"><span>02 / QUARTERLY PRO</span><span>1485 × 991 DESKTOP MODAL</span></div>
+<article class="modal-frame plan-quarterly" id="quarterly" aria-labelledby="quarterly-title">
+      <div class="modal-interior">
+        <header class="modal-header"><div class="heading-copy"><span class="kicker"><i></i>SPICYLAB MEMBERSHIP</span>
+            <h2 id="quarterly-title">Choose your <em>plan.</em></h2><p>Unlock more creative power with the plan that fits you.</p></div>
+          <div class="trusted"><div class="trusted-people" aria-hidden="true"><b>✦</b><b>✦</b><b>✦</b><b>✦</b></div><div>Trusted by <strong>1M+</strong> creators worldwide<br><span class="rating">★★★★★</span> <strong>1000+</strong> ratings</div></div>
+        </header>
+        <nav class="tabs" aria-label="Plan showcase navigation"><a class="plan-tab monthly " href="#monthly" >
+     <span class="tab-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 9 5 3-5 3V9Z"/></svg></span><span class="tab-info"><b>Monthly Pro</b><small>300 coins</small></span>
+     <span class="tab-price"><b>$4.33</b><small>/100 coins</small></span></a><a class="plan-tab quarterly selected" href="#quarterly" aria-current="location">
+     <span class="tab-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m13 2-9 11h7l-1 9 10-12h-7l1-8Z"/></svg></span><span class="tab-info"><b>Quarterly Pro</b><small>1,500 coins</small></span>
+     <span class="tab-price"><b>$2.67</b><small>/100 coins</small></span></a><a class="plan-tab annual " href="#annual" >
+     <span class="best-value"><svg viewBox="0 0 24 24"><path d="m2 7 5 4 5-8 5 8 5-4-2 12H4L2 7Zm2 15h16"/></svg>Best value</span><span class="tab-symbol"><svg viewBox="0 0 24 24"><path d="m2 7 5 4 5-8 5 8 5-4-2 12H4L2 7Zm2 15h16"/></svg></span><span class="tab-info"><b>Annual Pro</b><small>5,200 coins</small></span>
+     <span class="tab-price"><b>$1.35</b><small>/100 coins</small></span></a></nav>
+        <section class="summary-band" aria-label="Quarterly Pro pricing and credit overview">
+          <div class="pricing-tile"><div><span class="current-tier">02 / 03 &nbsp; SELECTED MEMBERSHIP</span><h3>Quarterly Pro</h3><p>Go further with more creative power</p></div>
+             <div class="price-lockup"><strong>$2.67</strong><span>/ 100 coins</span></div></div>
+          <div class="stat-grid">
+             <div class="stat"><span class="stat-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15 8H9.8a2 2 0 0 0 0 4h4.4a2 2 0 1 1 0 4H9m3-11v12"/></svg></span><div class="stat-text"><strong>1,500</strong><span>Coins</span></div></div>
+             <div class="stat"><span class="stat-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 9 5 3-5 3V9Z"/></svg></span><div class="stat-text"><strong>30</strong><span>Videos</span></div></div>
+             <div class="stat"><span class="stat-symbol"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 6"/></svg></span><div class="stat-text"><strong>100</strong><span>Images</span></div></div>
+          </div>
+        </section>
+        <section class="benefits-panel" aria-label="All membership benefits for Quarterly Pro">
+          <div class="benefits-bar"><div><span class="small-label">YOUR PLAN BENEFITS</span><h3>Everything you get with <em>Quarterly Pro</em></h3></div>
+             <div class="benefits-progress"><span><strong>10</strong><span>/ 15 included</span></span><div class="meter"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div></div>
+          </div>
+          <div class="performance-grid" aria-label="Included creation performance benefits">
+            <article class="power-tile"><div class="power-top"><span class="power-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 9 5 3-5 3V9Z"/></svg></span><span>VIDEO QUALITY</span><span class="power-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> Included</span></div>
+        <strong class="power-value">1080p</strong><span class="power-description">Video quality up to 1080p Full HD</span></article>
+            <article class="power-tile"><div class="power-top"><span class="power-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="12" height="12" rx="2"/><path d="M9 20h8a3 3 0 0 0 3-3V9"/></svg></span><span>PARALLEL TASKS</span><span class="power-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> Included</span></div>
+        <strong class="power-value">5 at once</strong><span class="power-description">Generate 5 tasks simultaneously</span></article>
+            <article class="power-tile"><div class="power-top"><span class="power-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m13 2-9 11h7l-1 9 10-12h-7l1-8Z"/></svg></span><span>PROCESSING SPEED</span><span class="power-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> Included</span></div>
+        <strong class="power-value">Priority</strong><span class="power-description">Priority processing</span></article>
+          </div>
+          <section class="feature-section included-section" aria-label="Included benefits for Quarterly Pro">
+            <div class="feature-heading"><strong>Included benefits</strong><span>7 creative tools included</span></div>
+            <div class="included-grid"><article class="benefit-card" data-tone="pink">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4 20 11-11 4 4L8 24M16 3v4m-2-2h4M6 2v4M4 4h4m13 9v4m-2-2h4"/></svg></span>
+      <div class="benefit-text"><h4>Generate videos with custom prompts</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="purple">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 2.6 7.4L22 12l-7.4 2.6L12 22l-2.6-7.4L2 12l7.4-2.6L12 2Z"/></svg></span>
+      <div class="benefit-text"><h4>AI Undress</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="blue">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h4m6 0h4v4m0 7v4h-4m-6 0H5v-4M5 9V8m4 3h.01M15 11h.01M9 15c2 2 4 2 6 0"/></svg></span>
+      <div class="benefit-text"><h4>Image face swap</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="gold">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 9 5v10l-9 5-9-5V7l9-5Zm-9 5 9 5 9-5m-9 5v10"/></svg></span>
+      <div class="benefit-text"><h4>Train your own AI model</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="blue">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 6"/></svg></span>
+      <div class="benefit-text"><h4>Upload face or pose references</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="pink">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 9H2v6h3l5 4V5L5 9Zm9-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg></span>
+      <div class="benefit-text"><h4>Generate videos with sound</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="purple">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M7 3v18M17 3v18M2 9h5m-5 6h5m10-6h5m-5 6h5"/></svg></span>
+      <div class="benefit-text"><h4>Video compilation generation</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article></div>
+          </section>
+          <section class="feature-section locked-section" aria-label="Benefits not included in Quarterly Pro">
+        <div class="feature-heading"><strong>Not included in this plan</strong><span>5 locked benefits</span></div>
+        <div class="locked-grid"><article class="locked-card">
+      <span class="locked-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 18a9 9 0 1 1 14 0M12 13l4-4M9 20h6"/></svg></span>
+      <div class="locked-text"><h4>Video generation up to 60 FPS</h4><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Not in this plan</span></div>
+    </article><article class="locked-card">
+      <span class="locked-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-3.2 8-9 10-5.8-2-9-5-9-10V6l9-4Z"/></svg></span>
+      <div class="locked-text"><h4>Enhanced adult content generation</h4><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Not in this plan</span></div>
+    </article><article class="locked-card">
+      <span class="locked-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m2 7 5 4 5-8 5 8 5-4-2 12H4L2 7Zm2 15h16"/></svg></span>
+      <div class="locked-text"><h4>Exclusive templates</h4><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Not in this plan</span></div>
+    </article><article class="locked-card">
+      <span class="locked-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg></span>
+      <div class="locked-text"><h4>Early access to new templates</h4><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Not in this plan</span></div>
+    </article><article class="locked-card">
+      <span class="locked-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 18c5 0 2-12 8-12M8 18h8"/></svg></span>
+      <div class="locked-text"><h4>Storyline branching</h4><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Not in this plan</span></div>
+    </article></div>
+      </section>
+        </section>
+        <footer class="modal-checkout"><div><span class="checkout-kicker">READY TO CREATE</span><div class="checkout-name">Continue with <strong>Quarterly Pro</strong></div><span class="payment-caption">Secure payment <span class="dot-separator">·</span> Card <span class="dot-separator">·</span> Telegram <span class="dot-separator">·</span> Crypto</span></div>
+         <div class="purchase-button" aria-label="Checkout UI preview">Continue with Quarterly Pro <span>→</span></div></footer>
+      </div>
+    </article>
+<div class="scene-label"><span>03 / ANNUAL PRO</span><span>1485 × 991 DESKTOP MODAL</span></div>
+<article class="modal-frame plan-annual" id="annual" aria-labelledby="annual-title">
+      <div class="modal-interior">
+        <header class="modal-header"><div class="heading-copy"><span class="kicker"><i></i>SPICYLAB MEMBERSHIP</span>
+            <h2 id="annual-title">Choose your <em>plan.</em></h2><p>Unlock more creative power with the plan that fits you.</p></div>
+          <div class="trusted"><div class="trusted-people" aria-hidden="true"><b>✦</b><b>✦</b><b>✦</b><b>✦</b></div><div>Trusted by <strong>1M+</strong> creators worldwide<br><span class="rating">★★★★★</span> <strong>1000+</strong> ratings</div></div>
+        </header>
+        <nav class="tabs" aria-label="Plan showcase navigation"><a class="plan-tab monthly " href="#monthly" >
+     <span class="tab-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 9 5 3-5 3V9Z"/></svg></span><span class="tab-info"><b>Monthly Pro</b><small>300 coins</small></span>
+     <span class="tab-price"><b>$4.33</b><small>/100 coins</small></span></a><a class="plan-tab quarterly " href="#quarterly" >
+     <span class="tab-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m13 2-9 11h7l-1 9 10-12h-7l1-8Z"/></svg></span><span class="tab-info"><b>Quarterly Pro</b><small>1,500 coins</small></span>
+     <span class="tab-price"><b>$2.67</b><small>/100 coins</small></span></a><a class="plan-tab annual selected" href="#annual" aria-current="location">
+     <span class="best-value"><svg viewBox="0 0 24 24"><path d="m2 7 5 4 5-8 5 8 5-4-2 12H4L2 7Zm2 15h16"/></svg>Best value</span><span class="tab-symbol"><svg viewBox="0 0 24 24"><path d="m2 7 5 4 5-8 5 8 5-4-2 12H4L2 7Zm2 15h16"/></svg></span><span class="tab-info"><b>Annual Pro</b><small>5,200 coins</small></span>
+     <span class="tab-price"><b>$1.35</b><small>/100 coins</small></span></a></nav>
+        <section class="summary-band" aria-label="Annual Pro pricing and credit overview">
+          <div class="pricing-tile"><div><span class="current-tier">03 / 03 &nbsp; SELECTED MEMBERSHIP</span><h3>Annual Pro</h3><p>Every feature, ready to create</p></div>
+             <div class="price-lockup"><strong>$1.35</strong><span>/ 100 coins</span></div></div>
+          <div class="stat-grid">
+             <div class="stat"><span class="stat-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15 8H9.8a2 2 0 0 0 0 4h4.4a2 2 0 1 1 0 4H9m3-11v12"/></svg></span><div class="stat-text"><strong>5,200</strong><span>Coins</span></div></div>
+             <div class="stat"><span class="stat-symbol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 9 5 3-5 3V9Z"/></svg></span><div class="stat-text"><strong>100</strong><span>Videos</span></div></div>
+             <div class="stat"><span class="stat-symbol"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 6"/></svg></span><div class="stat-text"><strong>400</strong><span>Images</span></div></div>
+          </div>
+        </section>
+        <section class="benefits-panel" aria-label="All membership benefits for Annual Pro">
+          <div class="benefits-bar"><div><span class="small-label">YOUR PLAN BENEFITS</span><h3>Everything you get with <em>Annual Pro</em></h3></div>
+             <div class="benefits-progress"><span><strong>15</strong><span>/ 15 included</span></span><div class="meter"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div></div>
+          </div>
+          <div class="performance-grid" aria-label="Included creation performance benefits">
+            <article class="power-tile"><div class="power-top"><span class="power-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 9 5 3-5 3V9Z"/></svg></span><span>VIDEO QUALITY</span><span class="power-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> Included</span></div>
+        <strong class="power-value">4K Ultra HD</strong><span class="power-description">Video quality up to 4K Ultra HD</span></article>
+            <article class="power-tile"><div class="power-top"><span class="power-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="12" height="12" rx="2"/><path d="M9 20h8a3 3 0 0 0 3-3V9"/></svg></span><span>PARALLEL TASKS</span><span class="power-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> Included</span></div>
+        <strong class="power-value">10 at once</strong><span class="power-description">Generate 10 tasks simultaneously</span></article>
+            <article class="power-tile"><div class="power-top"><span class="power-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m13 2-9 11h7l-1 9 10-12h-7l1-8Z"/></svg></span><span>PROCESSING SPEED</span><span class="power-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> Included</span></div>
+        <strong class="power-value">Highest priority</strong><span class="power-description">Highest-priority processing</span></article>
+          </div>
+          <section class="feature-section included-section" aria-label="Included benefits for Annual Pro">
+            <div class="feature-heading"><strong>Included benefits</strong><span>12 creative tools included</span></div>
+            <div class="included-grid"><article class="benefit-card" data-tone="pink">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4 20 11-11 4 4L8 24M16 3v4m-2-2h4M6 2v4M4 4h4m13 9v4m-2-2h4"/></svg></span>
+      <div class="benefit-text"><h4>Generate videos with custom prompts</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="purple">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 2.6 7.4L22 12l-7.4 2.6L12 22l-2.6-7.4L2 12l7.4-2.6L12 2Z"/></svg></span>
+      <div class="benefit-text"><h4>AI Undress</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="blue">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h4m6 0h4v4m0 7v4h-4m-6 0H5v-4M5 9V8m4 3h.01M15 11h.01M9 15c2 2 4 2 6 0"/></svg></span>
+      <div class="benefit-text"><h4>Image face swap</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="gold">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 9 5v10l-9 5-9-5V7l9-5Zm-9 5 9 5 9-5m-9 5v10"/></svg></span>
+      <div class="benefit-text"><h4>Train your own AI model</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="blue">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 6"/></svg></span>
+      <div class="benefit-text"><h4>Upload face or pose references</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="pink">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 9H2v6h3l5 4V5L5 9Zm9-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg></span>
+      <div class="benefit-text"><h4>Generate videos with sound</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="purple">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M7 3v18M17 3v18M2 9h5m-5 6h5m10-6h5m-5 6h5"/></svg></span>
+      <div class="benefit-text"><h4>Video compilation generation</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="gold">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 18a9 9 0 1 1 14 0M12 13l4-4M9 20h6"/></svg></span>
+      <div class="benefit-text"><h4>Video generation up to 60 FPS</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="pink">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-3.2 8-9 10-5.8-2-9-5-9-10V6l9-4Z"/></svg></span>
+      <div class="benefit-text"><h4>Enhanced adult content generation</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="gold">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m2 7 5 4 5-8 5 8 5-4-2 12H4L2 7Zm2 15h16"/></svg></span>
+      <div class="benefit-text"><h4>Exclusive templates</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="purple">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg></span>
+      <div class="benefit-text"><h4>Early access to new templates</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article><article class="benefit-card" data-tone="blue">
+      <span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 18c5 0 2-12 8-12M8 18h8"/></svg></span>
+      <div class="benefit-text"><h4>Storyline branching</h4><span class="available"><span class="available-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span>Included</span></div>
+    </article></div>
+          </section>
+          <div class="all-unlocked"><span class="all-unlocked-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg></span><span>All 15 benefits are included with Annual Pro.</span></div>
+        </section>
+        <footer class="modal-checkout"><div><span class="checkout-kicker">READY TO CREATE</span><div class="checkout-name">Continue with <strong>Annual Pro</strong></div><span class="payment-caption">Secure payment <span class="dot-separator">·</span> Card <span class="dot-separator">·</span> Telegram <span class="dot-separator">·</span> Crypto</span></div>
+         <div class="purchase-button" aria-label="Checkout UI preview">Continue with Annual Pro <span>→</span></div></footer>
+      </div>
+    </article>
+</main></body></html>
