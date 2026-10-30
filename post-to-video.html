@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pose to video – Create with AI flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  /* board chrome */
+  --board-bg:#e8e7eb;
+  --board-ink:#1c191e;
+  --board-muted:#5f5964;
+  --board-line:#d0cdd5;
+  --board-accent:#d61f72;
+
+  /* product UI – always dark, as on the live site */
+  --ui-bg:#140a0e;
+  --ui-card:#2a2729;
+  --ui-well:#1b1316;
+  --ui-field:#1d1619;
+  --ui-ink:#ffffff;
+  --ui-soft:#e3dbe0;
+  --ui-muted:#8f888c;
+  --pink:#ff3d8f;
+  --pink-grad:linear-gradient(90deg,#ff52a0 0%,#e3207a 100%);
+  --danger:#ff6b6b;
+  --gold:#ffd53d;
+
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --board-bg:#0f0d11;
+    --board-ink:#f2eff4;
+    --board-muted:#a29ca7;
+    --board-line:#2a262e;
+    --board-accent:#ff5ca6;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --board-bg:#0f0d11;
+  --board-ink:#f2eff4;
+  --board-muted:#a29ca7;
+  --board-line:#2a262e;
+  --board-accent:#ff5ca6;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--board-bg);
+  color:var(--board-ink);
+  font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+}
+button{appearance:none;font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer}
+button:disabled{cursor:not-allowed}
+button:focus-visible{outline:2px solid #7cc4ff;outline-offset:3px}
+.ico{width:16px;height:16px;flex:none;display:block}
+
+/* ---------- Board ---------- */
+.board{max-width:1340px;margin:0 auto;padding:44px 28px 96px}
+.board-head{
+  display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;
+  gap:12px 32px;padding-bottom:22px;border-bottom:1px solid var(--board-line)
+}
+.board-head h1{margin:0;font-size:clamp(22px,2.4vw,30px);font-weight:800;letter-spacing:-.015em}
+.board-head p{margin:6px 0 0;color:var(--board-muted);font-size:15px;max-width:66ch}
+.board-meta{font-size:13px;color:var(--board-muted)}
+
+.screen{margin-top:48px}
+.screen-head{
+  display:grid;grid-template-columns:auto 1fr;column-gap:14px;row-gap:4px;
+  margin-bottom:16px;max-width:920px
+}
+.screen-num{
+  grid-row:span 2;width:38px;height:38px;border-radius:50%;
+  border:1.5px solid var(--board-accent);color:var(--board-accent);
+  display:grid;place-items:center;font-size:14px;font-weight:800;font-variant-numeric:tabular-nums
+}
+.screen-head h2{margin:0;font-size:19px;font-weight:700;letter-spacing:-.01em}
+.screen-head p{margin:0;color:var(--board-muted);font-size:14.5px;max-width:80ch}
+
+.stage-scroll{overflow-x:auto;border-radius:20px;border:1px solid var(--board-line)}
+.stage{
+  position:relative;min-width:1040px;height:800px;overflow:hidden;
+  background:#0b0407;display:grid;place-items:center
+}
+
+/* blurred site behind the popup */
+.site{position:absolute;inset:-30px;filter:blur(11px)}
+.site span{position:absolute;display:block;border-radius:12px}
+.site .s-logo{left:11%;top:6%;width:34px;height:34px;border-radius:50%;background:#a3164b}
+.site .s-name{left:14.5%;top:6.8%;width:130px;height:18px;background:#4a3940}
+.site .s-pill{right:28%;top:5.6%;width:100px;height:40px;border-radius:99px;background:#d81f72}
+.site .s-link{right:20%;top:7%;width:100px;height:16px;background:#3a2d33}
+.site .s-coin{right:13.5%;top:6.8%;width:84px;height:20px;background:#5b4a1a}
+.site .s-ava{right:9%;top:5.6%;width:40px;height:40px;border-radius:50%;background:#3a3135}
+.site .s-h1{left:14%;top:21%;width:360px;height:48px;background:#5e4b54}
+.site .s-h2{left:14%;top:29%;width:220px;height:34px;background:#4b3b43}
+.site .s-h3{left:14%;top:35.5%;width:300px;height:14px;background:#3b2d34}
+.site .s-btn{left:14%;top:41%;width:280px;height:56px;border-radius:99px;background:#7d1541}
+.site .s-c1{right:11%;top:13%;width:24%;height:46%;background:linear-gradient(165deg,#7a5546,#3a222a 60%,#1e1216)}
+.site .s-c2{left:11%;top:62%;width:15%;height:40%;background:linear-gradient(170deg,#6a4a40,#2a1a1f)}
+.site .s-c3{left:28%;top:62%;width:15%;height:40%;background:linear-gradient(170deg,#4c3a44,#221519)}
+.site .s-c4{right:28%;top:62%;width:15%;height:40%;background:linear-gradient(170deg,#5d3b3a,#24161a)}
+.site .s-c5{right:11%;top:62%;width:15%;height:40%;background:linear-gradient(170deg,#6e5246,#2a1a1e)}
+.scrim{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(60% 50% at 50% 8%,rgba(140,15,70,.28),transparent 70%),
+    rgba(9,3,6,.72)
+}
+
+/* ---------- Popup ---------- */
+.modal{
+  position:relative;z-index:1;width:760px;padding:23px 23px 24px;border-radius:32px;
+  background:
+    radial-gradient(360px 240px at 14% 4%,rgba(160,22,78,.55),transparent 72%),
+    radial-gradient(420px 320px at 96% 100%,rgba(130,18,72,.36),transparent 72%),
+    var(--ui-bg);
+  border:1px solid rgba(255,80,150,.24);
+  box-shadow:0 40px 120px rgba(0,0,0,.65);
+  color:var(--ui-ink)
+}
+.m-close{
+  position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.32);background:rgba(255,255,255,.03);
+  display:grid;place-items:center
+}
+.m-head{text-align:center}
+.badge{
+  display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 15px;border-radius:99px;
+  border:1.5px solid var(--pink);background:rgba(255,61,143,.07);
+  font-size:12.5px;font-weight:700;letter-spacing:.05em
+}
+.badge .ico{width:12px;height:12px;color:var(--pink)}
+.m-title{margin:16px 0 0;font-size:26px;line-height:1.15;font-weight:800;letter-spacing:-.015em}
+.m-title .hl{color:var(--pink)}
+.m-sub{margin:10px 0 0;font-size:14.5px;color:var(--ui-soft)}
+
+.panes{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:22px;height:462px;margin-top:24px}
+.pane{position:relative;border-radius:20px;background:var(--ui-card);overflow:hidden}
+.pane-t2i{box-shadow:inset 0 0 0 1.5px rgba(255,61,143,.38)}
+
+.tag{
+  display:inline-flex;align-items:center;gap:7px;height:26px;padding:0 11px;border-radius:99px;
+  font-size:11.5px;font-weight:800;letter-spacing:.09em;white-space:nowrap
+}
+.pane > .tag{position:absolute;top:10px;left:12px;z-index:2}
+.tag-your{background:#1c191b;border:1.5px solid rgba(255,255,255,.42);color:#fff}
+.tag-result{background:var(--pink);color:#fff}
+.tag-t2i{background:rgba(255,61,143,.12);border:1.5px solid var(--pink);color:#ff8cbf}
+.tag-t2i .new{background:var(--pink);color:#fff;border-radius:99px;padding:2px 6px;font-size:9.5px;letter-spacing:.08em}
+
+.heart{
+  position:absolute;top:10px;right:10px;width:38px;height:38px;border-radius:50%;
+  background:#262325;border:1.5px solid rgba(255,255,255,.38);display:grid;place-items:center
+}
+.ph{position:absolute;left:0;right:0;top:142px;text-align:center;font-size:16px;letter-spacing:.02em;color:var(--ui-muted)}
+
+.flow-arrow{
+  position:absolute;left:50%;top:50%;z-index:3;width:42px;height:42px;margin:-21px 0 0 -21px;border-radius:50%;
+  background:var(--pink-grad);display:grid;place-items:center;color:#fff;
+  box-shadow:0 8px 22px rgba(255,61,143,.45)
+}
+.flow-arrow.is-idle{background:#3a3438;color:#8f888c;box-shadow:none}
+
+/* upload card (screen 01) */
+.pane-bottom{position:absolute;left:12px;right:12px;bottom:12px;display:flex;flex-direction:column;gap:10px}
+.examples{background:var(--ui-well);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:11px 10px 10px}
+.examples-title{margin:0 0 9px 3px;font-size:13.5px;font-weight:500;color:var(--ui-soft)}
+.ex-row{position:relative;display:flex;gap:9px;overflow:hidden;padding:4px;margin:-4px}
+.ex{
+  flex:0 0 74px;height:100px;border-radius:9px;background:#2d292c;border:1px solid rgba(255,255,255,.07);
+  display:grid;place-items:center;font-size:11px;letter-spacing:.03em;color:var(--ui-muted)
+}
+.ex-next{
+  position:absolute;right:8px;top:50%;width:28px;height:28px;margin-top:-14px;border-radius:50%;
+  background:#1c1719;border:1.5px solid rgba(255,255,255,.35);display:grid;place-items:center;color:#fff
+}
+.ex-next .ico{width:14px;height:14px}
+
+/* NEW: Create with AI entry */
+.ai-entry{
+  position:relative;flex:0 0 74px;height:100px;border-radius:9px;
+  border:1.5px solid var(--pink);
+  background:radial-gradient(90% 70% at 50% 0%,rgba(255,61,143,.38),transparent 72%),#2a1220;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
+  padding:14px 4px 6px;text-align:center;color:#fff;
+  box-shadow:0 0 0 3px rgba(255,61,143,.14),0 8px 20px rgba(255,61,143,.22)
+}
+.ai-entry .orb{
+  width:28px;height:28px;border-radius:50%;background:var(--pink-grad);
+  display:grid;place-items:center;box-shadow:0 4px 12px rgba(255,61,143,.5)
+}
+.ai-entry .orb .ico{width:14px;height:14px}
+.ai-entry strong{font-size:11px;line-height:1.2;font-weight:700}
+.ai-entry .new{
+  position:absolute;top:5px;right:5px;padding:2px 5px;border-radius:99px;
+  background:var(--pink);font-size:8px;font-weight:800;letter-spacing:.08em
+}
+
+.btn-upload{
+  position:relative;height:38px;border-radius:99px;background:var(--pink-grad);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:15px;font-weight:700;color:#fff;box-shadow:0 6px 18px rgba(227,32,122,.35)
+}
+.btn-upload .ad{
+  position:absolute;left:7px;top:7px;height:24px;padding:0 9px;border-radius:99px;
+  background:#6d0f38;font-size:11.5px;font-weight:800;letter-spacing:.04em;display:grid;place-items:center
+}
+.btn-select{
+  height:38px;border-radius:99px;
+  background:linear-gradient(90deg,#24161b,#3a242a 50%,#24161b);
+  border:1.5px solid rgba(255,255,255,.22);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:15px;font-weight:700;color:#fff
+}
+
+/* text-to-image card (screens 02 + 03) */
+.t2i{position:absolute;inset:0;display:flex;flex-direction:column;padding:12px 14px}
+.t2i-head{display:flex;flex-direction:column;align-items:flex-start;gap:9px}
+.link-back{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:#ff5ca6}
+.link-back .ico{width:15px;height:15px}
+.f-label{
+  display:flex;justify-content:space-between;align-items:baseline;
+  margin:14px 0 7px;font-size:13px;font-weight:600;color:#f1eaee
+}
+.f-label .count{font-size:12px;font-weight:500;color:var(--ui-muted);font-variant-numeric:tabular-nums}
+.prompt{
+  height:108px;padding:10px 12px;border-radius:12px;background:var(--ui-field);
+  border:1.5px solid rgba(255,255,255,.14);font-size:13px;line-height:1.5;color:#7d767a
+}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{
+  height:32px;padding:0 12px;display:inline-flex;align-items:center;gap:7px;border-radius:99px;
+  border:1.5px solid rgba(255,255,255,.14);background:#221c1f;color:#c7bfc4;
+  font-size:13px;font-weight:600
+}
+.chip[aria-pressed="true"]{border-color:var(--pink);background:rgba(255,61,143,.16);color:#fff}
+.ratio{display:inline-block;border:1.5px solid currentColor;border-radius:2px}
+.r-1-1{width:11px;height:11px}
+.r-3-4{width:10px;height:13px}
+.r-9-16{width:8px;height:14px}
+.r-16-9{width:15px;height:9px}
+.grow{flex:1}
+.btn-gen-img{
+  height:40px;border-radius:99px;display:flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--pink-grad);font-size:14.5px;font-weight:700;color:#fff
+}
+.btn-gen-img:disabled{background:#3a3438;color:#80787d}
+.btn-gen-img .coin{width:18px;height:18px;font-size:10px}
+.btn-gen-img:disabled .coin{filter:grayscale(1) brightness(.65)}
+.cost-note{margin:7px 0 0;text-align:center;font-size:11.5px;color:var(--ui-muted)}
+
+.gen-img-wrap{flex:1;min-height:0;display:grid;place-items:center;margin:10px 0 12px}
+.gen-img{
+  height:274px;aspect-ratio:9/16;border-radius:12px;
+  background:linear-gradient(180deg,#3d383b,#2e2a2d);
+  border:1px solid rgba(255,255,255,.1);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  text-align:center;color:#9d969a;font-size:12px;letter-spacing:.03em
+}
+.gen-img small{font-size:11px;color:#7d767a}
+.btn-use{
+  height:40px;border-radius:99px;background:var(--pink-grad);
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  font-size:15px;font-weight:700;color:#fff;box-shadow:0 6px 18px rgba(227,32,122,.35)
+}
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.act{
+  height:36px;border-radius:99px;border:1.5px solid rgba(255,255,255,.16);background:#221c1f;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  font-size:13px;font-weight:600;color:#efe8ec
+}
+.act .ico{width:14px;height:14px}
+.act-del{color:var(--danger);border-color:rgba(255,107,107,.42);background:rgba(255,107,107,.06)}
+
+/* footer */
+.m-foot{display:flex;align-items:center;gap:14px;margin-top:22px}
+.round{
+  width:50px;height:50px;border-radius:50%;flex:none;
+  border:1.5px solid rgba(255,255,255,.22);background:rgba(255,255,255,.03);
+  display:grid;place-items:center;color:#fff
+}
+.round .ico{width:18px;height:18px}
+.gen{
+  flex:1;height:54px;border-radius:99px;background:var(--pink-grad);
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  font-size:20px;font-weight:800;letter-spacing:.08em;color:#fff;
+  box-shadow:0 10px 30px rgba(227,32,122,.38)
+}
+.gen .ico{width:18px;height:18px}
+.cost{
+  display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 5px;border-radius:99px;
+  background:rgba(110,10,50,.45);font-size:17px;font-weight:800;letter-spacing:0;color:var(--gold)
+}
+.coin{
+  width:22px;height:22px;border-radius:50%;flex:none;
+  background:radial-gradient(circle at 35% 30%,#ffe680,#f2a900 70%);
+  color:#7a4700;font-size:12px;font-weight:900;letter-spacing:0;
+  display:grid;place-items:center;box-shadow:inset 0 -1px 0 rgba(0,0,0,.2)
+}
+.gen:disabled{background:#2b2528;color:#6f676c;box-shadow:none}
+.gen:disabled .cost{background:rgba(255,255,255,.05);color:#6f676c}
+.gen:disabled .coin{filter:grayscale(1) brightness(.6)}
+
+/* ---------- Board parts + mobile detail page ---------- */
+.board{--anno:#1f6fff;--cut:#d93a3f;--ok:#12864f;--board-panel:#f5f4f7}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .board{--anno:#6aa5ff;--cut:#ff6b70;--ok:#3fcf8e;--board-panel:#17141a}
+}
+:root[data-theme="dark"] .board{--anno:#6aa5ff;--cut:#ff6b70;--ok:#3fcf8e;--board-panel:#17141a}
+.board code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em;padding:1px 5px;border-radius:5px;background:var(--board-panel);border:1px solid var(--board-line)}
+.part{display:flex;align-items:center;gap:14px;margin-top:44px;font-size:14px;font-weight:700;color:var(--board-muted)}
+.part::after{content:"";flex:1;height:1px;background:var(--board-line)}
+.part + .screen{margin-top:22px}
+
+.m-canvas{overflow-x:auto;border:1px solid var(--board-line);border-radius:20px;background:var(--board-panel)}
+.m-pair{display:grid;grid-template-columns:repeat(2,max-content);column-gap:40px;row-gap:18px;justify-content:center;align-items:start;min-width:max-content;padding:32px 24px 36px}
+.m-row{display:flex;justify-content:center;align-items:flex-start;gap:32px;min-width:max-content;padding:32px 24px 36px}
+.m-fig{margin:0;display:grid;grid-template-columns:min-content;gap:18px}
+.m-cap{margin:0;max-width:540px;font-size:14px;line-height:1.5;color:var(--board-muted)}
+.m-cap b{display:block;margin-bottom:3px;font-size:15.5px;color:var(--board-ink)}
+.m-cap b.is-before{color:var(--cut)}
+.m-cap b.is-after{color:var(--ok)}
+
+/* phone */
+.phone{
+  --sat:0px;--sab:0px;--d-bg:#0e0b0d;--cta:linear-gradient(90deg,#8b5cf6,#ec4899);
+  position:relative;flex:none;width:var(--w);height:var(--h);
+  display:flex;flex-direction:column;overflow:hidden;border-radius:18px;
+  background:var(--d-bg);color:#fff;
+  box-shadow:0 0 0 7px #1b181c,0 0 0 8px rgba(255,255,255,.14),0 24px 60px rgba(0,0,0,.3)
+}
+.phone.is-ios{border-radius:48px}
+.p-status{position:absolute;top:0;left:0;right:0;z-index:3;height:var(--sat);display:flex;align-items:center;justify-content:space-between;padding:0 34px 0 42px;font-size:15px;font-weight:600}
+.phone.is-se .p-status{padding:0 10px;font-size:12px}
+.p-batt{width:25px;height:12px;border-radius:4px;border:1.5px solid rgba(255,255,255,.5);padding:1.5px;background:#fff;background-clip:content-box}
+.phone.is-se .p-batt{width:22px;height:10px}
+.p-island{position:absolute;top:11px;left:50%;z-index:4;width:124px;height:36px;margin-left:-62px;border-radius:20px;background:#000}
+.p-home{position:absolute;bottom:8px;left:50%;z-index:4;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:rgba(255,255,255,.9)}
+.p-top{flex:none;height:calc(52px + var(--sat));padding:var(--sat) 12px 0;display:flex;align-items:center}
+.p-back,.b-back{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#fff;background:rgba(255,255,255,.1)}
+.p-back .ico,.b-back .ico{width:20px;height:20px}
+.p-stage{flex:1;min-height:0}
+.p-stage img{display:block;width:100%;height:100%;object-fit:contain}
+.p-bottom{flex:none;height:calc(126px + var(--sab));padding:12px 16px calc(12px + var(--sab));display:flex;flex-direction:column;gap:12px}
+.p-meta{display:flex;align-items:center;gap:12px;height:42px}
+.p-titles{flex:1;min-width:0}
+.p-titles strong,.p-titles span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-titles strong{font-size:17px;line-height:22px;font-weight:700}
+.p-titles span{font-size:13px;line-height:18px;color:rgba(255,255,255,.7)}
+.p-acts{flex:none;display:flex;gap:4px}
+.p-act{width:44px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;font-weight:500;line-height:1.2;color:#fff}
+.p-act .ico{width:20px;height:20px}
+.p-cta,.b-cta{height:48px;border-radius:14px;background:var(--cta);display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:700;color:#fff}
+.p-cta .ico,.b-cta .ico{width:18px;height:18px}
+
+/* before: fixed-size work, overlays on top */
+.b-work{position:absolute;left:0;top:-120px;width:540px;height:960px}
+.b-work img{display:block;width:100%;height:100%}
+.b-back{position:absolute;left:21px;top:21px;width:38px;height:38px;background:rgba(0,0,0,.5)}
+.b-rail{position:absolute;right:12px;top:396px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.b-rail .p-act{width:auto;font-size:12px;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+.b-rail .p-act .ico{width:30px;height:30px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5))}
+.b-title{position:absolute;left:20px;right:80px;bottom:96px;text-shadow:0 1px 4px rgba(0,0,0,.7)}
+.b-title strong{display:block;font-size:20px;font-weight:700}
+.b-title span{display:block;font-size:14px;color:rgba(255,255,255,.85)}
+.b-cta{position:absolute;left:20px;right:20px;bottom:20px;height:52px;border-radius:12px;font-size:17px}
+.cut-wrap{position:relative;width:540px;padding:120px 0}
+.cut-ghost{position:absolute;left:0;top:0;width:540px;height:960px;outline:2px dashed var(--cut);outline-offset:-1px}
+.cut-ghost img{display:block;width:100%;height:100%;opacity:.3}
+.cut-band{position:absolute;left:0;right:0;height:120px;display:grid;place-items:center;background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--cut) 22%,transparent) 0 7px,transparent 7px 14px)}
+.cut-band.top{top:0}
+.cut-band.bot{bottom:0}
+.cut-band span{padding:4px 11px;border-radius:99px;background:var(--cut);color:#fff;font-size:12.5px;font-weight:700}
+
+/* dimension lines */
+.dim-wrap{display:flex;align-items:flex-start;gap:16px;padding-top:120px}
+.hdim{display:flex;margin-top:16px}
+.hdim > div{position:relative;flex:none;border-top:1.5px solid var(--anno);padding-top:6px;text-align:center;font-size:12px;font-weight:600;color:var(--anno);white-space:nowrap}
+.hdim > div::before,.hdim > div::after{content:"";position:absolute;top:-6px;width:1.5px;height:11px;background:var(--anno)}
+.hdim > div::before{left:0}
+.hdim > div::after{right:0}
+.vdim{flex:none;width:92px;display:flex;flex-direction:column}
+.vdim > div{position:relative;flex:none;border-left:1.5px solid var(--anno);display:flex;align-items:center;padding-left:10px;font-size:12px;font-weight:600;line-height:1.3;color:var(--anno)}
+.vdim > div::before,.vdim > div::after{content:"";position:absolute;left:-6px;width:11px;height:1.5px;background:var(--anno)}
+.vdim > div::before{top:0}
+.vdim > div::after{bottom:0}
+
+/* build notes */
+.notes{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:28px;align-items:start}
+.notes ol{margin:0;padding-left:22px;display:grid;gap:12px;font-size:14.5px;max-width:64ch}
+.notes li::marker{color:var(--board-accent);font-weight:700}
+.code{margin:0;padding:18px 20px;border-radius:16px;border:1px solid var(--board-line);background:#16131a;color:#ece7f1;font:12.5px/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-x:auto}
+.code code{padding:0;border:0;border-radius:0;background:none;color:inherit;font:inherit}
+.code .c{color:#8d8596}
+@media (max-width:980px){.notes{grid-template-columns:1fr}}
+
+@media (max-width:640px){
+  .board{padding:28px 16px 64px}
+  .screen{margin-top:36px}
+}
+</style>
+</head>
+<body>
+
+<!-- icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-spark" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C12.6 7.4 16.6 11.4 22 12C16.6 12.6 12.6 16.6 12 22C11.4 16.6 7.4 12.6 2 12C7.4 11.4 11.4 7.4 12 2Z"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4M7 9l5-5 5 5"/><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></g></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="1.6"/><path d="M21 15l-5-5L5 21"/></g></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></g></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></g></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 4v6M6 14v6M12 4v2M12 10v10M18 4v10M18 18v2"/><circle cx="6" cy="12" r="2"/><circle cx="12" cy="8" r="2"/><circle cx="18" cy="16" r="2"/></g></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/></g></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></g></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></g></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></g></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7"/></symbol>
+  <symbol id="i-chevl" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-heart-f" viewBox="0 0 24 24"><path fill="currentColor" d="M12 20.5s-8-4.9-8-11A4.6 4.6 0 0 1 12 6.6a4.6 4.6 0 0 1 8 2.9c0 6.1-8 11-8 11z"/></symbol>
+  <symbol id="i-bookmark-f" viewBox="0 0 24 24"><path fill="currentColor" d="M6 3.5h12a1 1 0 0 1 1 1V21l-7-4.5L5 21V4.5a1 1 0 0 1 1-1z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><g fill="currentColor"><circle cx="18" cy="5.5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="18.5" r="3"/></g><path fill="none" stroke="currentColor" stroke-width="2" d="M8.6 10.6l6.8-3.7M8.6 13.4l6.8 3.7"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M13 2L4.5 13.5H11L10 22l8.5-11.5H12L13 2z"/></symbol>
+</svg>
+
+<main class="board">
+  <header class="board-head">
+    <div>
+      <h1>UI updates: Create with AI flow and mobile detail page</h1>
+      <p>Screens 01–03 add the text-to-image flow to the Pose to video popup. Screens 04–06 fix the mobile detail page so the whole work stays visible on small screens. Everything not marked NEW or After is the current UI.</p>
+    </div>
+    <span class="board-meta">Static mockup</span>
+  </header>
+
+  <div class="part">Pose to video popup: Create with AI</div>
+
+  <!-- ========== 01 ========== -->
+  <section class="screen" id="screen-01">
+    <header class="screen-head">
+      <span class="screen-num">01</span>
+      <h2>Upload panel with the new Create with AI entry</h2>
+      <p>A Create with AI tile now leads the examples row. Clicking it swaps this card for the text-to-image panel inside the same popup (screen 02). Upload, Select and the sample images work as before.</p>
+    </header>
+    <div class="stage-scroll">
+      <div class="stage">
+        <div class="site" aria-hidden="true">
+          <span class="s-logo"></span><span class="s-name"></span><span class="s-pill"></span><span class="s-link"></span><span class="s-coin"></span><span class="s-ava"></span>
+          <span class="s-h1"></span><span class="s-h2"></span><span class="s-h3"></span><span class="s-btn"></span>
+          <span class="s-c1"></span><span class="s-c2"></span><span class="s-c3"></span><span class="s-c4"></span><span class="s-c5"></span>
+        </div>
+        <div class="scrim" aria-hidden="true"></div>
+
+        <div class="modal" role="dialog" aria-label="Pose to video">
+          <button class="m-close" aria-label="Close"><svg class="ico"><use href="#i-close"/></svg></button>
+          <div class="m-head">
+            <span class="badge"><svg class="ico"><use href="#i-spark"/></svg>Pose to video</span>
+            <h3 class="m-title">Get this <span class="hl">pose</span> in motion</h3>
+            <p class="m-sub">Choose an image and get a video in this exact pose.</p>
+          </div>
+
+          <div class="panes">
+            <div class="pane">
+              <span class="tag tag-your">YOUR IMAGE</span>
+              <span class="ph">IMAGE PLACEHOLDER</span>
+              <div class="pane-bottom">
+                <div class="examples">
+                  <p class="examples-title">No photo? Try an example</p>
+                  <div class="ex-row">
+                    <button class="ai-entry" aria-label="Create with AI, text to image">
+                      <span class="new">NEW</span>
+                      <span class="orb"><svg class="ico"><use href="#i-spark"/></svg></span>
+                      <strong>Create<br>with AI</strong>
+                    </button>
+                    <span class="ex">IMAGE</span>
+                    <span class="ex">IMAGE</span>
+                    <span class="ex">IMAGE</span>
+                    <span class="ex-next"><svg class="ico"><use href="#i-chev"/></svg></span>
+                  </div>
+                </div>
+                <button class="btn-upload"><span class="ad">AD</span><svg class="ico"><use href="#i-upload"/></svg>Upload Image</button>
+                <button class="btn-select"><svg class="ico"><use href="#i-image"/></svg>Select Image</button>
+              </div>
+            </div>
+
+            <span class="flow-arrow" aria-hidden="true"><svg class="ico"><use href="#i-arrow"/></svg></span>
+
+            <div class="pane">
+              <span class="tag tag-result">RESULT</span>
+              <span class="heart"><svg class="ico"><use href="#i-heart"/></svg></span>
+              <span class="ph">IMAGE PLACEHOLDER</span>
+            </div>
+          </div>
+
+          <div class="m-foot">
+            <button class="round" aria-label="Settings"><svg class="ico"><use href="#i-sliders"/></svg></button>
+            <button class="gen"><svg class="ico"><use href="#i-spark"/></svg>GENERATE<span class="cost"><span class="coin">$</span>50</span></button>
+            <button class="round" aria-label="Info"><svg class="ico"><use href="#i-info"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 02 ========== -->
+  <section class="screen" id="screen-02">
+    <header class="screen-head">
+      <span class="screen-num">02</span>
+      <h2>Text-to-image panel, after clicking Create with AI</h2>
+      <p>Prompt up to 500 characters, size (9:16 by default) and resolution (1080p by default). Generate image shows its own coin cost and stays disabled until there’s a prompt. The video GENERATE stays off because there’s no image yet. Back returns to screen 01 and keeps any selected image.</p>
+    </header>
+    <div class="stage-scroll">
+      <div class="stage">
+        <div class="site" aria-hidden="true">
+          <span class="s-logo"></span><span class="s-name"></span><span class="s-pill"></span><span class="s-link"></span><span class="s-coin"></span><span class="s-ava"></span>
+          <span class="s-h1"></span><span class="s-h2"></span><span class="s-h3"></span><span class="s-btn"></span>
+          <span class="s-c1"></span><span class="s-c2"></span><span class="s-c3"></span><span class="s-c4"></span><span class="s-c5"></span>
+        </div>
+        <div class="scrim" aria-hidden="true"></div>
+
+        <div class="modal" role="dialog" aria-label="Pose to video">
+          <button class="m-close" aria-label="Close"><svg class="ico"><use href="#i-close"/></svg></button>
+          <div class="m-head">
+            <span class="badge"><svg class="ico"><use href="#i-spark"/></svg>Pose to video</span>
+            <h3 class="m-title">Get this <span class="hl">pose</span> in motion</h3>
+            <p class="m-sub">Choose an image and get a video in this exact pose.</p>
+          </div>
+
+          <div class="panes">
+            <div class="pane pane-t2i">
+              <div class="t2i">
+                <div class="t2i-head">
+                  <span class="tag tag-t2i">TEXT TO IMAGE <span class="new">NEW</span></span>
+                  <button class="link-back"><svg class="ico"><use href="#i-back"/></svg>Back</button>
+                </div>
+
+                <div class="f-label"><span>Prompt</span><span class="count">0/500</span></div>
+                <div class="prompt">Describe the photo you want, e.g. a person standing on a beach at sunset, full body, soft light…</div>
+
+                <div class="f-label"><span>Size</span></div>
+                <div class="chips">
+                  <button class="chip" aria-pressed="false"><span class="ratio r-1-1"></span>1:1</button>
+                  <button class="chip" aria-pressed="false"><span class="ratio r-3-4"></span>3:4</button>
+                  <button class="chip" aria-pressed="true"><span class="ratio r-9-16"></span>9:16</button>
+                  <button class="chip" aria-pressed="false"><span class="ratio r-16-9"></span>16:9</button>
+                </div>
+
+                <div class="f-label"><span>Resolution</span></div>
+                <div class="chips">
+                  <button class="chip" aria-pressed="false">720p</button>
+                  <button class="chip" aria-pressed="true">1080p</button>
+                </div>
+
+                <div class="grow"></div>
+                <button class="btn-gen-img" disabled><svg class="ico"><use href="#i-spark"/></svg>Generate image<span class="coin">$</span>8</button>
+                <p class="cost-note">The video is generated separately below</p>
+              </div>
+            </div>
+
+            <span class="flow-arrow is-idle" aria-hidden="true"><svg class="ico"><use href="#i-arrow"/></svg></span>
+
+            <div class="pane">
+              <span class="tag tag-result">RESULT</span>
+              <span class="heart"><svg class="ico"><use href="#i-heart"/></svg></span>
+              <span class="ph">IMAGE PLACEHOLDER</span>
+            </div>
+          </div>
+
+          <div class="m-foot">
+            <button class="round" aria-label="Settings"><svg class="ico"><use href="#i-sliders"/></svg></button>
+            <button class="gen" disabled><svg class="ico"><use href="#i-spark"/></svg>GENERATE<span class="cost"><span class="coin">$</span>50</span></button>
+            <button class="round" aria-label="Info"><svg class="ico"><use href="#i-info"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 03 ========== -->
+  <section class="screen" id="screen-03">
+    <header class="screen-head">
+      <span class="screen-num">03</span>
+      <h2>Result: four actions on the generated image</h2>
+      <p>The image shows in the left card in the chosen size. Use puts it into YOUR IMAGE and switches on the video GENERATE. Download saves it to the device; Delete and Report each open a small popup first. Edit prompt returns to screen 02 with the prompt and settings kept. Regenerate is removed.</p>
+    </header>
+    <div class="stage-scroll">
+      <div class="stage">
+        <div class="site" aria-hidden="true">
+          <span class="s-logo"></span><span class="s-name"></span><span class="s-pill"></span><span class="s-link"></span><span class="s-coin"></span><span class="s-ava"></span>
+          <span class="s-h1"></span><span class="s-h2"></span><span class="s-h3"></span><span class="s-btn"></span>
+          <span class="s-c1"></span><span class="s-c2"></span><span class="s-c3"></span><span class="s-c4"></span><span class="s-c5"></span>
+        </div>
+        <div class="scrim" aria-hidden="true"></div>
+
+        <div class="modal" role="dialog" aria-label="Pose to video">
+          <button class="m-close" aria-label="Close"><svg class="ico"><use href="#i-close"/></svg></button>
+          <div class="m-head">
+            <span class="badge"><svg class="ico"><use href="#i-spark"/></svg>Pose to video</span>
+            <h3 class="m-title">Get this <span class="hl">pose</span> in motion</h3>
+            <p class="m-sub">Choose an image and get a video in this exact pose.</p>
+          </div>
+
+          <div class="panes">
+            <div class="pane pane-t2i">
+              <div class="t2i">
+                <div class="t2i-head">
+                  <span class="tag tag-t2i">TEXT TO IMAGE <span class="new">NEW</span></span>
+                  <button class="link-back"><svg class="ico"><use href="#i-back"/></svg>Edit prompt</button>
+                </div>
+
+                <div class="gen-img-wrap">
+                  <div class="gen-img">GENERATED IMAGE<small>9:16</small></div>
+                </div>
+
+                <button class="btn-use"><svg class="ico"><use href="#i-check"/></svg>Use</button>
+                <div class="acts">
+                  <button class="act"><svg class="ico"><use href="#i-download"/></svg>Download</button>
+                  <button class="act act-del"><svg class="ico"><use href="#i-trash"/></svg>Delete</button>
+                  <button class="act"><svg class="ico"><use href="#i-flag"/></svg>Report</button>
+                </div>
+              </div>
+            </div>
+
+            <span class="flow-arrow is-idle" aria-hidden="true"><svg class="ico"><use href="#i-arrow"/></svg></span>
+
+            <div class="pane">
+              <span class="tag tag-result">RESULT</span>
+              <span class="heart"><svg class="ico"><use href="#i-heart"/></svg></span>
+              <span class="ph">IMAGE PLACEHOLDER</span>
+            </div>
+          </div>
+
+          <div class="m-foot">
+            <button class="round" aria-label="Settings"><svg class="ico"><use href="#i-sliders"/></svg></button>
+            <button class="gen" disabled><svg class="ico"><use href="#i-spark"/></svg>GENERATE<span class="cost"><span class="coin">$</span>50</span></button>
+            <button class="round" aria-label="Info"><svg class="ico"><use href="#i-info"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="part">Mobile detail page: fit the whole work</div>
+
+  <!-- ========== 04 ========== -->
+  <section class="screen" id="screen-04">
+    <header class="screen-head">
+      <span class="screen-num">04</span>
+      <h2>Detail page on a small screen: before and after</h2>
+      <p>Today the work is drawn at a fixed size that’s taller than a 540 × 720 screen, so the top and bottom are cut off and the controls sit on top of it. After the fix, the work scales like <code>object-fit: contain</code>, height first, and is centered with the page background on both sides.</p>
+    </header>
+    <div class="m-canvas">
+      <div class="m-pair">
+        <p class="m-cap"><b class="is-before">Before</b>Surface Duo, 540 × 720. A 9:16 work drawn at a fixed 540 × 960.</p>
+        <p class="m-cap"><b class="is-after">After</b>Same screen and work. The work fits the available height at its own ratio, and nothing sits on top of it.</p>
+
+        <div class="cut-wrap">
+          <div class="cut-ghost"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='720' height='1280' viewBox='0 0 720 1280'><rect width='720' height='1280' fill='%233a353d'/><path d='M0 0L720 1280M720 0L0 1280' stroke='%234d4652' stroke-width='3'/><rect x='2' y='2' width='716' height='1276' fill='none' stroke='%23625b68' stroke-width='4'/><rect x='170' y='592' width='380' height='96' rx='14' fill='%233a353d'/><text x='360' y='656' fill='%23aaa2b0' font-family='Arial,Helvetica,sans-serif' font-size='46' font-weight='700' text-anchor='middle'>WORK 9:16</text></svg>" alt=""></div>
+          <div class="cut-band top"><span>120px cut off</span></div>
+          <div class="cut-band bot"><span>120px cut off</span></div>
+          <div class="phone is-before" style="--w:540px;--h:720px">
+            <div class="b-work"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='720' height='1280' viewBox='0 0 720 1280'><rect width='720' height='1280' fill='%233a353d'/><path d='M0 0L720 1280M720 0L0 1280' stroke='%234d4652' stroke-width='3'/><rect x='2' y='2' width='716' height='1276' fill='none' stroke='%23625b68' stroke-width='4'/><rect x='170' y='592' width='380' height='96' rx='14' fill='%233a353d'/><text x='360' y='656' fill='%23aaa2b0' font-family='Arial,Helvetica,sans-serif' font-size='46' font-weight='700' text-anchor='middle'>WORK 9:16</text></svg>" alt="Work, 9:16"></div>
+            <span class="b-back"><svg class="ico"><use href="#i-chevl"/></svg></span>
+            <div class="b-rail">
+              <span class="p-act"><svg class="ico"><use href="#i-heart-f"/></svg>528</span>
+              <span class="p-act"><svg class="ico"><use href="#i-bookmark-f"/></svg>Collect</span>
+              <span class="p-act"><svg class="ico"><use href="#i-share"/></svg>Share</span>
+            </div>
+            <div class="b-title"><strong>Template name</strong><span>Works with upper body photo</span></div>
+            <span class="b-cta"><svg class="ico"><use href="#i-bolt"/></svg>Generate immediately</span>
+          </div>
+        </div>
+
+        <div class="dim-wrap">
+          <div>
+            <div class="phone" style="--w:540px;--h:720px">
+              <div class="p-top"><span class="p-back"><svg class="ico"><use href="#i-chevl"/></svg></span></div>
+              <div class="p-stage"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='720' height='1280' viewBox='0 0 720 1280'><rect width='720' height='1280' fill='%233a353d'/><path d='M0 0L720 1280M720 0L0 1280' stroke='%234d4652' stroke-width='3'/><rect x='2' y='2' width='716' height='1276' fill='none' stroke='%23625b68' stroke-width='4'/><rect x='170' y='592' width='380' height='96' rx='14' fill='%233a353d'/><text x='360' y='656' fill='%23aaa2b0' font-family='Arial,Helvetica,sans-serif' font-size='46' font-weight='700' text-anchor='middle'>WORK 9:16</text></svg>" alt="Work, 9:16"></div>
+              <div class="p-bottom">
+                <div class="p-meta">
+                  <div class="p-titles"><strong>Template name</strong><span>Works with upper body photo</span></div>
+                  <div class="p-acts">
+                    <span class="p-act"><svg class="ico"><use href="#i-heart-f"/></svg>528</span>
+                    <span class="p-act"><svg class="ico"><use href="#i-bookmark-f"/></svg>Collect</span>
+                    <span class="p-act"><svg class="ico"><use href="#i-share"/></svg>Share</span>
+                  </div>
+                </div>
+                <span class="p-cta"><svg class="ico"><use href="#i-bolt"/></svg>Generate immediately</span>
+              </div>
+            </div>
+            <div class="hdim">
+              <div style="width:117.5px">Blank 118</div>
+              <div style="width:305px">Work 305 × 542</div>
+              <div style="width:117.5px">Blank 118</div>
+            </div>
+          </div>
+          <div class="vdim">
+            <div style="height:52px">Top bar<br>52</div>
+            <div style="height:542px">Available<br>height<br>542</div>
+            <div style="height:126px">Bottom area<br>126</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 05 ========== -->
+  <section class="screen" id="screen-05">
+    <header class="screen-head">
+      <span class="screen-num">05</span>
+      <h2>After, on other screen sizes</h2>
+      <p>The same rules on phones with safe areas. A square or landscape work hits the screen width before the available height, so it fits the width and is centered vertically instead.</p>
+    </header>
+    <div class="m-canvas">
+      <div class="m-row">
+        <figure class="m-fig">
+          <div class="phone is-se" style="--w:375px;--h:667px;--sat:20px;--sab:0px">
+            <div class="p-status"><span>9:41</span><span class="p-batt"></span></div>
+            <div class="p-top"><span class="p-back"><svg class="ico"><use href="#i-chevl"/></svg></span></div>
+            <div class="p-stage"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='720' height='1280' viewBox='0 0 720 1280'><rect width='720' height='1280' fill='%233a353d'/><path d='M0 0L720 1280M720 0L0 1280' stroke='%234d4652' stroke-width='3'/><rect x='2' y='2' width='716' height='1276' fill='none' stroke='%23625b68' stroke-width='4'/><rect x='170' y='592' width='380' height='96' rx='14' fill='%233a353d'/><text x='360' y='656' fill='%23aaa2b0' font-family='Arial,Helvetica,sans-serif' font-size='46' font-weight='700' text-anchor='middle'>WORK 9:16</text></svg>" alt="Work, 9:16"></div>
+            <div class="p-bottom">
+              <div class="p-meta">
+                <div class="p-titles"><strong>Template name</strong><span>Works with upper body photo</span></div>
+                <div class="p-acts">
+                  <span class="p-act"><svg class="ico"><use href="#i-heart-f"/></svg>528</span>
+                  <span class="p-act"><svg class="ico"><use href="#i-bookmark-f"/></svg>Collect</span>
+                  <span class="p-act"><svg class="ico"><use href="#i-share"/></svg>Share</span>
+                </div>
+              </div>
+              <span class="p-cta"><svg class="ico"><use href="#i-bolt"/></svg>Generate immediately</span>
+            </div>
+          </div>
+          <figcaption class="m-cap"><b>iPhone SE, 375 × 667</b>9:16 work. Available height 667 − 72 − 126 = 469, so the work is 264 × 469 with about 56 blank on each side.</figcaption>
+        </figure>
+
+        <figure class="m-fig">
+          <div class="phone is-ios" style="--w:393px;--h:852px;--sat:59px;--sab:34px">
+            <div class="p-status"><span>9:41</span><span class="p-batt"></span></div>
+            <span class="p-island"></span>
+            <div class="p-top"><span class="p-back"><svg class="ico"><use href="#i-chevl"/></svg></span></div>
+            <div class="p-stage"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='720' height='1280' viewBox='0 0 720 1280'><rect width='720' height='1280' fill='%233a353d'/><path d='M0 0L720 1280M720 0L0 1280' stroke='%234d4652' stroke-width='3'/><rect x='2' y='2' width='716' height='1276' fill='none' stroke='%23625b68' stroke-width='4'/><rect x='170' y='592' width='380' height='96' rx='14' fill='%233a353d'/><text x='360' y='656' fill='%23aaa2b0' font-family='Arial,Helvetica,sans-serif' font-size='46' font-weight='700' text-anchor='middle'>WORK 9:16</text></svg>" alt="Work, 9:16"></div>
+            <div class="p-bottom">
+              <div class="p-meta">
+                <div class="p-titles"><strong>Template name</strong><span>Works with upper body photo</span></div>
+                <div class="p-acts">
+                  <span class="p-act"><svg class="ico"><use href="#i-heart-f"/></svg>528</span>
+                  <span class="p-act"><svg class="ico"><use href="#i-bookmark-f"/></svg>Collect</span>
+                  <span class="p-act"><svg class="ico"><use href="#i-share"/></svg>Share</span>
+                </div>
+              </div>
+              <span class="p-cta"><svg class="ico"><use href="#i-bolt"/></svg>Generate immediately</span>
+            </div>
+            <span class="p-home"></span>
+          </div>
+          <figcaption class="m-cap"><b>iPhone 15, 393 × 852</b>9:16 work. Available height 852 − 111 − 160 = 581 (safe areas included), so the work is 327 × 581 with about 33 blank on each side.</figcaption>
+        </figure>
+
+        <figure class="m-fig">
+          <div class="phone is-ios" style="--w:393px;--h:852px;--sat:59px;--sab:34px">
+            <div class="p-status"><span>9:41</span><span class="p-batt"></span></div>
+            <span class="p-island"></span>
+            <div class="p-top"><span class="p-back"><svg class="ico"><use href="#i-chevl"/></svg></span></div>
+            <div class="p-stage"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1080' height='1080' viewBox='0 0 1080 1080'><rect width='1080' height='1080' fill='%233a353d'/><path d='M0 0L1080 1080M1080 0L0 1080' stroke='%234d4652' stroke-width='4'/><rect x='3' y='3' width='1074' height='1074' fill='none' stroke='%23625b68' stroke-width='6'/><rect x='330' y='482' width='420' height='116' rx='18' fill='%233a353d'/><text x='540' y='560' fill='%23aaa2b0' font-family='Arial,Helvetica,sans-serif' font-size='58' font-weight='700' text-anchor='middle'>WORK 1:1</text></svg>" alt="Work, 1:1"></div>
+            <div class="p-bottom">
+              <div class="p-meta">
+                <div class="p-titles"><strong>Template name</strong><span>Works with upper body photo</span></div>
+                <div class="p-acts">
+                  <span class="p-act"><svg class="ico"><use href="#i-heart-f"/></svg>528</span>
+                  <span class="p-act"><svg class="ico"><use href="#i-bookmark-f"/></svg>Collect</span>
+                  <span class="p-act"><svg class="ico"><use href="#i-share"/></svg>Share</span>
+                </div>
+              </div>
+              <span class="p-cta"><svg class="ico"><use href="#i-bolt"/></svg>Generate immediately</span>
+            </div>
+            <span class="p-home"></span>
+          </div>
+          <figcaption class="m-cap"><b>iPhone 15, square work</b>Height first would make it 581 wide, wider than the screen, so it fits the width instead: 393 × 393, centered with blank above and below.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 06 ========== -->
+  <section class="screen" id="screen-06">
+    <header class="screen-head">
+      <span class="screen-num">06</span>
+      <h2>Build notes</h2>
+      <p>How the size is worked out, plus a CSS starting point. The same rules apply to images and videos.</p>
+    </header>
+    <div class="notes">
+      <ol>
+        <li><b>Height first.</b> Available height = screen height − top bar (52) − bottom area (126) − the top and bottom safe areas. The work is never taller than this.</li>
+        <li><b>Width from the work’s own ratio.</b> If the result is narrower than the screen, center the work and fill both sides with the detail page background.</li>
+        <li><b>Wider works fit the width.</b> If the height-first width is wider than the screen (square or landscape works), fit the width and center vertically. This is exactly <code>object-fit: contain</code>; never <code>cover</code>.</li>
+        <li><b>Nothing on top of the work.</b> The back button gets its own top bar. The title, Like, Collect, Share and Generate move into the bottom area.</li>
+        <li><b>Use <code>100dvh</code>, not <code>100vh</code>.</b> On mobile browsers 100vh includes the area behind the address bar, which pushes the bottom off screen. <code>env(safe-area-inset-*)</code> needs <code>viewport-fit=cover</code> in the viewport meta tag.</li>
+      </ol>
+<pre class="code"><code><span class="c">/* Layout: the middle row is the available height */</span>
+.detail        { height: 100dvh; display: flex; flex-direction: column;
+                 background: var(--detail-bg); }
+.detail-top    { flex: none; height: calc(52px + env(safe-area-inset-top));
+                 padding-top: env(safe-area-inset-top); }
+.detail-media  { flex: 1; min-height: 0; }
+.detail-media img,
+.detail-media video { display: block; width: 100%; height: 100%;
+                      object-fit: contain; }
+.detail-bottom { flex: none; height: calc(126px + env(safe-area-inset-bottom));
+                 padding-bottom: env(safe-area-inset-bottom); }
+
+<span class="c">/* Same size in JS, height first */</span>
+const availH = innerHeight - topBar - bottomArea - safeTop - safeBottom;
+let h = availH;
+let w = h * workW / workH;
+if (w &gt; innerWidth) { w = innerWidth; h = w * workH / workW; }</code></pre>
+    </div>
+  </section>
+</main>
+</body>
+</html>
