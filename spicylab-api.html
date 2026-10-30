@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spicylab API</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0E0A20;
+  --bg-2:#120D29;
+  --bg-3:#09061A;
+  --surface:#18123A;
+  --surface-2:#201849;
+  --line:rgba(167,139,250,.16);
+  --line-2:rgba(192,132,252,.36);
+  --text:#F6F3FF;
+  --muted:#AEA7CF;
+  --dim:#857FA9;
+  --grad:linear-gradient(95deg,#7C3AED 0%,#A845F2 50%,#DE3FE4 100%);
+  --grad-text:linear-gradient(92deg,#C4A1FF 0%,#C27BFF 45%,#EE6CF2 100%);
+  --haze:rgba(124,58,237,.42);
+  --haze-2:rgba(217,70,239,.20);
+  --nav-bg:rgba(22,16,48,.74);
+  --grid:rgba(167,139,250,.07);
+  --chip:rgba(139,92,246,.12);
+  --mint-ink:#5EE9B5;
+  --mint-bg:rgba(52,211,153,.12);
+  --n-amber:#FBBF24;
+  --n-sky:#38BDF8;
+  --n-pink:#F472B6;
+  --n-violet:#B794FF;
+  --glow:0 40px 90px -30px rgba(168,85,247,.65);
+  --focus:#C084FC;
+  --c-bg:#0B0818;
+  --c-bg-2:#110C24;
+  --c-line:rgba(167,139,250,.15);
+  --c-text:#ECE8FF;
+  --c-dim:#8A84AE;
+  --wrap:1180px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#F7F4FF;
+  --bg-2:#EFEAFD;
+  --bg-3:#E8E1FB;
+  --surface:#FFFFFF;
+  --surface-2:#F5F1FF;
+  --line:rgba(91,33,182,.13);
+  --line-2:rgba(124,58,237,.32);
+  --text:#170F30;
+  --muted:#5A5379;
+  --dim:#7D7699;
+  --grad-text:linear-gradient(92deg,#7C3AED 0%,#9333EA 45%,#C026D3 100%);
+  --haze:rgba(167,139,250,.40);
+  --haze-2:rgba(232,121,249,.22);
+  --nav-bg:rgba(255,255,255,.82);
+  --grid:rgba(91,33,182,.06);
+  --chip:rgba(139,92,246,.09);
+  --mint-ink:#047857;
+  --mint-bg:rgba(16,185,129,.12);
+  --n-amber:#D97706;
+  --n-sky:#0284C7;
+  --n-pink:#DB2777;
+  --n-violet:#7C3AED;
+  --glow:0 40px 80px -34px rgba(124,58,237,.45);
+  --focus:#7C3AED;
+}
+
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 100px);background:var(--bg);-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.6 "Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
+main{overflow-x:clip}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:8px}
+h1,h2,h3{margin:0;font-family:"Nunito","Inter",system-ui,sans-serif;color:var(--text);text-wrap:balance}
+p{margin:0}
+.wrap{width:min(var(--wrap),100% - 40px);margin-inline:auto}
+.ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.grad-text{background:var(--grad-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 22px;border-radius:14px;font:700 15px/1 "Inter",sans-serif;white-space:nowrap;transition:transform .15s ease,box-shadow .2s ease,background-color .2s ease}
+.btn .ic{width:17px;height:17px}
+.btn-grad{background:var(--grad);color:#fff;box-shadow:0 12px 30px -12px rgba(192,70,240,.75),inset 0 1px 0 rgba(255,255,255,.25)}
+.btn-grad:hover{transform:translateY(-1px);box-shadow:0 16px 34px -12px rgba(192,70,240,.9),inset 0 1px 0 rgba(255,255,255,.25)}
+.btn-ghost{border:1px solid var(--line-2);color:var(--text)}
+.btn-ghost:hover{background:var(--chip)}
+.btn-sm{height:38px;padding:0 18px;border-radius:12px;font-size:14px}
+
+/* Nav */
+.nav-wrap{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;padding:14px 20px 0}
+.nav{max-width:var(--wrap);margin:0 auto;display:flex;align-items:center;gap:14px;height:62px;padding:0 10px 0 14px;border:1px solid var(--line);border-radius:18px;background:var(--nav-bg);-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%)}
+.brand{display:flex;align-items:center;gap:9px;font:800 18px/1 "Nunito",sans-serif;letter-spacing:-.01em;flex:none}
+.brand-mark{width:30px;height:30px}
+.brand-tag{font:700 11px/1 "Inter",sans-serif;padding:4px 7px;border-radius:7px;background:var(--chip);border:1px solid var(--line-2)}
+.nav-links{display:flex;gap:2px;list-style:none;margin:0 0 0 10px;padding:0}
+.nav-links a{display:block;padding:9px 13px;border-radius:10px;font:500 14px/1 "Inter",sans-serif;color:var(--muted)}
+.nav-links a:hover{color:var(--text);background:var(--chip)}
+.nav-links a[aria-current="page"]{background:var(--grad);color:#fff;font-weight:600}
+.nav-actions{margin-left:auto;display:flex;align-items:center;gap:4px}
+.icon-btn{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;color:var(--muted)}
+.icon-btn:hover{color:var(--text);background:var(--chip)}
+.nav-sep{width:1px;height:22px;background:var(--line);margin:0 6px}
+.menu-btn{display:none}
+.mobile-menu{max-width:var(--wrap);margin:8px auto 0;padding:8px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
+.mobile-menu:not([hidden]){display:grid;gap:2px}
+.mobile-menu a{display:block;padding:12px 14px;border-radius:12px;font:600 15px/1 "Inter",sans-serif;color:var(--muted)}
+.mobile-menu a:hover,.mobile-menu a[aria-current="page"]{background:var(--chip);color:var(--text)}
+
+/* Pills / labels */
+.pill{display:inline-flex;align-items:center;gap:9px;padding:7px 14px 7px 12px;border-radius:999px;border:1px solid var(--line-2);background:var(--chip);font:600 13px/1 "Inter",sans-serif}
+.pill i{width:7px;height:7px;border-radius:50%;background:#34D399;box-shadow:0 0 0 3px rgba(52,211,153,.2);flex:none}
+.pill.caps{font-size:12px;letter-spacing:.08em}
+
+/* Hero */
+.hero{position:relative;isolation:isolate;padding:clamp(48px,7vw,88px) 0 clamp(72px,9vw,112px)}
+.hero-bg{position:absolute;inset:-100px 0 0;z-index:-1;pointer-events:none;background:radial-gradient(58% 55% at 28% 0%,var(--haze),transparent 70%),radial-gradient(40% 45% at 84% 22%,var(--haze-2),transparent 70%)}
+.hero-bg::after{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(70% 60% at 50% 32%,#000 20%,transparent 75%);mask-image:radial-gradient(70% 60% at 50% 32%,#000 20%,transparent 75%)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(32px,4.5vw,56px);align-items:center}
+.hero-copy{position:relative}
+.hero h1{margin-top:22px;font-weight:900;font-size:clamp(34px,3.9vw,52px);line-height:1.06;letter-spacing:-.028em;text-wrap:wrap}
+.hero h1 .grad-text{padding-bottom:.08em}
+.lede{margin-top:20px;max-width:34em;font-size:clamp(16px,1.3vw,18px);color:var(--muted);text-wrap:pretty}
+.cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}
+.apps{margin-top:36px;padding-top:22px;border-top:1px dashed var(--line-2);max-width:540px}
+.apps-label{font:700 12px/1 "Inter",sans-serif;letter-spacing:.1em;color:var(--dim)}
+.apps-note{margin-top:8px;font-size:14px;line-height:1.5;color:var(--muted)}
+.app-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.app-chip{display:inline-flex;align-items:center;gap:9px;height:42px;padding:0 15px 0 8px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font:600 14px/1 "Inter",sans-serif}
+.app-chip:hover{border-color:var(--line-2)}
+.app-ico{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--chip)}
+.app-ico svg{width:18px;height:18px}
+
+/* Coins */
+.coin{position:absolute;width:var(--s,44px);height:var(--s,44px);border-radius:50%;pointer-events:none;background:radial-gradient(circle at 34% 30%,#FFE9A8 0 14%,#FBBF24 40%,#E08A0B 78%,#B86B05 100%);box-shadow:inset 0 0 0 calc(var(--s,44px)*.09) rgba(255,214,102,.55),inset 0 -3px 6px rgba(120,60,0,.35),0 0 34px rgba(245,165,36,.45)}
+.coin::after{content:"$";position:absolute;inset:0;display:grid;place-items:center;font:900 calc(var(--s,44px)*.48)/1 "Nunito",sans-serif;color:rgba(170,95,0,.6)}
+.coin.soft{filter:blur(1.5px);opacity:.75}
+.spark{position:absolute;width:10px;height:10px;border-radius:50%;background:#F59E0B;box-shadow:0 0 14px rgba(245,158,11,.75);pointer-events:none}
+
+/* Console */
+.console-wrap{position:relative}
+.console-wrap::before{content:"";position:absolute;inset:14% 8% -6%;background:var(--grad);filter:blur(64px);opacity:.42;border-radius:40px;z-index:-1}
+.console{position:relative;border-radius:22px;background:var(--c-bg);border:1px solid rgba(192,132,252,.32);box-shadow:var(--glow),inset 0 1px 0 rgba(255,255,255,.06);overflow:hidden;color:var(--c-text)}
+.console-top{display:flex;align-items:center;gap:12px;height:52px;padding:0 14px 0 16px;border-bottom:1px solid var(--c-line);background:var(--c-bg-2)}
+.dots{display:flex;gap:6px;flex:none}
+.dots i{width:10px;height:10px;border-radius:50%}
+.dots i:nth-child(1){background:#F472B6}.dots i:nth-child(2){background:#FBBF24}.dots i:nth-child(3){background:#34D399}
+.tabs{display:flex;margin:0 auto 0 4px;min-width:0}
+.tab{position:relative;display:flex;align-items:center;height:52px;padding:0 12px;font:600 13px/1 "Inter",sans-serif;color:var(--c-dim)}
+.tab.is-active{color:#fff}
+.tab.is-active::after{content:"";position:absolute;left:10px;right:10px;bottom:-1px;height:2px;border-radius:2px;background:var(--grad)}
+.status{display:inline-flex;align-items:center;gap:7px;height:26px;padding:0 10px;border-radius:999px;background:rgba(52,211,153,.12);color:#6EE7B7;font:600 12px/1 "JetBrains Mono",monospace;white-space:nowrap;flex:none}
+.status i{width:7px;height:7px;border-radius:50%;background:#34D399;box-shadow:0 0 0 3px rgba(52,211,153,.2)}
+.endpoint{display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid var(--c-line);font:500 13px/1.2 "JetBrains Mono",monospace;white-space:nowrap}
+.method{padding:5px 8px;border-radius:7px;background:rgba(52,211,153,.14);color:#6EE7B7;font-weight:700;font-size:11.5px;flex:none}
+.c-section{padding:15px 18px 16px}
+.c-section.res{border-top:1px solid var(--c-line);background:var(--c-bg-2)}
+.c-label{font:700 11px/1 "Inter",sans-serif;letter-spacing:.12em;color:var(--c-dim);margin-bottom:12px}
+.code{margin:0;font:400 12px/1.75 "JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre;overflow-x:auto;color:var(--c-text)}
+.req .code{min-height:calc(12px * 1.75 * 9)}
+.res .code{min-height:calc(12px * 1.75 * 4);font-size:11.5px;white-space:pre-wrap;overflow-wrap:anywhere}
+.ck{color:#C4B5FD}.cs{color:#F9A8D4}.cc{color:#5EEAD4}.cn{color:#FCD34D}.cp{color:#8E88B4}
+.caret{display:inline-block;width:7px;height:1.15em;vertical-align:-.22em;margin-left:1px;background:#E879F9;animation:blink 1s steps(1) infinite}
+.console-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 14px;border-top:1px solid var(--c-line);font:600 11.5px/1 "JetBrains Mono",monospace;color:var(--c-dim)}
+.meta{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:8px;background:rgba(167,139,250,.08);white-space:nowrap}
+.meta-end{margin-left:auto}
+@keyframes blink{50%{opacity:0}}
+
+/* Stats */
+.stats{background:var(--bg-2);border-block:1px solid var(--line)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.stat{display:grid;gap:8px;justify-items:center;padding:38px 16px;text-align:center}
+.stat + .stat{border-left:1px solid var(--line)}
+.stat-num{font:900 clamp(38px,4.4vw,54px)/1 "Nunito",sans-serif;letter-spacing:-.02em}
+.stat-lbl{font:500 14px/1.4 "Inter",sans-serif;color:var(--muted)}
+.n-amber{color:var(--n-amber)}.n-sky{color:var(--n-sky)}.n-pink{color:var(--n-pink)}.n-violet{color:var(--n-violet)}
+
+/* Sections */
+.section{padding-block:clamp(80px,10vw,128px)}
+.section.alt{background:var(--bg-2)}
+.head{margin-bottom:clamp(36px,5vw,52px)}
+.head.center{text-align:center}
+.h2{margin-top:18px;font-weight:900;font-size:clamp(32px,4.2vw,50px);line-height:1.06;letter-spacing:-.025em}
+
+/* Tiles */
+.tile{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.3);flex:none}
+.tile .ic{width:20px;height:20px}
+.t-violet{background:linear-gradient(140deg,#A78BFA,#7C3AED)}
+.t-pink{background:linear-gradient(140deg,#F9A8D4,#DB2777)}
+.t-amber{background:linear-gradient(140deg,#FCD34D,#F59E0B)}
+.t-sky{background:linear-gradient(140deg,#7DD3FC,#2563EB)}
+.t-teal{background:linear-gradient(140deg,#5EEAD4,#0D9488)}
+.t-orange{background:linear-gradient(140deg,#FDBA74,#F97316)}
+
+/* Bento */
+.bento{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+.card{position:relative;display:flex;flex-direction:column;gap:12px;padding:26px;border-radius:24px;background:var(--surface);border:1px solid var(--line);overflow:hidden}
+.card-head{display:flex;align-items:center;gap:12px}
+.num{display:inline-grid;place-items:center;min-width:34px;height:26px;padding:0 8px;border-radius:999px;background:var(--chip);border:1px solid var(--line-2);font:700 12px/1 "JetBrains Mono",monospace;color:var(--muted)}
+.card h3{font-weight:800;font-size:21px;letter-spacing:-.01em}
+.card-head .tile{margin-left:auto}
+.card > p{color:var(--muted);font-size:15px;max-width:36em}
+.span-4{grid-column:span 4}.span-3{grid-column:span 3}.span-2{grid-column:span 2}
+.viz{margin-top:auto;padding-top:12px}
+.panel{padding:18px;border-radius:18px;background:var(--surface-2);border:1px solid var(--line)}
+.model-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.model-pill{display:flex;align-items:center;gap:10px;height:46px;padding:0 14px;border-radius:13px;border:1px solid var(--line);background:var(--surface);font:600 14px/1 "Inter",sans-serif}
+.model-pill i{width:12px;height:12px;border-radius:4px;flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.shield-viz{position:relative;display:grid;place-items:center;height:170px}
+.ring{position:absolute;border-radius:50%;border:1px solid var(--line-2)}
+.ring.r1{width:156px;height:156px;opacity:.45}
+.ring.r2{width:112px;height:112px;opacity:.75}
+.ring.r3{width:112px;height:112px;border:0;background:radial-gradient(circle,rgba(168,85,247,.28),transparent 70%)}
+.shield{position:relative;width:68px;height:68px;border-radius:22px;display:grid;place-items:center;background:var(--grad);color:#fff;box-shadow:0 18px 40px -14px rgba(192,70,240,.9),inset 0 1px 0 rgba(255,255,255,.3)}
+.shield .ic{width:30px;height:30px}
+.shield-ok{position:absolute;top:-8px;right:-8px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#10B981;color:#fff;border:3px solid var(--surface)}
+.shield-ok .ic{width:13px;height:13px;stroke-width:3.2}
+.flow{display:grid;grid-template-columns:auto minmax(36px,1fr) auto;align-items:center}
+.hub{width:56px;height:56px;border-radius:17px;display:grid;place-items:center;background:var(--c-bg);border:1px solid rgba(192,132,252,.45);box-shadow:0 0 0 6px var(--chip),0 10px 30px -10px rgba(168,85,247,.8)}
+.hub svg{width:32px;height:32px}
+.fan-wrap{position:relative;align-self:stretch}
+.fan{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.fan path{fill:none;stroke:#A855F7;stroke-opacity:.65;stroke-width:2;vector-effect:non-scaling-stroke}
+.chans{display:grid;gap:10px}
+.chan{display:flex;align-items:center;gap:10px;height:40px;padding:0 14px 0 8px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font:600 13.5px/1 "Inter",sans-serif;white-space:nowrap}
+.chan b{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--chip);font:700 12px/1 "Inter",sans-serif;color:var(--muted);flex:none}
+.chan.hot{border-color:transparent;background:linear-gradient(var(--surface),var(--surface)) padding-box,var(--grad) border-box;border:1px solid transparent}
+.chan.hot b{background:var(--grad);color:#fff}
+.dev-viz{display:grid;gap:16px}
+.skel{border-radius:14px;background:var(--c-bg);border:1px solid rgba(192,132,252,.28);overflow:hidden}
+.skel-top{display:flex;gap:6px;padding:10px 12px;border-bottom:1px solid var(--c-line);background:var(--c-bg-2)}
+.skel-top i{width:8px;height:8px;border-radius:50%;background:#3A2F63}
+.skel-body{display:grid;gap:9px;padding:14px 14px 16px}
+.skel-body span{display:block;height:7px;border-radius:99px;background:var(--c)}
+.dev-row{display:flex;align-items:center;flex-wrap:wrap;gap:14px}
+.stack{display:flex}
+.stack span{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:700 10.5px/1 "Inter",sans-serif;color:#fff;border:3px solid var(--surface-2)}
+.stack span + span{margin-left:-10px}
+.compat{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:999px;background:var(--chip);border:1px solid var(--line-2);font:600 13.5px/1 "Inter",sans-serif}
+.compat .ic{width:16px;height:16px;color:var(--n-violet)}
+.minis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:14px}
+.mini{display:grid;justify-items:center;align-content:start;gap:10px;padding:26px 20px;border-radius:20px;background:var(--surface);border:1px solid var(--line);text-align:center}
+.mini h3{margin-top:4px;font-weight:800;font-size:17px}
+.mini p{font-size:14px;line-height:1.55;color:var(--muted)}
+
+/* Steps */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;list-style:none;margin:0;padding:0}
+.step{position:relative;padding:28px 26px;border-radius:22px;background:var(--surface);border:1px solid var(--line)}
+.step:not(:last-child)::after{content:"";position:absolute;top:50px;right:-19px;width:20px;border-top:2px dashed var(--line-2)}
+.step-icon{position:relative;width:56px;height:56px;border-radius:17px;display:grid;place-items:center;color:#fff;background:var(--grad);box-shadow:0 14px 30px -12px rgba(192,70,240,.8),inset 0 1px 0 rgba(255,255,255,.3)}
+.step-icon .ic{width:24px;height:24px}
+.step-n{position:absolute;top:-9px;right:-9px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#3B0F78;font:900 13px/1 "Nunito",sans-serif;box-shadow:0 4px 10px rgba(0,0,0,.25)}
+.step h3{margin-top:22px;font-weight:800;font-size:21px}
+.step p{margin-top:8px;color:var(--muted);font-size:15px}
+
+/* CTA */
+.cta{position:relative;isolation:isolate;overflow:hidden;border-radius:32px;padding:clamp(56px,7vw,92px) 24px;text-align:center;background:linear-gradient(110deg,#7C3AED 0%,#A43BF0 45%,#E43FD8 100%);color:#fff;box-shadow:0 40px 90px -44px rgba(217,70,239,.8)}
+.cta::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(50% 80% at 50% 0%,rgba(255,255,255,.22),transparent 70%)}
+.cta h2{color:#fff;font-weight:900;font-size:clamp(34px,4.6vw,56px);line-height:1.06;letter-spacing:-.025em}
+.cta h2 span{display:block;color:#FDE6FF;opacity:.92}
+.cta p{margin:18px auto 0;max-width:32em;font-size:17px;color:rgba(255,255,255,.88);text-wrap:pretty}
+.cta-btns{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:30px}
+.btn-white{background:#fff;color:#2A0F57;box-shadow:0 14px 30px -14px rgba(40,0,80,.6)}
+.btn-white:hover{transform:translateY(-1px)}
+.btn-line{border:1px solid rgba(255,255,255,.55);color:#fff}
+.btn-line:hover{background:rgba(255,255,255,.12)}
+.ghost-coin{position:absolute;z-index:-1;width:var(--s,40px);height:var(--s,40px);border-radius:50%;border:2px solid rgba(255,255,255,.28);display:grid;place-items:center;font:900 calc(var(--s,40px)*.48)/1 "Nunito",sans-serif;color:rgba(255,255,255,.3)}
+.ghost-coin::after{content:"$"}
+
+/* Footer */
+.footer{background:var(--bg-3);border-top:1px solid var(--line);padding:56px 0 28px}
+.foot-brand p{margin-top:12px;font-size:14.5px;color:var(--muted)}
+.foot-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line);font-size:13px;color:var(--dim)}
+.foot-bottom b{color:var(--text);font-weight:600}
+
+/* Responsive */
+@media (max-width:1080px){
+  .nav-links{display:none}
+  .menu-btn{display:grid}
+}
+@media (max-width:980px){
+  .hero-grid{grid-template-columns:minmax(0,1fr)}
+  .bento{grid-template-columns:minmax(0,1fr)}
+  .span-4,.span-3,.span-2{grid-column:auto}
+  .minis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps{grid-template-columns:minmax(0,1fr)}
+  .step:not(:last-child)::after{top:auto;bottom:-19px;right:auto;left:53px;width:0;height:20px;border-top:0;border-left:2px dashed var(--line-2)}
+}
+@media (max-width:640px){
+  .nav-wrap{padding:10px 12px 0}
+  .nav{gap:10px;padding:0 6px 0 12px}
+  .nav-actions{gap:2px}
+  .hide-sm{display:none}
+  .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat:nth-child(3){border-left:0}
+  .stat:nth-child(n+3){border-top:1px solid var(--line)}
+  .minis{grid-template-columns:minmax(0,1fr)}
+  .model-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dots{display:none}
+  .tab{padding:0 6px;font-size:12px}
+  .tabs{margin-left:0}
+  .hero h1{font-size:clamp(30px,8.8vw,36px)}
+  .hero h1 br{display:none}
+  .console-top{padding:0 10px}
+  .meta-end{margin-left:0}
+  .cta-row .btn{flex:1 1 auto}
+  .card{padding:20px}
+  .coin.hide-sm-coin,.ghost-coin{display:none}
+  .cta{border-radius:26px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="lgHorn" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FB923C"/><stop offset="1" stop-color="#E040E0"/></linearGradient>
+    <linearGradient id="lgHead" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9F67FF"/><stop offset="1" stop-color="#5B21B6"/></linearGradient>
+  </defs>
+  <symbol id="logo" viewBox="0 0 32 32">
+    <path d="M6.5 3.5 12 11l-7 .5Z" fill="url(#lgHorn)"/>
+    <path d="M25.5 3.5 27 11.5 20 11Z" fill="url(#lgHorn)"/>
+    <circle cx="16" cy="18.5" r="11" fill="url(#lgHead)" stroke="url(#lgHorn)" stroke-width="2"/>
+    <path d="M10.6 16.4l3.2 1.7M21.4 16.4l-3.2 1.7" stroke="#FCD34D" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M12.2 22.6q3.8 2.8 7.6 0" fill="none" stroke="#FCD34D" stroke-width="1.9" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+  <symbol id="i-lang" viewBox="0 0 24 24"><path d="m5 8 6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2zM22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
+  <symbol id="i-dollar" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18M7 16v-4M12 16V8M17 16v-7"/></symbol>
+</svg>
+
+<header class="nav-wrap">
+  <nav class="nav" aria-label="Main">
+    <a class="brand" href="#top">
+      <svg class="brand-mark" aria-hidden="true"><use href="#logo"/></svg>
+      <span>Spicylab</span><span class="brand-tag">API</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#top" aria-current="page">Home</a></li>
+      <li><a href="#">Console</a></li>
+      <li><a href="#">Model Square</a></li>
+      <li><a href="#">Rankings</a></li>
+      <li><a href="#">Docs</a></li>
+      <li><a href="#">About</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="icon-btn hide-sm" type="button" aria-label="Change language"><svg class="ic"><use href="#i-lang"/></svg></button>
+      <button class="icon-btn" type="button" id="themeToggle" aria-label="Switch to light theme"><svg class="ic"><use href="#i-sun"/></svg></button>
+      <button class="icon-btn hide-sm" type="button" aria-label="Notifications"><svg class="ic"><use href="#i-bell"/></svg></button>
+      <span class="nav-sep hide-sm" aria-hidden="true"></span>
+      <a class="btn btn-grad btn-sm" href="#">Sign in</a>
+      <button class="icon-btn menu-btn" type="button" id="menuBtn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu"><svg class="ic"><use href="#i-menu"/></svg></button>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu" hidden>
+    <a href="#top" aria-current="page">Home</a>
+    <a href="#">Console</a>
+    <a href="#">Model Square</a>
+    <a href="#">Rankings</a>
+    <a href="#">Docs</a>
+    <a href="#">About</a>
+  </div>
+</header>
+
+<main id="top">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="coin soft hide-sm-coin" style="--s:34px;right:4%;top:-10px" aria-hidden="true"></span>
+        <p class="pill"><i></i>AI Application Infrastructure Foundation</p>
+        <h1>Unified API Gateway for<br> <span class="grad-text">Vast Range of AI Models</span></h1>
+        <p class="lede">Access a vast selection of models via a standard, unified API protocol. Power AI applications, manage digital assets, and connect the Future.</p>
+        <div class="cta-row">
+          <a class="btn btn-grad" href="#">Get Started<svg class="ic"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn-ghost" href="#">View Pricing</a>
+          <a class="btn btn-ghost" href="#"><svg class="ic"><use href="#i-book"/></svg>Docs</a>
+        </div>
+        <div class="apps">
+          <p class="apps-label">SUPPORTED APPLICATIONS</p>
+          <p class="apps-note">Supports one-click configuration and perfectly adapts to NewAPI multi-protocol configuration.</p>
+          <div class="app-chips">
+            <a class="app-chip" href="#"><span class="app-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 15C9 9.5 12.5 5.5 17.5 3.5M15.5 15C15.3 10 16 6.5 17.5 3.5" fill="none" stroke="#22C55E" stroke-width="1.8" stroke-linecap="round"/><circle cx="7.5" cy="17" r="4.5" fill="#F43F5E"/><circle cx="15.8" cy="17" r="4.5" fill="#E11D48"/></svg></span>Cherry Studio</a>
+            <a class="app-chip" href="#"><span class="app-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4" fill="none" stroke="#F97316" stroke-width="2.4" stroke-linecap="round"/></svg></span>CC Switch</a>
+            <a class="app-chip" href="#"><span class="app-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2" fill="currentColor"/><circle cx="12" cy="12" r="2" fill="currentColor"/><circle cx="19" cy="12" r="2" fill="currentColor"/></svg></span>More Apps</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="console-wrap">
+        <span class="coin" style="--s:50px;left:-22px;top:-24px;z-index:2" aria-hidden="true"></span>
+        <span class="coin soft hide-sm-coin" style="--s:26px;right:14%;top:-44px" aria-hidden="true"></span>
+        <span class="coin hide-sm-coin" style="--s:40px;right:-24px;bottom:18%;z-index:2" aria-hidden="true"></span>
+        <span class="spark hide-sm-coin" style="left:-38px;top:46%" aria-hidden="true"></span>
+
+        <div class="console">
+          <div class="console-top">
+            <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="tabs">
+              <span class="tab is-active">Chat</span>
+              <span class="tab">Responses</span>
+              <span class="tab">Claude</span>
+              <span class="tab">Gemini</span>
+            </div>
+            <span class="status"><i></i>200 OK</span>
+          </div>
+          <div class="endpoint"><span class="method">POST</span><span>/v1/chat/completions</span></div>
+          <div class="c-section req">
+            <div class="c-label">REQUEST</div>
+<pre class="code"><span class="cc">curl</span> <span class="cc">-X POST</span> <span class="cs">"/v1/chat/completions"</span> \
+  <span class="cc">-H</span> <span class="cs">"Authorization: Bearer sk-••••"</span> \
+  <span class="cc">-d</span> <span class="cp">'{</span>
+    <span class="ck">"model"</span>: <span class="cs">"your-model"</span>,
+    <span class="ck">"messages"</span>: [
+      { <span class="ck">"role"</span>: <span class="cs">"user"</span>, <span class="ck">"content"</span>: <span class="cs">"..."</span> }
+    ]
+  <span class="cp">}'</span></pre>
+          </div>
+          <div class="c-section res">
+            <div class="c-label">RESPONSE</div>
+<pre class="code" id="resCode">{
+  <span class="ck">"choices"</span>: [{ <span class="ck">"message"</span>: { <span class="ck">"content"</span>: <span class="cs">"<span id="resText">Chat request routed.</span>"</span> } }],
+  <span class="ck">"usage"</span>: { <span class="ck">"total_tokens"</span>: <span class="cn">27</span> }
+}</pre>
+          </div>
+          <div class="console-foot">
+            <span class="meta">142 MS</span>
+            <span class="meta">27 TOKENS</span>
+            <span class="meta">COST $0.00081</span>
+            <span class="meta meta-end">STREAM · SSE</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats">
+    <div class="wrap stats-grid">
+      <div class="stat"><span class="stat-num n-amber">50+</span><span class="stat-lbl">upstream services integrated</span></div>
+      <div class="stat"><span class="stat-num n-sky">100+</span><span class="stat-lbl">model billing support</span></div>
+      <div class="stat"><span class="stat-num n-pink">50+</span><span class="stat-lbl">compatible API routes</span></div>
+      <div class="stat"><span class="stat-num n-violet">10+</span><span class="stat-lbl">scheduling controls</span></div>
+    </div>
+  </section>
+
+  <!-- Core features -->
+  <section class="section">
+    <div class="wrap">
+      <div class="head">
+        <p class="pill caps"><i></i>CORE FEATURES</p>
+        <h2 class="h2">Built for developers,<br>designed for scale</h2>
+      </div>
+
+      <div class="bento">
+        <article class="card span-4">
+          <div class="card-head"><span class="num">01</span><h3>Lightning Fast</h3><span class="tile t-amber" aria-hidden="true"><svg class="ic"><use href="#i-zap"/></svg></span></div>
+          <p>Optimized network architecture ensures millisecond response times</p>
+          <div class="viz">
+            <div class="panel model-grid">
+              <span class="model-pill"><i class="t-violet"></i>OpenAI</span>
+              <span class="model-pill"><i class="t-orange"></i>Claude</span>
+              <span class="model-pill"><i class="t-sky"></i>Gemini</span>
+              <span class="model-pill"><i class="t-teal"></i>DeepSeek</span>
+              <span class="model-pill"><i class="t-pink"></i>Qwen</span>
+              <span class="model-pill"><i class="t-amber"></i>Llama</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card span-2">
+          <div class="card-head"><span class="num">02</span><h3>Secure &amp; Reliable</h3></div>
+          <p>Enterprise-grade security with comprehensive permission management</p>
+          <div class="viz">
+            <div class="shield-viz" aria-hidden="true">
+              <span class="ring r3"></span><span class="ring r1"></span><span class="ring r2"></span>
+              <span class="shield"><svg class="ic"><use href="#i-shield"/></svg><span class="shield-ok"><svg class="ic"><use href="#i-check"/></svg></span></span>
+            </div>
+          </div>
+        </article>
+
+        <article class="card span-3">
+          <div class="card-head"><span class="num">03</span><h3>Global Coverage</h3><span class="tile t-sky" aria-hidden="true"><svg class="ic"><use href="#i-globe"/></svg></span></div>
+          <p>Multi-region deployment for stable global access</p>
+          <div class="viz">
+            <div class="panel flow">
+              <span class="hub" aria-hidden="true"><svg><use href="#logo"/></svg></span>
+              <span class="fan-wrap" aria-hidden="true"><svg class="fan" viewBox="0 0 100 140" preserveAspectRatio="none"><path d="M0 70C50 70 50 20 100 20"/><path d="M0 70H100"/><path d="M0 70C50 70 50 120 100 120"/></svg></span>
+              <div class="chans">
+                <span class="chan"><b>1</b>Load Balancing</span>
+                <span class="chan hot"><b>2</b>Rate Limiting</span>
+                <span class="chan"><b>3</b>Cost Tracking</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card span-3">
+          <div class="card-head"><span class="num">04</span><h3>Developer Friendly</h3><span class="tile t-pink" aria-hidden="true"><svg class="ic"><use href="#i-code"/></svg></span></div>
+          <p>Compatible API routes for common AI application workflows</p>
+          <div class="viz">
+            <div class="panel dev-viz">
+              <div class="skel" aria-hidden="true">
+                <div class="skel-top"><i></i><i></i><i></i></div>
+                <div class="skel-body">
+                  <span style="width:46%;--c:#C4B5FD"></span>
+                  <span style="width:72%;margin-left:6%;--c:#F9A8D4"></span>
+                  <span style="width:58%;margin-left:6%;--c:#5EEAD4"></span>
+                  <span style="width:30%;--c:#C4B5FD"></span>
+                </div>
+              </div>
+              <div class="dev-row">
+                <div class="stack">
+                  <span class="t-violet">API</span><span class="t-pink">SDK</span><span class="t-sky">CLI</span><span class="t-amber">Docs</span>
+                </div>
+                <span class="compat"><svg class="ic"><use href="#i-code"/></svg>Multi-protocol Compatible</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="minis">
+        <article class="mini"><span class="tile t-violet" aria-hidden="true"><svg class="ic"><use href="#i-gauge"/></svg></span><h3>High Performance</h3><p>Support for high concurrency with automatic load balancing</p></article>
+        <article class="mini"><span class="tile t-amber" aria-hidden="true"><svg class="ic"><use href="#i-dollar"/></svg></span><h3>Transparent Billing</h3><p>Pay-as-you-go with real-time usage monitoring</p></article>
+        <article class="mini"><span class="tile t-pink" aria-hidden="true"><svg class="ic"><use href="#i-users"/></svg></span><h3>Team Collaboration</h3><p>Multi-user management with flexible permission allocation</p></article>
+        <article class="mini"><span class="tile t-teal" aria-hidden="true"><svg class="ic"><use href="#i-heart"/></svg></span><h3>Open Source</h3><p>Community driven, self-hosted, and extensible</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section alt">
+    <div class="wrap">
+      <div class="head center">
+        <p class="pill caps"><i></i>HOW IT WORKS</p>
+        <h2 class="h2">Three steps to get started</h2>
+      </div>
+      <ol class="steps">
+        <li class="step"><span class="step-icon" aria-hidden="true"><svg class="ic"><use href="#i-gear"/></svg><span class="step-n">1</span></span><h3>Configure</h3><p>Add your API keys, set up channels and configure access permissions</p></li>
+        <li class="step"><span class="step-icon" aria-hidden="true"><svg class="ic"><use href="#i-zap"/></svg><span class="step-n">2</span></span><h3>Connect</h3><p>Connect through OpenAI, Claude, Gemini, and other compatible API routes</p></li>
+        <li class="step"><span class="step-icon" aria-hidden="true"><svg class="ic"><use href="#i-chart"/></svg><span class="step-n">3</span></span><h3>Monitor</h3><p>Track usage, costs and performance with real-time analytics</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="wrap">
+      <div class="cta">
+        <span class="ghost-coin" style="--s:44px;left:5%;top:14%" aria-hidden="true"></span>
+        <span class="ghost-coin" style="--s:30px;right:6%;bottom:16%" aria-hidden="true"></span>
+        <h2>Ready to simplify <span>your AI integration?</span></h2>
+        <p>Deploy your own gateway and start routing requests through your configured upstream services.</p>
+        <div class="cta-btns">
+          <a class="btn btn-white" href="#">Get Started<svg class="ic"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn-line" href="#">View Pricing</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="foot-brand">
+      <a class="brand" href="#top"><svg class="brand-mark" aria-hidden="true"><use href="#logo"/></svg><span>Spicylab</span><span class="brand-tag">API</span></a>
+      <p>Powerful API Management Platform</p>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Spicylab API. All rights reserved.</span>
+      <span>© 2026 <b>New API</b>. All rights reserved. Designed and developed by the project contributors.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Theme toggle */
+  var themeBtn = document.getElementById('themeToggle');
+  function applyTheme(t, save) {
+    root.setAttribute('data-theme', t);
+    themeBtn.setAttribute('aria-label', t === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
+    themeBtn.querySelector('use').setAttribute('href', t === 'light' ? '#i-moon' : '#i-sun');
+    if (save) { try { localStorage.setItem('slapi-theme', t); } catch (e) {} }
+  }
+  var saved = null;
+  try { saved = localStorage.getItem('slapi-theme'); } catch (e) {}
+  applyTheme(saved === 'light' ? 'light' : 'dark', false);
+  themeBtn.addEventListener('click', function () {
+    applyTheme(root.getAttribute('data-theme') === 'light' ? 'dark' : 'light', true);
+  });
+
+  /* Mobile menu */
+  var menuBtn = document.getElementById('menuBtn');
+  var menu = document.getElementById('mobileMenu');
+  function closeMenu() { menu.setAttribute('hidden', ''); menuBtn.setAttribute('aria-expanded', 'false'); menuBtn.setAttribute('aria-label', 'Open menu'); }
+  menuBtn.addEventListener('click', function () {
+    if (menu.hasAttribute('hidden')) {
+      menu.removeAttribute('hidden'); menuBtn.setAttribute('aria-expanded', 'true'); menuBtn.setAttribute('aria-label', 'Close menu');
+    } else { closeMenu(); }
+  });
+  menu.addEventListener('click', function (e) { if (e.target.closest('a')) closeMenu(); });
+
+  /* Response streams in once on load (same text, just animated) */
+  var resText = document.getElementById('resText');
+  if (!reduce && resText) {
+    var full = resText.textContent, i = 0;
+    resText.innerHTML = '<span class="caret"></span>';
+    setTimeout(function tick() {
+      i++;
+      if (i < full.length) {
+        resText.innerHTML = full.slice(0, i) + '<span class="caret"></span>';
+        setTimeout(tick, 45);
+      } else {
+        resText.textContent = full;
+      }
+    }, 700);
+  }
+})();
+</script>
+</body>
+</html>
