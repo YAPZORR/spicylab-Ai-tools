@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Axoreels payment page redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Inter+Tight:wght@600..800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --board-bg:#ebe8e4;--board-ink:#1e1a17;--board-muted:#6d655e;--board-line:#d8d3cd;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--board-bg:#0b0807;--board-ink:#f1ebe5;--board-muted:#958a81;--board-line:#2a231f;color-scheme:dark}
+}
+:root[data-theme="dark"]{--board-bg:#0b0807;--board-ink:#f1ebe5;--board-muted:#958a81;--board-line:#2a231f;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--board-bg);color:var(--board-ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+img,svg{max-width:100%}
+
+/* ---------- Board ---------- */
+.board{max-width:1520px;margin:0 auto;padding:48px 32px 88px}
+.board-head{max-width:680px}
+.board-head h1{font-family:"Inter Tight",Inter,system-ui,sans-serif;font-weight:800;font-size:clamp(28px,4vw,40px);letter-spacing:-.03em;line-height:1.1;margin:0 0 10px}
+.board-head p{margin:0;color:var(--board-muted);font-size:16px;line-height:1.55}
+.state{margin-top:56px}
+.state-label{display:flex;align-items:baseline;gap:12px;margin:0 0 14px;font-size:15px;font-weight:600}
+.state-label span{color:var(--board-muted);font-weight:500;font-size:14px}
+
+/* ---------- Frame (product UI, always dark) ---------- */
+.ax{
+  --bg:#140c08;--sunk:#0c0705;--raise-a:#2e1e14;--raise-b:#24170f;
+  --line:rgba(255,232,214,.08);--line-2:rgba(255,232,214,.15);
+  --ink:#f8f0e9;--ink-2:#cdbbad;--ink-3:#93806f;--ink-4:#62544a;
+  --orange:#ff6a1f;--green:#4ad68f;
+  color-scheme:dark;position:relative;color:var(--ink);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px;line-height:1.45;
+  background:
+    radial-gradient(70% 45% at 50% -14%,rgba(255,106,31,.17),transparent 70%),
+    radial-gradient(40% 28% at 88% 108%,rgba(255,106,31,.09),transparent 70%),
+    var(--bg);
+  border:1px solid var(--line-2);border-radius:28px;padding:40px 40px 44px;
+  box-shadow:0 40px 90px -40px rgba(0,0,0,.7);
+}
+.ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.icf{width:1em;height:1em;fill:currentColor;stroke:none;flex:none}
+
+/* Header */
+.ax-head{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:36px}
+.ax-title{font-family:"Inter Tight",Inter,system-ui,sans-serif;font-weight:800;font-size:40px;letter-spacing:-.035em;line-height:1.05;margin:0}
+.ax-sub{margin:8px 0 0;color:var(--ink-2);font-size:15px}
+.trust{display:flex;align-items:center;gap:12px;font-size:12.5px;color:var(--ink-2);line-height:1.35}
+.trust b{color:var(--ink);font-weight:700}
+.avatars{display:flex}
+.avatars span{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--bg);margin-left:-8px;color:#fff;font-size:11px}
+.avatars span:first-child{margin-left:0}
+.stars{display:flex;align-items:center;gap:2px;color:#ffc53d;font-size:11px;margin-top:3px}
+.stars b{margin-left:6px;font-size:12.5px}
+
+/* Layout */
+.ax-body{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:40px;align-items:start}
+.ax-main{display:grid;gap:40px;min-width:0}
+
+/* Step headings: the page is a real sequence (choose, review, pay) */
+.step{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.step-n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;border:1.5px solid var(--line-2);color:var(--ink-2);flex:none}
+.step h3{font-family:"Inter Tight",Inter,system-ui,sans-serif;font-weight:700;font-size:19px;letter-spacing:-.015em;margin:0;line-height:1.2}
+.step p{margin:2px 0 0;color:var(--ink-3);font-size:13px}
+
+/* ---------- Zone 1: plan list (open, selectable) ---------- */
+.plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.plan{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;column-gap:12px;row-gap:16px;align-items:center;
+  padding:18px;border-radius:18px;border:1px solid var(--line-2);
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01));cursor:pointer}
+.plan-icon{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:rgba(255,255,255,.06);color:var(--ink-2)}
+.plan-name{display:block;font-weight:650;font-size:15.5px;letter-spacing:-.005em}
+.plan-coins{display:block;color:var(--ink-3);font-size:13px;margin-top:1px}
+.radio{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--ink-4)}
+.plan-price{grid-column:1/-1;display:flex;align-items:baseline;gap:6px;padding-top:14px;border-top:1px solid var(--line)}
+.plan-price strong{font-family:"Inter Tight",Inter,system-ui,sans-serif;font-weight:800;font-size:28px;letter-spacing:-.03em;line-height:1}
+.plan-price span{color:var(--ink-3);font-size:13px}
+.plan.is-on{border-color:var(--orange);
+  background:linear-gradient(180deg,rgba(255,106,31,.17),rgba(255,106,31,.04));
+  box-shadow:0 0 0 3px rgba(255,106,31,.15),0 18px 40px -18px rgba(255,106,31,.6)}
+.plan.is-on .radio{border-color:var(--orange);background:radial-gradient(circle,var(--orange) 0 4.5px,transparent 5px)}
+.plan.is-on .plan-icon,.plan-icon.is-solid{background:linear-gradient(160deg,#ff8a3d,#ff5a14);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.28)}
+.badge{position:absolute;top:-11px;right:16px;display:inline-flex;align-items:center;gap:5px;padding:3px 10px 3px 8px;border-radius:999px;background:var(--orange);color:#fff;font-size:11.5px;font-weight:700}
+
+/* ---------- Zone 2: benefits (recessed spec sheet, no orange) ---------- */
+.sheet{background:var(--sunk);border:1px solid var(--line);border-radius:22px;box-shadow:inset 0 2px 14px rgba(0,0,0,.5)}
+.spec{display:grid;grid-template-columns:128px repeat(3,minmax(0,1fr));border-bottom:1px solid var(--line)}
+.spec h4{margin:0;padding:20px 0 20px 22px;font-size:13px;font-weight:600;color:var(--ink-3);align-self:center}
+.cell{padding:18px 20px;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:6px;min-width:0}
+.cell-lab{color:var(--ink-3);font-size:12.5px}
+.cell-row{display:flex;align-items:center;gap:10px}
+.cell-val{font-family:"Inter Tight",Inter,system-ui,sans-serif;font-weight:800;font-size:28px;letter-spacing:-.03em;line-height:1.05}
+.cell-val.sm{font-size:23px}
+.cell-sub{color:var(--ink-2);font-size:12.5px}
+.coin{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:none;font-weight:800;font-size:13px;color:#7a4b00;
+  background:radial-gradient(circle at 35% 30%,#ffe58a,#f5b416 62%,#c98806);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28)}
+.mini{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none;font-size:14px;color:var(--c);
+  background:color-mix(in srgb,var(--c) 15%,transparent)}
+
+.tools{padding:20px 22px 24px}
+.tools-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px 16px;flex-wrap:wrap}
+.tools-head h4{margin:0;font-size:15px;font-weight:650}
+.tools-count{font-size:12.5px;color:var(--ink-3)}
+.tools-count b{color:var(--green);font-weight:600}
+.meter{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin:12px 0 18px}
+.meter i{height:5px;border-radius:3px;background:rgba(255,255,255,.08)}
+.meter i.on{background:var(--green)}
+.tool-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 24px}
+.tool{display:flex;align-items:center;gap:12px;min-width:0}
+.tool-ic{width:36px;height:36px;flex:none;border-radius:10px;display:grid;place-items:center;font-size:17px;color:var(--c);
+  background:color-mix(in srgb,var(--c) 13%,transparent);border:1px solid color-mix(in srgb,var(--c) 30%,transparent)}
+.tool-t{display:block;font-weight:600;font-size:13.5px;line-height:1.3}
+.tool-s{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--green);margin-top:3px}
+.tool.off .tool-ic{--c:#7b6b60;background:transparent;border:1px dashed rgba(255,232,214,.16)}
+.tool.off .tool-t{color:var(--ink-3)}
+.tool.off .tool-s{color:var(--ink-4);font-weight:500}
+.tools-sub{display:flex;align-items:center;gap:12px;margin:22px 0 16px;font-size:12.5px;font-weight:600;color:var(--ink-3)}
+.tools-sub::after{content:"";flex:1;border-top:1px dashed var(--line-2)}
+.all-in{display:flex;align-items:center;gap:10px;margin:22px 0 0;padding:12px 14px;border-radius:12px;font-weight:600;font-size:13.5px;
+  color:#a4f2c7;background:rgba(74,214,143,.08);border:1px solid rgba(74,214,143,.3)}
+
+/* ---------- Zone 3: payment (raised ticket, the only filled orange) ---------- */
+.checkout{position:sticky;top:24px}
+.ticket{filter:drop-shadow(0 26px 40px rgba(0,0,0,.55))}
+.t-top,.t-bot{background:linear-gradient(180deg,var(--raise-a),var(--raise-b));padding:22px}
+.t-top{border-radius:20px 20px 0 0;box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
+  -webkit-mask:radial-gradient(circle at 0 100%,#0000 11px,#000 11.5px) left/51% 100% no-repeat,radial-gradient(circle at 100% 100%,#0000 11px,#000 11.5px) right/51% 100% no-repeat;
+          mask:radial-gradient(circle at 0 100%,#0000 11px,#000 11.5px) left/51% 100% no-repeat,radial-gradient(circle at 100% 100%,#0000 11px,#000 11.5px) right/51% 100% no-repeat}
+.t-bot{position:relative;border-radius:0 0 20px 20px;background:var(--raise-b);padding-top:24px;
+  -webkit-mask:radial-gradient(circle at 0 0,#0000 11px,#000 11.5px) left/51% 100% no-repeat,radial-gradient(circle at 100% 0,#0000 11px,#000 11.5px) right/51% 100% no-repeat;
+          mask:radial-gradient(circle at 0 0,#0000 11px,#000 11.5px) left/51% 100% no-repeat,radial-gradient(circle at 100% 0,#0000 11px,#000 11.5px) right/51% 100% no-repeat}
+.t-bot::before{content:"";position:absolute;left:22px;right:22px;top:0;border-top:1.5px dashed rgba(255,232,214,.2)}
+.t-plan{display:flex;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.t-rows{margin:14px 0 0;display:grid;gap:8px}
+.t-rows div{display:flex;justify-content:space-between;gap:12px;color:var(--ink-2);font-size:13.5px}
+.t-rows dd{margin:0;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.t-total{display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.t-total span{font-weight:600;font-size:14px}
+.t-total strong{font-family:"Inter Tight",Inter,system-ui,sans-serif;font-weight:800;font-size:36px;letter-spacing:-.035em;line-height:1}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border-radius:14px;font:inherit;font-weight:650;cursor:pointer;border:1px solid transparent}
+.btn:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.btn-primary{height:54px;white-space:nowrap;justify-content:center;padding:0 18px;font-size:15px;color:#fff;
+  background:linear-gradient(180deg,#ff7a30,#ff5a12);box-shadow:0 14px 30px -12px rgba(255,92,18,.8),inset 0 1px 0 rgba(255,255,255,.3)}
+.pill{background:rgba(255,255,255,.2);padding:7px 11px;border-radius:9px;font-weight:700;font-variant-numeric:tabular-nums}
+.logos{display:flex;justify-content:center;gap:8px;margin:14px 0 20px}
+.logos svg{height:24px;width:auto}
+.or{display:flex;align-items:center;gap:12px;color:var(--ink-3);font-size:12.5px;margin-bottom:14px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line-2)}
+.alt{display:grid;gap:10px}
+.btn-ghost{height:48px;font-size:14.5px;color:var(--ink);background:rgba(255,255,255,.03);border-color:var(--line-2)}
+.btn-ghost .ic{font-size:18px}
+.btn-tg .ic{color:#3aa9e6}
+.btn-crypto .ic{color:#f7a531}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1180px){
+  .ax-body{grid-template-columns:1fr}
+  .checkout{position:static;max-width:560px}
+}
+@media (max-width:1000px){.tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:820px){
+  .plans{grid-template-columns:1fr}
+  .spec{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .spec h4{grid-column:1/-1;padding:16px 20px 0}
+  .spec .cell:first-of-type{border-left:0}
+}
+@media (max-width:640px){
+  .board{padding:28px 14px 56px}
+  .ax{padding:24px 16px 28px;border-radius:22px}
+  .ax-head{flex-direction:column;gap:16px;margin-bottom:28px}
+  .ax-title{font-size:32px}
+  .ax-main{gap:32px}
+  .spec{grid-template-columns:1fr}
+  .cell{border-left:0;border-top:1px solid var(--line)}
+  .spec .cell:first-of-type{border-top:0}
+  .tools{padding:18px 16px 20px}
+  .spec.allow{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .spec.allow .cell{border-top:0;border-left:1px solid var(--line);padding:12px 10px 16px 20px}
+  .spec.allow .cell:first-of-type{border-left:0}
+  .spec.allow .coin,.spec.allow .mini{display:none}
+  .spec.allow .cell-val{font-size:24px}
+  .spec:not(.allow){border-top:1px solid var(--line)}
+  .tool-grid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<symbol id="i-play" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="m10 8.5 5.5 3.5-5.5 3.5z"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+<symbol id="i-crown" viewBox="0 0 24 24"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+<symbol id="i-wand" viewBox="0 0 24 24"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></symbol>
+<symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></symbol>
+<symbol id="i-scan" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01"/><path d="M15 9h.01"/></symbol>
+<symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol>
+<symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.364 18.364a9 9 0 0 0 0-12.728"/></symbol>
+<symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></symbol>
+<symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+<symbol id="i-branch" viewBox="0 0 24 24"><path d="M6 3v12"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m8 12.5 2.8 2.8L16.5 9.5"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></symbol>
+<symbol id="i-btc" viewBox="0 0 24 24"><path d="M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.26m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></symbol>
+<symbol id="i-spark4" viewBox="0 0 24 24"><path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/></symbol>
+</svg>
+<main class="board">
+  <header class="board-head">
+    <h1>Axoreels payment page</h1>
+    <p>Plans, benefits and payment now sit in three separate steps, each with its own surface: open cards to choose, a recessed sheet to review, a raised ticket to pay. All three tabs are shown below.</p>
+  </header>
+
+  <section class="state" id="monthly">
+    <p class="state-label">Monthly Pro selected <span>Tab 1 of 3</span></p>
+    <article class="ax" aria-label="Payment page with Monthly Pro selected">
+      <header class="ax-head">
+        <div><h2 class="ax-title">Choose your plan.</h2><p class="ax-sub">Unlock more creative power with the plan that fits you.</p></div>
+        <div class="trust">
+        <div class="avatars" aria-hidden="true"><span style="background:#7c4dff;color:#fff"><svg class="icf" aria-hidden="true"><use href="#i-spark4"/></svg></span><span style="background:#ff3d9a;color:#fff"><svg class="icf" aria-hidden="true"><use href="#i-spark4"/></svg></span><span style="background:#ffc53d;color:#3a2600"><svg class="icf" aria-hidden="true"><use href="#i-spark4"/></svg></span><span style="background:#2f80ff;color:#fff"><svg class="icf" aria-hidden="true"><use href="#i-spark4"/></svg></span></div>
+        <div>Trusted by <b>1M+</b> creators worldwide<div class="stars" aria-label="5 star rating"><svg class="icf" aria-hidden="true"><use href="#i-star"/></svg><svg class="icf" aria-hidden="true"><use href="#i-star"/></svg><svg class="icf" aria-hidden="true"><use href="#i-star"/></svg><svg class="icf" aria-hidden="true"><use href="#i-star"/></svg><svg class="icf" aria-hidden="true"><use href="#i-star"/></svg><b>1000+</b>&nbsp;<span style="color:var(--ink-2);font-weight:400">ratings</span></div></div>
+      </div>
+      </header>
+      <div class="ax-body">
+        <div class="ax-main">
+          <section aria-label="Plans">
+            <div class="step"><span class="step-n">1</span><div><h3>Choose a plan</h3><p>Prices shown per 100 coins.</p></div></div>
+            <div class="plans" role="radiogroup" aria-label="Plans">
+          <div class="plan is-on" role="radio" aria-checked="true" tabindex="0">
+            <span class="plan-icon"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg></span>
+            <span><span class="plan-name">Monthly Pro</span><span class="plan-coins">300 coins</span></span>
+            <span class="radio" aria-hidden="true"></span>
+            <span class="plan-price"><strong>$4.33</strong><span>/100 coins</span></span>
+          </div>
+          <div class="plan" role="radio" aria-checked="false" tabindex="-1">
+            <span class="plan-icon"><svg class="ic" aria-hidden="true"><use href="#i-zap"/></svg></span>
+            <span><span class="plan-name">Quarterly Pro</span><span class="plan-coins">1,500 coins</span></span>
+            <span class="radio" aria-hidden="true"></span>
+            <span class="plan-price"><strong>$2.67</strong><span>/100 coins</span></span>
+          </div>
+          <div class="plan" role="radio" aria-checked="false" tabindex="-1">
+            <span class="badge"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg>Best value</span><span class="plan-icon"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg></span>
+            <span><span class="plan-name">Annual Pro</span><span class="plan-coins">5,200 coins</span></span>
+            <span class="radio" aria-hidden="true"></span>
+            <span class="plan-price"><strong>$1.35</strong><span>/100 coins</span></span>
+          </div>
+            </div>
+          </section>
+          <section aria-label="Benefits">
+            <div class="step"><span class="step-n">2</span><div><h3>What you get with Monthly Pro</h3><p>Allowance, performance and creative tools.</p></div></div>
+            <div class="sheet">
+            <div class="spec allow">
+              <h4>Allowance</h4>
+              <div class="cell"><span class="cell-lab">Coins</span><span class="cell-row"><span class="coin" aria-hidden="true">$</span><span class="cell-val">300</span></span></div>
+              <div class="cell"><span class="cell-lab">Videos</span><span class="cell-row"><span class="mini" style="--c:#ffa66b"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg></span><span class="cell-val">7</span></span></div>
+              <div class="cell"><span class="cell-lab">Images</span><span class="cell-row"><span class="mini" style="--c:#ff7eb6"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg></span><span class="cell-val">23</span></span></div>
+            </div>
+            <div class="spec">
+              <h4>Performance</h4>
+              <div class="cell"><span class="cell-lab">Video quality</span><span class="cell-val sm">720p HD</span><span class="cell-sub">Video quality up to 720p HD</span></div>
+              <div class="cell"><span class="cell-lab">Parallel tasks</span><span class="cell-val sm">2 at once</span><span class="cell-sub">Generate 2 tasks simultaneously</span></div>
+              <div class="cell"><span class="cell-lab">Processing speed</span><span class="cell-val sm">Standard</span><span class="cell-sub">Standard processing</span></div>
+            </div>
+            <div class="tools">
+              <div class="tools-head"><h4>Creative tools</h4><span class="tools-count"><b>4 creative tools included</b>, 8 locked benefits</span></div>
+              <div class="meter" role="img" aria-label="4 of 12 creative tools included"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              <ul class="tool-grid"><li class="tool"><span class="tool-ic" style="--c:#ff7eb6"><svg class="ic" aria-hidden="true"><use href="#i-wand"/></svg></span><span><span class="tool-t">Generate videos with custom prompts</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#b48cff"><svg class="ic" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span><span class="tool-t">AI Undress</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#4fd6ea"><svg class="ic" aria-hidden="true"><use href="#i-scan"/></svg></span><span><span class="tool-t">Image face swap</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#ffc84a"><svg class="ic" aria-hidden="true"><use href="#i-box"/></svg></span><span><span class="tool-t">Train your own AI model</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li></ul>
+              <p class="tools-sub">Not included in this plan</p>
+              <ul class="tool-grid"><li class="tool off"><span class="tool-ic"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg></span><span><span class="tool-t">Upload face or pose references</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>In Quarterly Pro</span></span></li><li class="tool off"><span class="tool-ic"><svg class="ic" aria-hidden="true"><use href="#i-volume"/></svg></span><span><span class="tool-t">Generate videos with sound</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>In Quarterly Pro</span></span></li><li class="tool off"><span class="tool-ic"><svg class="ic" aria-hidden="true"><use href="#i-film"/></svg></span><span><span class="tool-t">Video compilation generation</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>In Quarterly Pro</span></span></li><li class="tool off"><span class="tool-ic"><svg class="ic" aria-hidden="true"><use href="#i-gauge"/></svg></span><span><span class="tool-t">Video generation up to 60 FPS</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>In Annual Pro</span></span></li><li class="tool off"><span class="tool-ic"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></span><span><span class="tool-t">Enhanced adult content generation</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>In Annual Pro</span></span></li><li class="tool off"><span class="tool-ic"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg></span><span><span class="tool-t">Exclusive templates</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>In Annual Pro</span></span></li><li class="tool off"><span class="tool-ic"><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg></span><span><span class="tool-t">Early access to new templates</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>In Annual Pro</span></span></li><li class="tool off"><span class="tool-ic"><svg class="ic" aria-hidden="true"><use href="#i-branch"/></svg></span><span><span class="tool-t">Storyline branching</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>In Annual Pro</span></span></li></ul>
+            </div>
+            </div>
+          </section>
+        </div>
+        <aside class="checkout" aria-label="Payment">
+          <div class="step"><span class="step-n">3</span><div><h3>Ready to create</h3><p>Review your order and pay.</p></div></div>
+          <div class="ticket">
+            <div class="t-top">
+              <div class="t-plan"><span class="plan-icon is-solid"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg></span><span><span class="plan-name">Monthly Pro</span><span class="plan-coins">300 coins</span></span></div>
+              <dl class="t-rows">
+                <div><dt>Videos</dt><dd>7</dd></div>
+                <div><dt>Images</dt><dd>23</dd></div>
+                <div><dt>Price per 100 coins</dt><dd>$4.33</dd></div>
+              </dl>
+              <div class="t-total"><span>Total</span><strong>$12.99</strong></div>
+            </div>
+            <div class="t-bot">
+              <button class="btn btn-primary" type="button"><span>Continue with</span><span class="pill">$12.99</span></button>
+              <div class="logos"><svg viewBox="0 0 44 28" role="img" aria-label="Visa"><rect width="44" height="28" rx="5" fill="#fff"/><text x="22" y="18.6" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12.5" font-weight="900" font-style="italic" fill="#1a1f71">VISA</text></svg>
+<svg viewBox="0 0 44 28" role="img" aria-label="Mastercard"><rect width="44" height="28" rx="5" fill="#fff"/><circle cx="18.5" cy="14" r="7.5" fill="#eb001b"/><circle cx="25.5" cy="14" r="7.5" fill="#f79e1b" fill-opacity=".88"/></svg>
+<svg viewBox="0 0 44 28" role="img" aria-label="Card"><rect x=".5" y=".5" width="43" height="27" rx="4.5" fill="#000" stroke="rgba(255,255,255,.28)"/><rect x="14" y="8" width="16" height="12" rx="3" fill="#fff"/><circle cx="22" cy="14" r="2.6" fill="#000"/></svg>
+<svg viewBox="0 0 44 28" role="img" aria-label="PayPal"><rect width="44" height="28" rx="5" fill="#fff"/><text x="22" y="17.8" text-anchor="middle" font-family="Verdana,Arial,sans-serif" font-size="9.5" font-weight="700" font-style="italic"><tspan fill="#003087">Pay</tspan><tspan fill="#009cde">Pal</tspan></text></svg></div>
+              <div class="or">or</div>
+              <div class="alt">
+                <button class="btn btn-ghost btn-tg" type="button"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg>Pay with Telegram</button>
+                <button class="btn btn-ghost btn-crypto" type="button"><svg class="ic" aria-hidden="true"><use href="#i-btc"/></svg>Pay with crypto</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </article>
+  </section>
+  <section class="state" id="quarterly">
+    <p class="state-label">Quarterly Pro selected <span>Tab 2 of 3</span></p>
+    <article class="ax" aria-label="Payment page with Quarterly Pro selected">
+      <header class="ax-head">
+        <div><h2 class="ax-title">Choose your plan.</h2><p class="ax-sub">Unlock more creative power with the plan that fits you.</p></div>
+        <div class="trust">
+        <div class="avatars" aria-hidden="true"><span style="background:#7c4dff;color:#fff"><svg class="icf" aria-hidden="true"><use href="#i-spark4"/></svg></span><span style="background:#ff3d9a;color:#fff"><svg class="icf" aria-hidden="true"><use href="#i-spark4"/></svg></span><span style="background:#ffc53d;color:#3a2600"><svg class="icf" aria-hidden="true"><use href="#i-spark4"/></svg></span><span style="background:#2f80ff;color:#fff"><svg class="icf" aria-hidden="true"><use href="#i-spark4"/></svg></span></div>
+        <div>Trusted by <b>1M+</b> creators worldwide<div class="stars" aria-label="5 star rating"><svg class="icf" aria-hidden="true"><use href="#i-star"/></svg><svg class="icf" aria-hidden="true"><use href="#i-star"/></svg><svg class="icf" aria-hidden="true"><use href="#i-star"/></svg><svg class="icf" aria-hidden="true"><use href="#i-star"/></svg><svg class="icf" aria-hidden="true"><use href="#i-star"/></svg><b>1000+</b>&nbsp;<span style="color:var(--ink-2);font-weight:400">ratings</span></div></div>
+      </div>
+      </header>
+      <div class="ax-body">
+        <div class="ax-main">
+          <section aria-label="Plans">
+            <div class="step"><span class="step-n">1</span><div><h3>Choose a plan</h3><p>Prices shown per 100 coins.</p></div></div>
+            <div class="plans" role="radiogroup" aria-label="Plans">
+          <div class="plan" role="radio" aria-checked="false" tabindex="-1">
+            <span class="plan-icon"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg></span>
+            <span><span class="plan-name">Monthly Pro</span><span class="plan-coins">300 coins</span></span>
+            <span class="radio" aria-hidden="true"></span>
+            <span class="plan-price"><strong>$4.33</strong><span>/100 coins</span></span>
+          </div>
+          <div class="plan is-on" role="radio" aria-checked="true" tabindex="0">
+            <span class="plan-icon"><svg class="ic" aria-hidden="true"><use href="#i-zap"/></svg></span>
+            <span><span class="plan-name">Quarterly Pro</span><span class="plan-coins">1,500 coins</span></span>
+            <span class="radio" aria-hidden="true"></span>
+            <span class="plan-price"><strong>$2.67</strong><span>/100 coins</span></span>
+          </div>
+          <div class="plan" role="radio" aria-checked="false" tabindex="-1">
+            <span class="badge"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg>Best value</span><span class="plan-icon"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg></span>
+            <span><span class="plan-name">Annual Pro</span><span class="plan-coins">5,200 coins</span></span>
+            <span class="radio" aria-hidden="true"></span>
+            <span class="plan-price"><strong>$1.35</strong><span>/100 coins</span></span>
+          </div>
+            </div>
+          </section>
+          <section aria-label="Benefits">
+            <div class="step"><span class="step-n">2</span><div><h3>What you get with Quarterly Pro</h3><p>Allowance, performance and creative tools.</p></div></div>
+            <div class="sheet">
+            <div class="spec allow">
+              <h4>Allowance</h4>
+              <div class="cell"><span class="cell-lab">Coins</span><span class="cell-row"><span class="coin" aria-hidden="true">$</span><span class="cell-val">1,500</span></span></div>
+              <div class="cell"><span class="cell-lab">Videos</span><span class="cell-row"><span class="mini" style="--c:#ffa66b"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg></span><span class="cell-val">30</span></span></div>
+              <div class="cell"><span class="cell-lab">Images</span><span class="cell-row"><span class="mini" style="--c:#ff7eb6"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg></span><span class="cell-val">100</span></span></div>
+            </div>
+            <div class="spec">
+              <h4>Performance</h4>
+              <div class="cell"><span class="cell-lab">Video quality</span><span class="cell-val sm">1080p</span><span class="cell-sub">Video quality up to 1080p Full HD</span></div>
+              <div class="cell"><span class="cell-lab">Parallel tasks</span><span class="cell-val sm">5 at once</span><span class="cell-sub">Generate 5 tasks simultaneously</span></div>
+              <div class="cell"><span class="cell-lab">Processing speed</span><span class="cell-val sm">Priority</span><span class="cell-sub">Priority processing</span></div>
+            </div>
+            <div class="tools">
+              <div class="tools-head"><h4>Creative tools</h4><span class="tools-count"><b>7 creative tools included</b>, 5 locked benefits</span></div>
+              <div class="meter" role="img" aria-label="7 of 12 creative tools included"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+              <ul class="tool-grid"><li class="tool"><span class="tool-ic" style="--c:#ff7eb6"><svg class="ic" aria-hidden="true"><use href="#i-wand"/></svg></span><span><span class="tool-t">Generate videos with custom prompts</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#b48cff"><svg class="ic" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span><span class="tool-t">AI Undress</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#4fd6ea"><svg class="ic" aria-hidden="true"><use href="#i-scan"/></svg></span><span><span class="tool-t">Image face swap</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#ffc84a"><svg class="ic" aria-hidden="true"><use href="#i-box"/></svg></span><span><span class="tool-t">Train your own AI model</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#4fd6ea"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg></span><span><span class="tool-t">Upload face or pose references</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#ff7eb6"><svg class="ic" aria-hidden="true"><use href="#i-volume"/></svg></span><span><span class="tool-t">Generate videos with sound</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#b48cff"><svg class="ic" aria-hidden="true"><use href="#i-film"/></svg></span><span><span class="tool-t">Video compilation generation</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li></ul>
+              <p class="tools-sub">Not included in this plan</p>
+              <ul class="tool-grid"><li class="tool off"><span class="tool-ic"><svg class="ic" aria-hidden="true"><use href="#i-gauge"/></svg></span><span><span class="tool-t">Video generation up to 60 FPS</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>In Annual Pro</span></span></li><li class="tool off"><span class="tool-ic"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></span><span><span class="tool-t">Enhanced adult content generation</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>In Annual Pro</span></span></li><li class="tool off"><span class="tool-ic"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg></span><span><span class="tool-t">Exclusive templates</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>In Annual Pro</span></span></li><li class="tool off"><span class="tool-ic"><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg></span><span><span class="tool-t">Early access to new templates</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>In Annual Pro</span></span></li><li class="tool off"><span class="tool-ic"><svg class="ic" aria-hidden="true"><use href="#i-branch"/></svg></span><span><span class="tool-t">Storyline branching</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>In Annual Pro</span></span></li></ul>
+            </div>
+            </div>
+          </section>
+        </div>
+        <aside class="checkout" aria-label="Payment">
+          <div class="step"><span class="step-n">3</span><div><h3>Ready to create</h3><p>Review your order and pay.</p></div></div>
+          <div class="ticket">
+            <div class="t-top">
+              <div class="t-plan"><span class="plan-icon is-solid"><svg class="ic" aria-hidden="true"><use href="#i-zap"/></svg></span><span><span class="plan-name">Quarterly Pro</span><span class="plan-coins">1,500 coins</span></span></div>
+              <dl class="t-rows">
+                <div><dt>Videos</dt><dd>30</dd></div>
+                <div><dt>Images</dt><dd>100</dd></div>
+                <div><dt>Price per 100 coins</dt><dd>$2.67</dd></div>
+              </dl>
+              <div class="t-total"><span>Total</span><strong>$39.99</strong></div>
+            </div>
+            <div class="t-bot">
+              <button class="btn btn-primary" type="button"><span>Continue with</span><span class="pill">$39.99</span></button>
+              <div class="logos"><svg viewBox="0 0 44 28" role="img" aria-label="Visa"><rect width="44" height="28" rx="5" fill="#fff"/><text x="22" y="18.6" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12.5" font-weight="900" font-style="italic" fill="#1a1f71">VISA</text></svg>
+<svg viewBox="0 0 44 28" role="img" aria-label="Mastercard"><rect width="44" height="28" rx="5" fill="#fff"/><circle cx="18.5" cy="14" r="7.5" fill="#eb001b"/><circle cx="25.5" cy="14" r="7.5" fill="#f79e1b" fill-opacity=".88"/></svg>
+<svg viewBox="0 0 44 28" role="img" aria-label="Card"><rect x=".5" y=".5" width="43" height="27" rx="4.5" fill="#000" stroke="rgba(255,255,255,.28)"/><rect x="14" y="8" width="16" height="12" rx="3" fill="#fff"/><circle cx="22" cy="14" r="2.6" fill="#000"/></svg>
+<svg viewBox="0 0 44 28" role="img" aria-label="PayPal"><rect width="44" height="28" rx="5" fill="#fff"/><text x="22" y="17.8" text-anchor="middle" font-family="Verdana,Arial,sans-serif" font-size="9.5" font-weight="700" font-style="italic"><tspan fill="#003087">Pay</tspan><tspan fill="#009cde">Pal</tspan></text></svg></div>
+              <div class="or">or</div>
+              <div class="alt">
+                <button class="btn btn-ghost btn-tg" type="button"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg>Pay with Telegram</button>
+                <button class="btn btn-ghost btn-crypto" type="button"><svg class="ic" aria-hidden="true"><use href="#i-btc"/></svg>Pay with crypto</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </article>
+  </section>
+  <section class="state" id="annual">
+    <p class="state-label">Annual Pro selected <span>Tab 3 of 3</span></p>
+    <article class="ax" aria-label="Payment page with Annual Pro selected">
+      <header class="ax-head">
+        <div><h2 class="ax-title">Choose your plan.</h2><p class="ax-sub">Unlock more creative power with the plan that fits you.</p></div>
+        <div class="trust">
+        <div class="avatars" aria-hidden="true"><span style="background:#7c4dff;color:#fff"><svg class="icf" aria-hidden="true"><use href="#i-spark4"/></svg></span><span style="background:#ff3d9a;color:#fff"><svg class="icf" aria-hidden="true"><use href="#i-spark4"/></svg></span><span style="background:#ffc53d;color:#3a2600"><svg class="icf" aria-hidden="true"><use href="#i-spark4"/></svg></span><span style="background:#2f80ff;color:#fff"><svg class="icf" aria-hidden="true"><use href="#i-spark4"/></svg></span></div>
+        <div>Trusted by <b>1M+</b> creators worldwide<div class="stars" aria-label="5 star rating"><svg class="icf" aria-hidden="true"><use href="#i-star"/></svg><svg class="icf" aria-hidden="true"><use href="#i-star"/></svg><svg class="icf" aria-hidden="true"><use href="#i-star"/></svg><svg class="icf" aria-hidden="true"><use href="#i-star"/></svg><svg class="icf" aria-hidden="true"><use href="#i-star"/></svg><b>1000+</b>&nbsp;<span style="color:var(--ink-2);font-weight:400">ratings</span></div></div>
+      </div>
+      </header>
+      <div class="ax-body">
+        <div class="ax-main">
+          <section aria-label="Plans">
+            <div class="step"><span class="step-n">1</span><div><h3>Choose a plan</h3><p>Prices shown per 100 coins.</p></div></div>
+            <div class="plans" role="radiogroup" aria-label="Plans">
+          <div class="plan" role="radio" aria-checked="false" tabindex="-1">
+            <span class="plan-icon"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg></span>
+            <span><span class="plan-name">Monthly Pro</span><span class="plan-coins">300 coins</span></span>
+            <span class="radio" aria-hidden="true"></span>
+            <span class="plan-price"><strong>$4.33</strong><span>/100 coins</span></span>
+          </div>
+          <div class="plan" role="radio" aria-checked="false" tabindex="-1">
+            <span class="plan-icon"><svg class="ic" aria-hidden="true"><use href="#i-zap"/></svg></span>
+            <span><span class="plan-name">Quarterly Pro</span><span class="plan-coins">1,500 coins</span></span>
+            <span class="radio" aria-hidden="true"></span>
+            <span class="plan-price"><strong>$2.67</strong><span>/100 coins</span></span>
+          </div>
+          <div class="plan is-on" role="radio" aria-checked="true" tabindex="0">
+            <span class="badge"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg>Best value</span><span class="plan-icon"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg></span>
+            <span><span class="plan-name">Annual Pro</span><span class="plan-coins">5,200 coins</span></span>
+            <span class="radio" aria-hidden="true"></span>
+            <span class="plan-price"><strong>$1.35</strong><span>/100 coins</span></span>
+          </div>
+            </div>
+          </section>
+          <section aria-label="Benefits">
+            <div class="step"><span class="step-n">2</span><div><h3>What you get with Annual Pro</h3><p>Allowance, performance and creative tools.</p></div></div>
+            <div class="sheet">
+            <div class="spec allow">
+              <h4>Allowance</h4>
+              <div class="cell"><span class="cell-lab">Coins</span><span class="cell-row"><span class="coin" aria-hidden="true">$</span><span class="cell-val">5,200</span></span></div>
+              <div class="cell"><span class="cell-lab">Videos</span><span class="cell-row"><span class="mini" style="--c:#ffa66b"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg></span><span class="cell-val">120</span></span></div>
+              <div class="cell"><span class="cell-lab">Images</span><span class="cell-row"><span class="mini" style="--c:#ff7eb6"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg></span><span class="cell-val">400</span></span></div>
+            </div>
+            <div class="spec">
+              <h4>Performance</h4>
+              <div class="cell"><span class="cell-lab">Video quality</span><span class="cell-val sm">4K Ultra HD</span><span class="cell-sub">Video quality up to 4K Ultra HD</span></div>
+              <div class="cell"><span class="cell-lab">Parallel tasks</span><span class="cell-val sm">10 at once</span><span class="cell-sub">Generate 10 tasks simultaneously</span></div>
+              <div class="cell"><span class="cell-lab">Processing speed</span><span class="cell-val sm">Highest priority</span><span class="cell-sub">Highest-priority processing</span></div>
+            </div>
+            <div class="tools">
+              <div class="tools-head"><h4>Creative tools</h4><span class="tools-count"><b>12 creative tools included</b></span></div>
+              <div class="meter" role="img" aria-label="12 of 12 creative tools included"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+              <ul class="tool-grid"><li class="tool"><span class="tool-ic" style="--c:#ff7eb6"><svg class="ic" aria-hidden="true"><use href="#i-wand"/></svg></span><span><span class="tool-t">Generate videos with custom prompts</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#b48cff"><svg class="ic" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span><span class="tool-t">AI Undress</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#4fd6ea"><svg class="ic" aria-hidden="true"><use href="#i-scan"/></svg></span><span><span class="tool-t">Image face swap</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#ffc84a"><svg class="ic" aria-hidden="true"><use href="#i-box"/></svg></span><span><span class="tool-t">Train your own AI model</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#4fd6ea"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg></span><span><span class="tool-t">Upload face or pose references</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#ff7eb6"><svg class="ic" aria-hidden="true"><use href="#i-volume"/></svg></span><span><span class="tool-t">Generate videos with sound</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#b48cff"><svg class="ic" aria-hidden="true"><use href="#i-film"/></svg></span><span><span class="tool-t">Video compilation generation</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#ffc84a"><svg class="ic" aria-hidden="true"><use href="#i-gauge"/></svg></span><span><span class="tool-t">Video generation up to 60 FPS</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#ff7eb6"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></span><span><span class="tool-t">Enhanced adult content generation</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#ffc84a"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg></span><span><span class="tool-t">Exclusive templates</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#b48cff"><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg></span><span><span class="tool-t">Early access to new templates</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li><li class="tool"><span class="tool-ic" style="--c:#4fd6ea"><svg class="ic" aria-hidden="true"><use href="#i-branch"/></svg></span><span><span class="tool-t">Storyline branching</span><span class="tool-s"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Included</span></span></li></ul>
+              <p class="all-in"><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>All 15 benefits are included with Annual Pro.</p>
+            </div>
+            </div>
+          </section>
+        </div>
+        <aside class="checkout" aria-label="Payment">
+          <div class="step"><span class="step-n">3</span><div><h3>Ready to create</h3><p>Review your order and pay.</p></div></div>
+          <div class="ticket">
+            <div class="t-top">
+              <div class="t-plan"><span class="plan-icon is-solid"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg></span><span><span class="plan-name">Annual Pro</span><span class="plan-coins">5,200 coins</span></span></div>
+              <dl class="t-rows">
+                <div><dt>Videos</dt><dd>120</dd></div>
+                <div><dt>Images</dt><dd>400</dd></div>
+                <div><dt>Price per 100 coins</dt><dd>$1.35</dd></div>
+              </dl>
+              <div class="t-total"><span>Total</span><strong>$69.99</strong></div>
+            </div>
+            <div class="t-bot">
+              <button class="btn btn-primary" type="button"><span>Continue with</span><span class="pill">$69.99</span></button>
+              <div class="logos"><svg viewBox="0 0 44 28" role="img" aria-label="Visa"><rect width="44" height="28" rx="5" fill="#fff"/><text x="22" y="18.6" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12.5" font-weight="900" font-style="italic" fill="#1a1f71">VISA</text></svg>
+<svg viewBox="0 0 44 28" role="img" aria-label="Mastercard"><rect width="44" height="28" rx="5" fill="#fff"/><circle cx="18.5" cy="14" r="7.5" fill="#eb001b"/><circle cx="25.5" cy="14" r="7.5" fill="#f79e1b" fill-opacity=".88"/></svg>
+<svg viewBox="0 0 44 28" role="img" aria-label="Card"><rect x=".5" y=".5" width="43" height="27" rx="4.5" fill="#000" stroke="rgba(255,255,255,.28)"/><rect x="14" y="8" width="16" height="12" rx="3" fill="#fff"/><circle cx="22" cy="14" r="2.6" fill="#000"/></svg>
+<svg viewBox="0 0 44 28" role="img" aria-label="PayPal"><rect width="44" height="28" rx="5" fill="#fff"/><text x="22" y="17.8" text-anchor="middle" font-family="Verdana,Arial,sans-serif" font-size="9.5" font-weight="700" font-style="italic"><tspan fill="#003087">Pay</tspan><tspan fill="#009cde">Pal</tspan></text></svg></div>
+              <div class="or">or</div>
+              <div class="alt">
+                <button class="btn btn-ghost btn-tg" type="button"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg>Pay with Telegram</button>
+                <button class="btn btn-ghost btn-crypto" type="button"><svg class="ic" aria-hidden="true"><use href="#i-btc"/></svg>Pay with crypto</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </article>
+  </section>
+</main>
+</body>
+</html>
