@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Explore templates loading states | Innoreels</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS
+   ============================================================ */
+@property --p { syntax: '<number>'; inherits: true; initial-value: 0; }
+
+:root{
+  color-scheme: dark;
+  --board:#0a0907;
+  --bg:#0f0d0a;
+  --panel:#13110d;
+  --surface:#1a1712;
+  --surface-2:#231f18;
+  --line:#2b261d;
+  --line-soft:#201c15;
+  --text:#f5f0e6;
+  --text-2:#d8d1c3;
+  --muted:#968d7d;
+  --dim:#6b6457;
+  --gold:#ffc23a;
+  --gold-hi:#ffd65a;
+  --gold-lo:#ffa915;
+  --gold-soft:rgba(255,194,58,.14);
+  --on-gold:#2a1a00;
+  --hot:#ff6a2c;
+  --new:#2fd27c;
+  --love:#ff3b67;
+  --radius-card:16px;
+  --font:"Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0}
+body{background:var(--board);color:var(--text);font-family:var(--font);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:10px}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.coin{width:16px;height:16px;border-radius:50%;flex:none;display:inline-block;
+  background:radial-gradient(circle at 35% 30%,#fff3b8,#ffc83a 45%,#e3940a 100%);
+  box-shadow:inset 0 0 0 1.5px rgba(150,90,0,.35)}
+.gold-btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;font-weight:700;color:var(--on-gold);
+  background:linear-gradient(180deg,var(--gold-hi),var(--gold-lo));box-shadow:0 8px 24px -10px rgba(255,170,20,.7)}
+.logo{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;color:var(--on-gold);flex:none;
+  background:linear-gradient(180deg,var(--gold-hi),var(--gold-lo));box-shadow:0 6px 18px -6px rgba(255,170,20,.6)}
+.logo .ic{width:20px;height:20px;stroke-width:2.2}
+
+/* ============================================================
+   BOARD
+   ============================================================ */
+.board{max-width:1520px;margin:0 auto;padding:56px 40px 96px}
+.board-head{display:grid;gap:14px;padding-bottom:40px;border-bottom:1px solid var(--line-soft)}
+.board-brand{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:800;letter-spacing:-.01em}
+.board-title{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-top:10px}
+.board-lede{color:var(--muted);font-size:16px;max-width:64ch}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.toc a{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:11px;border:1px solid var(--line);background:var(--surface);color:var(--text-2);font-weight:600;font-size:13.5px}
+.toc a:hover{border-color:rgba(255,194,58,.5);color:var(--text)}
+.toc .n{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11.5px;font-weight:800;color:var(--on-gold);background:var(--gold)}
+
+.sec{padding-top:64px;scroll-margin-top:16px}
+.sec-head{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;margin-bottom:24px}
+.step{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:var(--on-gold);
+  background:linear-gradient(180deg,var(--gold-hi),var(--gold-lo));box-shadow:0 6px 18px -8px rgba(255,170,20,.7)}
+.sec-head h2{font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1.25}
+.sec-head p{color:var(--muted);font-size:15px;max-width:68ch;margin-top:4px}
+.sub{font-size:16px;font-weight:700;letter-spacing:-.01em;margin:40px 0 4px}
+.sub + p{color:var(--muted);font-size:14px;max-width:68ch}
+
+/* Scaled 1440 × 1180 screen inside each frame */
+.frame{position:relative;aspect-ratio:1440/1180;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:var(--bg);
+  box-shadow:0 40px 80px -40px rgba(255,170,20,.28),0 30px 60px -30px rgba(0,0,0,.8)}
+.screen{position:absolute;top:0;left:0;width:1440px;height:1180px;transform-origin:0 0;transform:scale(var(--s,1))}
+
+/* ============================================================
+   APP SCREEN (fixed desktop width inside the frame)
+   ============================================================ */
+.app{display:grid;grid-template-columns:264px minmax(0,1fr);height:100%;background:var(--bg)}
+.side{position:relative;height:100%;overflow:hidden;background:var(--panel);border-right:1px solid var(--line-soft);padding:20px 16px 12px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:12px;padding:2px 6px 14px}
+.brand b{font-size:20px;font-weight:800;letter-spacing:-.015em}
+.collapse{margin-left:auto;width:32px;height:32px;border:1px solid var(--line);border-radius:9px;display:grid;place-items:center;color:var(--muted)}
+.collapse .ic{width:16px;height:16px}
+.nav-group{font-size:12.5px;color:var(--dim);font-weight:600;padding:14px 12px 6px}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a{position:relative;display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:11px;border:1px solid transparent;color:var(--text-2);font-weight:500;font-size:15px}
+.nav a .ic{color:var(--muted)}
+.nav a[aria-current=page]{background:linear-gradient(90deg,rgba(255,194,58,.16),rgba(255,194,58,.05));border-color:rgba(255,194,58,.35);color:var(--text)}
+.nav a[aria-current=page] .ic{color:var(--gold)}
+.nav a[aria-current=page]::before{content:"";position:absolute;left:-17px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:var(--gold)}
+.pill{margin-left:auto;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;line-height:1.3}
+.pill.hot{background:var(--hot);color:#fff}
+.pill.pro{border:1px solid rgba(255,194,58,.5);color:var(--gold);background:rgba(255,194,58,.08)}
+.side-foot{margin-top:auto;padding-top:20px;display:flex;flex-direction:column;gap:12px}
+.lang{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text-2);font-size:14.5px;width:100%;text-align:left}
+.lang .chev{margin-left:auto;width:16px;height:16px;color:var(--muted)}
+.user{display:flex;align-items:center;gap:12px;padding:2px 4px}
+.avatar{width:38px;height:38px;border-radius:50%;flex:none;display:grid;place-items:center;font-weight:800;color:var(--on-gold);background:linear-gradient(180deg,var(--gold-hi),var(--gold-lo))}
+.user b{display:block;font-size:15px;font-weight:700}
+.user small{color:var(--muted);font-size:13px}
+.wallet{border-radius:16px;padding:12px;color:var(--on-gold);background:linear-gradient(180deg,var(--gold-hi),#ffb01f);box-shadow:0 10px 30px -12px rgba(255,170,20,.55)}
+.wallet-row{display:flex;align-items:center;gap:8px;padding-left:4px}
+.wallet .coin{width:18px;height:18px}
+.wallet .amt{font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.wallet .unit{font-weight:600}
+.wallet .buy{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:#1a1408;color:var(--gold);font-weight:700}
+.wallet .buy .ic{width:15px;height:15px}
+.vip{margin-top:10px;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.55);border-radius:999px;padding:5px 12px 5px 5px;font-size:12.5px}
+.vip .tier{background:#1a1408;color:var(--gold);font-weight:800;padding:3px 9px;border-radius:999px;font-size:11.5px}
+.vip .track{flex:1;height:4px;border-radius:4px;background:rgba(26,20,8,.16);position:relative}
+.vip .track i{position:absolute;inset:0 auto 0 0;width:6%;background:#1a1408;border-radius:4px}
+.vip b{font-weight:800}
+.signout{display:flex;align-items:center;gap:12px;padding:12px;margin-top:2px;border-top:1px solid var(--line-soft);color:var(--muted);font-size:15px}
+
+.main{min-width:0;height:100%;overflow:hidden;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;gap:10px;padding:14px 28px}
+.crumbs{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13.5px}
+.crumbs .ic{width:14px;height:14px}
+.crumbs .here{color:var(--text)}
+.top-actions{margin-left:auto;display:flex;gap:10px;align-items:center}
+.gopro{padding:9px 16px}
+.gopro .ic{width:16px;height:16px}
+.coins{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 14px;border:1px solid var(--line);border-radius:999px;font-weight:700;color:var(--gold)}
+.icon-btn{width:38px;height:38px;border:1px solid var(--line);border-radius:12px;display:grid;place-items:center;position:relative;color:var(--text-2)}
+.icon-btn .dot{position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;background:var(--hot);box-shadow:0 0 0 2px var(--bg)}
+.me{display:flex;align-items:center;gap:6px;padding:3px 9px 3px 3px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+.me .avatar{width:32px;height:32px;font-size:14px}
+.me .ic{width:15px;height:15px}
+.page{width:100%;max-width:1188px;margin:0 auto;padding:12px 24px 0}
+.page-title{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.lede{color:var(--muted);margin-top:8px;font-size:15px}
+.promo{margin-top:24px;display:flex;align-items:center;gap:18px;padding:14px 16px 14px 18px;border-radius:18px;
+  border:1px solid rgba(255,194,58,.3);background:linear-gradient(90deg,rgba(255,194,58,.13),rgba(255,194,58,.02) 65%),var(--surface)}
+.promo-thumbs{display:flex;padding-left:14px;flex:none}
+.promo-thumbs span{width:40px;height:52px;border-radius:10px;border:2px solid var(--surface);margin-left:-14px;transform:rotate(-6deg)}
+.promo-thumbs span:nth-child(2){transform:rotate(0);margin-top:-4px}
+.promo-thumbs span:nth-child(3){transform:rotate(6deg)}
+.promo h2{font-size:16px;font-weight:700;letter-spacing:-.01em}
+.promo p{color:var(--muted);font-size:13px;margin-top:2px}
+.promo .try{margin-left:auto;padding:10px 18px;flex:none}
+.promo .try .ic{width:16px;height:16px}
+.filters{margin-top:20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{flex:none;display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 13px;border-radius:11px;border:1px solid var(--line);background:var(--surface);color:var(--text-2);font-weight:500;font-size:13.5px;white-space:nowrap}
+.chip .ic{width:15px;height:15px}
+.chip.on{background:linear-gradient(180deg,var(--gold-hi),#ffb01f);border-color:transparent;color:var(--on-gold);font-weight:700}
+.chip.search{width:36px;padding:0;justify-content:center}
+.chip .love{color:var(--love);fill:var(--love)}
+.sep{width:1px;height:22px;background:var(--line);margin:0 4px;flex:none}
+
+/* ---------- Grid-level loading status ---------- */
+.load-status{margin-top:18px;display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:8px 10px;font-size:13px;color:var(--muted)}
+.ls-icon{width:16px;height:16px;display:grid;place-items:center}
+.ls-spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,194,58,.22);border-top-color:var(--gold);animation:spin .8s linear infinite}
+.ls-icon .ic{display:none;width:16px;height:16px;stroke-width:2.4}
+.load-status[data-phase=complete] .ls-spin,.load-status[data-phase=failed] .ls-spin{display:none}
+.load-status[data-phase=complete] .ls-ok{display:block;color:var(--new)}
+.load-status[data-phase=failed] .ls-warn{display:block;color:var(--hot)}
+.ls-text{color:var(--text);font-weight:600}
+.ls-count{font-variant-numeric:tabular-nums}
+.ls-retry{display:none;line-height:1;color:var(--gold);font-weight:700;font-size:12.5px;padding:2px 4px}
+.load-status[data-phase=failed] .ls-retry{display:inline}
+.ls-bar{grid-column:1/-1;height:3px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+.ls-bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold-lo),var(--gold-hi));box-shadow:0 0 12px rgba(255,194,58,.6)}
+.load-status[data-phase=failed] .ls-bar i{background:linear-gradient(90deg,var(--gold-lo),var(--hot))}
+.load-status[data-phase=complete] .ls-bar i{background:linear-gradient(90deg,#1fb366,var(--new));box-shadow:0 0 12px rgba(47,210,124,.5)}
+
+/* ============================================================
+   TEMPLATE CARD + LOADING STATES
+   data-state: skeleton | queued | loading | ready | error
+   --p (0–100) sets the ring fill and the thumbnail blur
+   ============================================================ */
+.grid{margin-top:16px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
+.card{position:relative;aspect-ratio:9/16;border-radius:var(--radius-card);overflow:hidden;isolation:isolate;background:var(--surface);border:1px solid var(--line)}
+
+.thumb{position:absolute;inset:0;z-index:0;
+  filter:blur(calc((100 - var(--p)) * .2px)) saturate(calc(.4 + var(--p) * .006));
+  opacity:calc(.3 + var(--p) * .007);
+  transform:scale(calc(1.1 - var(--p) * .001))}
+.card::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(180deg,rgba(10,8,6,.38) 0%,transparent 20%,transparent 56%,rgba(10,8,6,.85) 100%)}
+.veil{position:absolute;inset:0;z-index:1;background:radial-gradient(60% 42% at 50% 46%,rgba(15,13,10,.2),rgba(15,13,10,.62))}
+.card::after{content:"";position:absolute;inset:0;z-index:8;pointer-events:none;opacity:0;
+  background:linear-gradient(105deg,transparent 32%,rgba(255,214,120,.06) 44%,rgba(255,236,190,.12) 50%,rgba(255,214,120,.06) 56%,transparent 68%);
+  background-size:260% 100%;background-position:130% 0}
+.card:is([data-state=skeleton],[data-state=queued],[data-state=loading])::after{opacity:1;animation:sheen 2s ease-in-out infinite;animation-delay:calc(var(--col,0) * 110ms)}
+
+.content-layer{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;padding:11px}
+.top{display:flex;align-items:flex-start;gap:6px}
+.badges{display:flex;gap:5px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:7px;font-size:11.5px;font-weight:600;background:rgba(18,15,11,.62);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#f2ecdf}
+.badge .ic{width:11px;height:11px;stroke-width:2.2}
+.badge.hot{background:var(--hot);color:#fff}
+.badge.new{background:var(--new);color:#05261a}
+.fav{margin-left:auto;width:32px;height:32px;flex:none;border-radius:50%;display:grid;place-items:center;color:#fff;background:rgba(18,15,11,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.fav .ic{width:16px;height:16px}
+.fav.on{background:var(--love);box-shadow:0 4px 14px -4px rgba(255,59,103,.7)}
+.fav.on .ic{fill:#fff}
+.use{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.94);opacity:0;padding:10px 16px;white-space:nowrap;font-size:13.5px}
+.use .ic{width:16px;height:16px}
+.card:not([data-state=ready]) .use{visibility:hidden}
+.card[data-state=ready]:is(:hover,:focus-within,.is-hover) .use{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.card[data-state=ready]:is(:hover,:focus-within,.is-hover){border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 16px 40px -16px rgba(255,180,30,.5)}
+.bottom{margin-top:auto;display:flex;align-items:flex-end;gap:8px}
+.name{flex:1;min-width:0;font-size:15px;font-weight:700;line-height:1.2;letter-spacing:-.01em;text-shadow:0 1px 8px rgba(0,0,0,.45)}
+.price{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px 0 5px;border-radius:999px;flex:none;background:rgba(18,15,11,.62);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-weight:700;font-size:12.5px;color:var(--gold)}
+
+/* Skeleton */
+.skel{position:absolute;inset:0;z-index:5}
+.sk{position:absolute;border-radius:999px;background:linear-gradient(90deg,#221e17 0%,#302a20 40%,#221e17 80%);background-size:200% 100%;animation:pulse 1.6s ease-in-out infinite;animation-delay:calc(var(--col,0) * 110ms)}
+.sk-badge{top:11px;left:11px;width:58px;height:22px;border-radius:7px}
+.sk-fav{top:11px;right:11px;width:32px;height:32px}
+.sk-l1{left:12px;bottom:40px;width:60%;height:12px}
+.sk-l2{left:12px;bottom:18px;width:36%;height:12px}
+.sk-price{right:11px;bottom:14px;width:46px;height:26px}
+.sk-glyph{position:absolute;left:50%;top:45%;width:34px;height:34px;transform:translate(-50%,-50%);color:#3a3328;stroke-width:1.4}
+
+/* Progress ring */
+.loader{position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;pointer-events:none;padding-bottom:18px}
+.ring{position:relative;width:68px;height:68px;border-radius:50%;display:grid;place-items:center;background:rgba(15,13,10,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.arc{position:absolute;inset:0;border-radius:50%;filter:drop-shadow(0 0 6px rgba(255,186,40,.5))}
+.arc::before{content:"";position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(#ff9f0f 0%,var(--gold-hi) calc(var(--p) * 1%),rgba(255,255,255,.09) 0);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3.5px));
+          mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3.5px))}
+.arc::after{content:"";position:absolute;inset:0;border-radius:50%;opacity:clamp(0,var(--p),1);transform:rotate(calc(var(--p) * 3.6deg));
+  background:radial-gradient(circle at 50% 2px,#fff7dc 0 2.4px,transparent 3.2px)}
+.pct{position:relative;font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.pct small{font-size:10px;font-weight:700;color:var(--muted);margin-left:1px}
+.dots{position:absolute;display:flex;gap:4px;opacity:0}
+.dots i{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:dot 1.2s ease-in-out infinite}
+.dots i:nth-child(2){animation-delay:.15s}
+.dots i:nth-child(3){animation-delay:.3s}
+.status{font-size:12px;font-weight:600;color:#ebe4d6;padding:4px 10px;border-radius:999px;white-space:nowrap;background:rgba(15,13,10,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.card[data-state=queued] .arc::before{background:conic-gradient(rgba(255,194,58,0) 0 55%,rgba(255,194,58,.95) 100%);animation:spin 1.1s linear infinite}
+.card[data-state=queued] .arc::after,.card[data-state=queued] .pct{opacity:0}
+.card[data-state=queued] .dots{opacity:1}
+
+/* Error */
+.error{position:absolute;inset:0;z-index:7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px 16px 34px;text-align:center}
+.err-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:rgba(255,106,44,.13);color:var(--hot)}
+.error p{font-size:13px;font-weight:600;color:var(--text)}
+.retry{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:999px;font-weight:700;font-size:12.5px;border:1px solid rgba(255,194,58,.45);color:var(--gold);background:rgba(255,194,58,.08)}
+.retry .ic{width:14px;height:14px;stroke-width:2.2}
+
+/* State visibility */
+.skel,.loader,.error{display:none}
+.card[data-state=skeleton] .skel,
+.card[data-state=queued] .loader,
+.card[data-state=loading] .loader{display:flex}
+.card[data-state=skeleton] .skel{display:block}
+.card[data-state=error] .error{display:flex}
+.card[data-state=skeleton] :is(.content-layer,.thumb,.veil),
+.card[data-state=skeleton]::before{display:none}
+.card[data-state=ready] .veil{display:none}
+.card[data-state=error]{border-color:rgba(255,106,44,.35)}
+.card[data-state=error] .thumb{filter:blur(18px) grayscale(1);opacity:.16}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes sheen{from{background-position:130% 0}to{background-position:-30% 0}}
+@keyframes pulse{0%,100%{background-position:100% 0}50%{background-position:0 0}}
+@keyframes dot{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+
+/* Placeholder artwork (swap for the real thumbnails) */
+.art{--skin:#e8c3a5;--hair:#6b4a32;--top:#efe8dc;--glow:#a7c47a;--bg1:#56763c;--bg2:#1f1810;
+  background:
+    radial-gradient(21% 13% at 50% 37%,var(--skin) 0 93%,transparent 100%),
+    radial-gradient(33% 22% at 50% 35%,var(--hair) 0 94%,transparent 100%),
+    radial-gradient(62% 30% at 50% 94%,var(--top) 0 95%,transparent 100%),
+    radial-gradient(85% 55% at 18% 12%,var(--glow),transparent 70%),
+    linear-gradient(180deg,var(--bg1),var(--bg2))}
+.art-sunlit{--skin:#f0c7a2;--hair:#9a6a45;--top:#efe9df;--glow:#a7c47a;--bg1:#56763c;--bg2:#1f1810}
+.art-studio{--skin:#e9bf9c;--hair:#b88a5a;--top:#1d1a18;--glow:#8fa3b5;--bg1:#5d6b77;--bg2:#17120e}
+.art-alpine{--skin:#e7c2a6;--hair:#cfd5dc;--top:#3a4552;--glow:#e8eef5;--bg1:#8ea4ba;--bg2:#1e2833}
+.art-knit{--skin:#f0c9ac;--hair:#6b4a32;--top:#f1e8d8;--glow:#b6c48e;--bg1:#7f9161;--bg2:#3a3a2a}
+.art-jelly{--skin:#f3d6c6;--hair:#141216;--top:#ece6dc;--glow:#6a6a72;--bg1:#3a3a3f;--bg2:#cfc8bd}
+.art-goth{--skin:#e9d6f2;--hair:#2a2230;--top:#2b2333;--glow:#b38ad0;--bg1:#34283d;--bg2:#110d14}
+.art-neon{--skin:#f0b48c;--hair:#3a2016;--top:#39c7e8;--glow:#ff3fa4;--bg1:#8a2ad6;--bg2:#ff5fae}
+.art-crystal{--skin:#dfe7ff;--hair:#b9c8ff;--top:#a7b6f5;--glow:#ffb8ef;--bg1:#6c86e0;--bg2:#2b3170}
+.art-balloon{--skin:#f2c39a;--hair:#c98a4f;--top:#ff9fca;--glow:#ffd3e6;--bg1:#e9b9a6;--bg2:#9c6a5c}
+.art-bunny{--skin:#ff9ec8;--hair:#ff7fb6;--top:#b48cff;--glow:#ffd1e4;--bg1:#ffc3dc;--bg2:#e48ab4}
+.art-winter{--skin:#f2d0b6;--hair:#f4f4f2;--top:#8aa0b8;--glow:#ffffff;--bg1:#a8c3e3;--bg2:#5d6f82}
+
+/* ============================================================
+   SECTION 3: one card per state + status bar variants
+   ============================================================ */
+.states{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:20px;margin-top:20px}
+.states figure{margin:0}
+.states figcaption{margin-top:12px}
+.states figcaption b{display:block;font-size:14px;font-weight:700}
+.states figcaption span{display:block;margin-top:3px;color:var(--muted);font-size:12.5px;line-height:1.45}
+.status-list{display:grid;gap:12px;margin-top:20px}
+.status-row{display:grid;grid-template-columns:220px minmax(0,1fr);gap:28px;align-items:center;padding:18px 22px;border:1px solid var(--line);border-radius:16px;background:var(--bg)}
+.status-row h4{font-size:14px;font-weight:700}
+.status-row p{font-size:12.5px;color:var(--muted);margin-top:2px}
+.status-row .load-status{margin-top:0}
+
+@media (max-width:1200px){ .states{grid-template-columns:repeat(4,minmax(0,1fr))} }
+@media (max-width:720px){
+  .board{padding:32px 16px 64px}
+  .board-title{font-size:30px}
+  .frame{border-radius:12px}
+  .states{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .status-row{grid-template-columns:1fr;gap:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important}
+  .card[data-state=queued] .arc::before{background:conic-gradient(rgba(255,194,58,.6) 0 25%,rgba(255,255,255,.09) 25%)}
+  .card[data-state=queued] .dots i{opacity:.6}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ ICONS ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m-7.07-17.07 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+  <symbol id="i-panel" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-1.8 5.41a2 2 0 0 1-1.27 1.27l-5.41 1.8 1.8-5.41a2 2 0 0 1 1.27-1.27z"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+  <symbol id="i-wand" viewBox="0 0 24 24"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72M14 7l3 3M5 6v4m14 4v4M10 2v2M7 8H3m18 8h-4M11 3H9"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><path d="M21.42 10.92a1 1 0 0 0-.02-1.84L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.83l8.57 3.91a2 2 0 0 0 1.66 0zM22 10v6M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-coins" viewBox="0 0 24 24"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4m8.71 3.88.7.71-2.82 2.82"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M11.56 3.27a.5.5 0 0 1 .88 0l2.95 5.6a1 1 0 0 0 1.52.3l4.27-3.67a.5.5 0 0 1 .8.52l-2.83 10.25a1 1 0 0 1-.96.73H5.81a1 1 0 0 1-.96-.73L2.02 6.02a.5.5 0 0 1 .8-.52l4.27 3.67a1 1 0 0 0 1.52-.3zM5 21h14"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5m4-1v5l4 2"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13m7-9v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7m2.5-4a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></symbol>
+  <symbol id="i-hands" viewBox="0 0 24 24"><path d="m11 17 2 2a1 1 0 1 0 3-3m-2-2 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4m0-1 1 11h-2M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3M3 4h8"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3m.08 4h.01"/></symbol>
+  <symbol id="i-headset" viewBox="0 0 24 24"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/></symbol>
+  <symbol id="i-chev-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-chev-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10.27 21a2 2 0 0 0 3.46 0M3.26 15.33A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.67C19.41 13.96 18 12.5 18 8A6 6 0 0 0 6 8c0 4.5-1.41 5.96-2.74 7.33"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 3l14 9-14 9z"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></symbol>
+  <symbol id="i-image-plus" viewBox="0 0 24 24"><path d="M16 5h6m-3-3v6m2 3.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5m8.5 12-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/><circle cx="9" cy="9" r="2"/></symbol>
+  <symbol id="i-image-off" viewBox="0 0 24 24"><path d="m2 2 20 20M10.41 10.41a2 2 0 1 1-2.83-2.83M13.5 13.5 6 21m12-9 3 3M3.59 3.59A2 2 0 0 0 3 5v14a2 2 0 0 0 2 2h14c.55 0 1.05-.22 1.41-.59M21 15V5a2 2 0 0 0-2-2H9"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18m0-13.5h4m-4 9h4"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0l1.58 6.14a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96l-6.14 1.58a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0zM20 3v4m2-2h-4"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></symbol>
+  <symbol id="i-retry" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8m0-5v5h-5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></symbol>
+</svg>
+
+<div class="board">
+  <header class="board-head">
+    <div class="board-brand"><span class="logo"><svg class="ic"><use href="#i-sun"/></svg></span>Innoreels</div>
+    <h1 class="board-title">Explore templates loading states</h1>
+    <p class="board-lede">Static reference for the template grid while it loads. Each screen below is frozen in one state, followed by every card state and status bar variant on its own.</p>
+    <nav class="toc" aria-label="Sections">
+      <a href="#skeleton"><span class="n">1</span>Loading skeleton</a>
+      <a href="#progress"><span class="n">2</span>Loading progress</a>
+      <a href="#states"><span class="n">3</span>All card states</a>
+    </nav>
+  </header>
+
+  <section class="sec" id="skeleton">
+    <div class="sec-head">
+      <span class="step">1</span>
+      <div>
+        <h2>Loading skeleton</h2>
+        <p>Shown while the template list is being fetched. Nothing about the templates is known yet, so every card is placeholder shapes with a soft gold shimmer.</p>
+      </div>
+    </div>
+    <div class="frame" data-screen="skeleton"></div>
+  </section>
+
+  <section class="sec" id="progress">
+    <div class="sec-head">
+      <span class="step">2</span>
+      <div>
+        <h2>Loading progress</h2>
+        <p>The list has arrived, so names, badges and prices are real. Each thumbnail loads behind a progress ring and sharpens as the percentage climbs. Cards not started yet wait in the queue.</p>
+      </div>
+    </div>
+    <div class="frame" data-screen="progress"></div>
+  </section>
+
+  <section class="sec" id="states">
+    <div class="sec-head">
+      <span class="step">3</span>
+      <div>
+        <h2>All card states</h2>
+        <p>Every state a template card can be in, in the order a card moves through them.</p>
+      </div>
+    </div>
+    <div class="states" id="state-cards"></div>
+
+    <h3 class="sub">Grid status bar</h3>
+    <p>Sits between the filters and the grid. It tracks the whole page while the cards load, then hides once everything is in.</p>
+    <div class="status-list" id="status-list"></div>
+  </section>
+</div>
+
+<!-- ============ SCREEN TEMPLATE ============ -->
+<template id="screen-tpl">
+  <div class="screen">
+    <div class="app">
+      <aside class="side">
+        <div class="brand">
+          <span class="logo"><svg class="ic"><use href="#i-sun"/></svg></span>
+          <b>Innoreels</b>
+          <span class="collapse"><svg class="ic"><use href="#i-panel"/></svg></span>
+        </div>
+        <div class="nav-group">Create</div>
+        <nav class="nav">
+          <a aria-current="page"><svg class="ic"><use href="#i-compass"/></svg>Explore</a>
+          <a><svg class="ic"><use href="#i-heart"/></svg>Favorites</a>
+          <a><svg class="ic"><use href="#i-wand"/></svg>AI tools</a>
+          <a><svg class="ic"><use href="#i-cap"/></svg>Training<span class="pill hot">Hot</span></a>
+        </nav>
+        <div class="nav-group">Library</div>
+        <nav class="nav"><a><svg class="ic"><use href="#i-clock"/></svg>History</a></nav>
+        <div class="nav-group">Account</div>
+        <nav class="nav">
+          <a><svg class="ic"><use href="#i-coins"/></svg>Buy coins</a>
+          <a><svg class="ic"><use href="#i-crown"/></svg>Subscription<span class="pill pro">Pro</span></a>
+          <a><svg class="ic"><use href="#i-history"/></svg>My orders</a>
+          <a><svg class="ic"><use href="#i-gift"/></svg>Redeem code</a>
+          <a><svg class="ic"><use href="#i-hands"/></svg>Affiliate</a>
+        </nav>
+        <div class="nav-group">Help</div>
+        <nav class="nav">
+          <a><svg class="ic"><use href="#i-help"/></svg>FAQ</a>
+          <a><svg class="ic"><use href="#i-headset"/></svg>Support</a>
+        </nav>
+        <div class="side-foot">
+          <span class="lang"><svg class="ic"><use href="#i-globe"/></svg>English<svg class="ic chev"><use href="#i-chev-down"/></svg></span>
+          <div class="user"><span class="avatar">A</span><div><b>Alyana Ryu</b><small>Free plan</small></div></div>
+          <div class="wallet">
+            <div class="wallet-row"><i class="coin"></i><span class="amt">10</span><span class="unit">coins</span><span class="buy"><svg class="ic"><use href="#i-sparkles"/></svg>Buy</span></div>
+            <div class="vip"><span class="tier">VIP 1</span><span class="track"><i></i></span><span><b>$100</b> to go</span></div>
+          </div>
+          <a class="signout"><svg class="ic"><use href="#i-logout"/></svg>Sign out</a>
+        </div>
+      </aside>
+
+      <div class="main">
+        <div class="topbar">
+          <div class="crumbs"><span>Create</span><svg class="ic"><use href="#i-chev-right"/></svg><span class="here">Explore</span></div>
+          <div class="top-actions">
+            <span class="gold-btn gopro"><svg class="ic"><use href="#i-crown"/></svg>Go Pro</span>
+            <span class="coins"><i class="coin"></i>10</span>
+            <span class="icon-btn"><svg class="ic"><use href="#i-bell"/></svg><span class="dot"></span></span>
+            <span class="me"><span class="avatar">A</span><svg class="ic"><use href="#i-chev-down"/></svg></span>
+          </div>
+        </div>
+        <div class="page">
+          <div class="page-title">Explore templates</div>
+          <p class="lede">Pick a template, add a photo, and we do the rest.</p>
+          <div class="promo">
+            <div class="promo-thumbs"><span class="art art-balloon"></span><span class="art art-bunny"></span><span class="art art-neon"></span></div>
+            <div><h2>New this week: Balloon character pack</h2><p>Three new looks. Images from 15 coins.</p></div>
+            <span class="gold-btn try">Try it<svg class="ic"><use href="#i-arrow"/></svg></span>
+          </div>
+          <div class="filters">
+            <span class="chip search"><svg class="ic"><use href="#i-search"/></svg></span>
+            <span class="chip on">All</span>
+            <span class="chip"><svg class="ic love"><use href="#i-heart"/></svg>Favorites</span>
+            <span class="chip"><svg class="ic"><use href="#i-sparkles"/></svg>New</span>
+            <span class="chip"><svg class="ic"><use href="#i-film"/></svg>Video</span>
+            <span class="chip"><svg class="ic"><use href="#i-image"/></svg>Image</span>
+            <span class="sep"></span>
+            <span class="chip">Designer toy</span><span class="chip">Neon plastic</span><span class="chip">Jelly</span>
+            <span class="chip">Balloon</span><span class="chip">Winter</span><span class="chip">Rag doll</span>
+          </div>
+          <div class="status-slot"></div>
+          <div class="grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- ============ STATUS BAR TEMPLATE ============ -->
+<template id="status-tpl">
+  <div class="load-status">
+    <span class="ls-icon"><span class="ls-spin"></span><svg class="ic ls-ok"><use href="#i-check"/></svg><svg class="ic ls-warn"><use href="#i-alert"/></svg></span>
+    <span class="ls-text"></span>
+    <span class="ls-count"></span>
+    <span class="ls-retry">Retry</span>
+    <div class="ls-bar"><i></i></div>
+  </div>
+</template>
+
+<!-- ============ CARD TEMPLATE ============ -->
+<template id="card-tpl">
+  <article class="card">
+    <div class="thumb art"></div>
+    <div class="veil"></div>
+    <div class="content-layer">
+      <div class="top">
+        <div class="badges">
+          <span class="badge kind"><svg class="ic"><use href="#i-play"/></svg><span class="kind-label">Video</span></span>
+          <span class="badge tag"></span>
+        </div>
+        <span class="fav"><svg class="ic"><use href="#i-heart"/></svg></span>
+      </div>
+      <span class="gold-btn use"><svg class="ic"><use href="#i-image-plus"/></svg>Use template</span>
+      <div class="bottom">
+        <h3 class="name"></h3>
+        <span class="price"><i class="coin"></i><span class="price-val"></span></span>
+      </div>
+    </div>
+    <div class="skel">
+      <span class="sk sk-badge"></span><span class="sk sk-fav"></span>
+      <svg class="ic sk-glyph"><use href="#i-image"/></svg>
+      <span class="sk sk-l1"></span><span class="sk sk-l2"></span><span class="sk sk-price"></span>
+    </div>
+    <div class="loader">
+      <div class="ring">
+        <i class="arc"></i>
+        <span class="pct"><span class="pct-num">0</span><small>%</small></span>
+        <span class="dots"><i></i><i></i><i></i></span>
+      </div>
+      <span class="status">In queue</span>
+    </div>
+    <div class="error">
+      <span class="err-icon"><svg class="ic"><use href="#i-image-off"/></svg></span>
+      <p>Preview didn’t load</p>
+      <span class="retry"><svg class="ic"><use href="#i-retry"/></svg>Retry</span>
+    </div>
+  </article>
+</template>
+
+<script>
+/* Builds the static screens once. No timers, nothing changes after load. */
+(() => {
+  const TEMPLATES = [
+    { name: 'Active photo',          kind: 'video', tag: 'hot', price: 50, art: 'sunlit' },
+    { name: 'Animate photo',         kind: 'video', fav: true,  price: 50, art: 'studio' },
+    { name: 'Designer toy style A',  kind: 'video', tag: 'hot', fav: true, price: 50, art: 'alpine' },
+    { name: 'Neon plastic A',        kind: 'image', tag: 'new', price: 15, art: 'knit' },
+    { name: 'Jelly material A',      kind: 'image', price: 15, art: 'jelly' },
+    { name: 'Balloon character A',   kind: 'image', fav: true,  price: 15, art: 'goth' },
+    { name: 'Winter wonderland V1',  kind: 'video', tag: 'new', price: 50, art: 'goth' },
+    { name: 'Rag doll A',            kind: 'image', price: 15, art: 'goth' },
+    { name: 'Designer toy style B',  kind: 'video', price: 50, art: 'neon' },
+    { name: 'Neon plastic B',        kind: 'image', price: 15, art: 'neon' },
+    { name: 'Neon plastic C',        kind: 'image', price: 15, art: 'neon' },
+    { name: 'Jelly material B',      kind: 'image', fav: true,  price: 15, art: 'crystal' },
+    { name: 'Balloon character B',   kind: 'video', price: 50, art: 'balloon' },
+    { name: 'Balloon pet A',         kind: 'image', price: 15, art: 'bunny' },
+    { name: 'Winter wonderland V2',  kind: 'video', price: 50, art: 'winter' },
+  ];
+  const byName = n => TEMPLATES.find(t => t.name === n);
+
+  /* Fixed progress per card on the progress screen (null = in queue) */
+  const PROGRESS = [92, 78, 64, 47, 31, 24, 16, 9, null, null, null, null, null, null, null];
+
+  const cardTpl = document.getElementById('card-tpl');
+  const statusTpl = document.getElementById('status-tpl');
+  const screenTpl = document.getElementById('screen-tpl');
+
+  function statusLabel(t, p) {
+    if (p >= 85) return 'Almost ready';
+    return t.kind === 'video' ? 'Loading video' : 'Loading preview';
+  }
+
+  function makeCard(t, state, p = 0, col = 0, extra = '') {
+    const card = cardTpl.content.firstElementChild.cloneNode(true);
+    card.dataset.state = state;
+    if (extra) card.classList.add(extra);
+    card.style.setProperty('--col', col);
+    card.style.setProperty('--p', state === 'ready' ? 100 : p);
+    card.querySelector('.thumb').classList.add('art-' + t.art);
+    card.querySelector('.kind-label').textContent = t.kind === 'video' ? 'Video' : 'Image';
+    card.querySelector('.kind use').setAttribute('href', t.kind === 'video' ? '#i-play' : '#i-image');
+    const tag = card.querySelector('.tag');
+    if (t.tag) { tag.textContent = t.tag === 'hot' ? 'Hot' : 'New'; tag.classList.add(t.tag); } else tag.remove();
+    if (t.fav) card.querySelector('.fav').classList.add('on');
+    card.querySelector('.name').textContent = t.name;
+    card.querySelector('.price-val').textContent = t.price;
+    card.querySelector('.pct-num').textContent = Math.round(p);
+    if (state === 'loading') card.querySelector('.status').textContent = statusLabel(t, p);
+    return card;
+  }
+
+  function makeStatus({ phase, text, count = '', bar }) {
+    const el = statusTpl.content.firstElementChild.cloneNode(true);
+    el.dataset.phase = phase;
+    el.querySelector('.ls-text').textContent = text;
+    el.querySelector('.ls-count').textContent = count;
+    el.querySelector('.ls-bar i').style.width = bar + '%';
+    return el;
+  }
+
+  /* ---- Screens 1 and 2 ---- */
+  document.querySelectorAll('.frame').forEach(frame => {
+    const screen = screenTpl.content.firstElementChild.cloneNode(true);
+    const grid = screen.querySelector('.grid');
+    const mode = frame.dataset.screen;
+
+    TEMPLATES.forEach((t, i) => {
+      if (mode === 'skeleton') grid.append(makeCard(t, 'skeleton', 0, i % 5));
+      else {
+        const p = PROGRESS[i];
+        grid.append(p == null ? makeCard(t, 'queued', 0, i % 5) : makeCard(t, 'loading', p, i % 5));
+      }
+    });
+
+    const avg = PROGRESS.reduce((s, p) => s + (p || 0), 0) / TEMPLATES.length;
+    screen.querySelector('.status-slot').append(
+      mode === 'skeleton'
+        ? makeStatus({ phase: 'fetching', text: 'Loading templates', bar: 8 })
+        : makeStatus({ phase: 'loading', text: 'Loading previews', count: `0 of ${TEMPLATES.length} ready`, bar: avg })
+    );
+    frame.append(screen);
+  });
+
+  /* ---- Section 3: one card per state ---- */
+  const STATES = [
+    { label: 'Skeleton',      note: 'List still loading. Placeholder shapes shimmer.', t: 'Active photo', state: 'skeleton' },
+    { label: 'In queue',      note: 'Details are in. Waiting its turn to load the preview.', t: 'Neon plastic B', state: 'queued' },
+    { label: 'Loading',       note: 'Ring fills with the percentage. Thumbnail sharpens as it loads.', t: 'Designer toy style A', state: 'loading', p: 46 },
+    { label: 'Almost ready',  note: 'From 85%, the label switches to Almost ready.', t: 'Jelly material A', state: 'loading', p: 92 },
+    { label: 'Error',         note: 'Preview failed. Retry starts it again.', t: 'Rag doll A', state: 'error' },
+    { label: 'Loaded',        note: 'Preview is sharp. Ring and veil are gone.', t: 'Balloon character B', state: 'ready' },
+    { label: 'Loaded, hover', note: 'Gold border and Use template button.', t: 'Neon plastic C', state: 'ready', extra: 'is-hover' },
+  ];
+  const stateWrap = document.getElementById('state-cards');
+  STATES.forEach((s, i) => {
+    const fig = document.createElement('figure');
+    fig.append(makeCard(byName(s.t), s.state, s.p || 0, i, s.extra));
+    const cap = document.createElement('figcaption');
+    cap.innerHTML = `<b>${s.label}</b><span>${s.note}</span>`;
+    fig.append(cap);
+    stateWrap.append(fig);
+  });
+
+  /* ---- Section 3: status bar variants ---- */
+  const STATUSES = [
+    { title: 'Fetching the list', note: 'Matches the skeleton screen.', phase: 'fetching', text: 'Loading templates', bar: 8 },
+    { title: 'Loading previews', note: 'Bar shows the average of every card.', phase: 'loading', text: 'Loading previews', count: '6 of 15 ready', bar: 58 },
+    { title: 'Some failed', note: 'Stays visible with Retry for failed cards.', phase: 'failed', text: '1 preview didn’t load', count: '14 of 15 ready', bar: 93 },
+    { title: 'Done', note: 'Shows briefly, then the bar hides.', phase: 'complete', text: 'All templates loaded', count: '15 of 15 ready', bar: 100 },
+  ];
+  const list = document.getElementById('status-list');
+  STATUSES.forEach(s => {
+    const row = document.createElement('div');
+    row.className = 'status-row';
+    row.innerHTML = `<div><h4>${s.title}</h4><p>${s.note}</p></div>`;
+    row.append(makeStatus(s));
+    list.append(row);
+  });
+
+  /* ---- Fit the 1440px screens to the frame width ---- */
+  const ro = new ResizeObserver(entries => entries.forEach(e => {
+    e.target.style.setProperty('--s', e.contentRect.width / 1440);
+  }));
+  document.querySelectorAll('.frame').forEach(f => ro.observe(f));
+})();
+</script>
+</body>
+</html>
