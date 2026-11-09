@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Choose your plan: payment page redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Inter+Tight:wght@600..800&display=swap" rel="stylesheet">
+<style>/* ---------- Board (theme-aware) ---------- */
+:root{
+  --board-bg:#EEECF5;
+  --board-ink:#1C1830;
+  --board-ink-2:#5E5978;
+  --board-line:rgba(28,24,48,.12);
+  --board-chip:#FFFFFF;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --board-bg:#07060D;
+    --board-ink:#ECEAF6;
+    --board-ink-2:#9A95B3;
+    --board-line:rgba(255,255,255,.1);
+    --board-chip:#14121F;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --board-bg:#07060D;
+  --board-ink:#ECEAF6;
+  --board-ink-2:#9A95B3;
+  --board-line:rgba(255,255,255,.1);
+  --board-chip:#14121F;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--board-bg);color:var(--board-ink);
+  font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;
+}
+img{max-width:100%}
+button{font:inherit;color:inherit}
+.ic{width:1em;height:1em;flex:none;display:inline-block;vertical-align:-.125em}
+
+.board{max-width:1500px;margin:0 auto;padding:48px clamp(14px,3vw,40px) 80px}
+.board-head{max-width:760px;margin-bottom:28px}
+.board-head h1{font-family:"Inter Tight","Inter",sans-serif;font-weight:800;font-size:clamp(28px,4vw,40px);letter-spacing:-.025em;line-height:1.1;margin:0 0 12px}
+.board-head p{margin:0 0 10px;color:var(--board-ink-2);font-size:16px;max-width:66ch}
+.board-head blockquote{margin:16px 0 0;padding:12px 16px;border-left:3px solid #CC3EE3;background:var(--board-chip);border-radius:0 10px 10px 0;color:var(--board-ink);font-size:14.5px}
+.board-head blockquote span{display:block;color:var(--board-ink-2);font-size:12.5px;margin-bottom:2px}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0;padding:0;list-style:none}
+.jump a{display:inline-block;padding:7px 12px;border-radius:999px;border:1px solid var(--board-line);background:var(--board-chip);color:var(--board-ink);text-decoration:none;font-size:13px;font-weight:500}
+.jump a:hover{border-color:#CC3EE3}
+.jump a:focus-visible{outline:2px solid #CC3EE3;outline-offset:2px}
+
+.dir{margin-top:56px}
+.dir-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin-bottom:6px;padding-bottom:14px;border-bottom:1px solid var(--board-line)}
+.dir-head h2{margin:0;font-family:"Inter Tight","Inter",sans-serif;font-size:24px;letter-spacing:-.02em}
+.dir-head p{margin:0;color:var(--board-ink-2);font-size:14.5px}
+.shot{margin:28px 0 0}
+.shot figcaption{font-size:13.5px;font-weight:600;margin:0 0 10px;color:var(--board-ink)}
+.shot figcaption span{font-weight:400;color:var(--board-ink-2);margin-left:8px}
+
+/* ---------- Product tokens (always dark) ---------- */
+.ui{
+  --bg:#120F22;--sunk:#0D0A1D;--surface:#1A1631;--surface-2:#221C40;
+  --line:rgba(255,255,255,.08);--line-2:rgba(255,255,255,.14);
+  --text:#F6F3FF;--text-2:#BCB6D8;--text-3:#7F79A2;
+  --magenta:#CC3EE3;--pink:#F055B4;--pink-2:#D63E9E;--gold:#F2B93F;--ok:#46D9A0;
+  color:var(--text);color-scheme:dark;
+}
+.acc-violet{--acc:#8B5CF6;--acc-2:#6A45E6;--acc-ink:#fff}
+.acc-pink{--acc:#EC4FAF;--acc-2:#C9378F;--acc-ink:#fff}
+.acc-gold{--acc:#F4BE45;--acc-2:#E39A1B;--acc-ink:#2A1A00}
+.acc-blue{--acc:#4F9BFF;--acc-2:#6A5CFF;--acc-ink:#fff}
+
+.stage{border-radius:22px;overflow:hidden;padding:clamp(10px,3.2vw,48px)}
+.stage-a{
+  background:
+    radial-gradient(60% 50% at 8% 0%,rgba(98,64,200,.35),transparent 70%),
+    radial-gradient(50% 50% at 100% 100%,rgba(204,62,227,.16),transparent 70%),
+    #0B0918;
+}
+.stage-b{
+  background:
+    radial-gradient(28% 38% at 6% 18%,rgba(70,120,170,.55),transparent 70%),
+    radial-gradient(30% 40% at 92% 14%,rgba(120,100,200,.45),transparent 70%),
+    radial-gradient(34% 30% at 22% 98%,rgba(190,130,90,.45),transparent 70%),
+    radial-gradient(30% 30% at 82% 96%,rgba(170,110,120,.4),transparent 70%),
+    #1B2230;
+}
+
+/* shared bits */
+.coin{display:inline-block;width:1em;height:1em;border-radius:50%;flex:none;
+  background:radial-gradient(circle at 34% 28%,#FFEDB0 0 14%,#F8C94E 42%,#DC9512 100%);
+  box-shadow:inset 0 0 0 .09em rgba(150,90,0,.55),inset 0 0 0 .2em rgba(255,236,170,.3)}
+.trust{display:flex;align-items:center;gap:12px}
+.avatars{display:flex}
+.avatars span{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:14px;color:#fff;border:2px solid #15112B;margin-left:-8px}
+.avatars span:first-child{margin-left:0}
+.trust p{margin:0;font-size:13px;line-height:1.35;color:var(--text-2)}
+.trust p b{color:var(--text)}
+.stars{color:#FFC93E;font-size:11px;letter-spacing:1px;display:inline-flex;gap:1px;vertical-align:-1px;margin-right:6px}
+.radio{width:22px;height:22px;border-radius:50%;border:2px solid var(--line-2);display:grid;place-items:center;flex:none;font-size:13px;color:transparent}
+.is-selected .radio{border-color:var(--acc);background:var(--acc);color:var(--acc-ink)}
+.ptile{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex:none;
+  background:linear-gradient(145deg,var(--acc),var(--acc-2));color:var(--acc-ink);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 16px -8px var(--acc)}
+.save{display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;font-size:11.5px;font-weight:600;
+  background:rgba(70,217,160,.12);color:#7BE7BC;white-space:nowrap}
+.ribbon{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:700;
+  background:linear-gradient(90deg,#FFD567,#F2A92A);color:#3A2400;white-space:nowrap;box-shadow:0 6px 16px -8px rgba(242,169,42,.9)}
+.ribbon .ic{font-size:12px}
+.pm-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin:0;font-size:12px;color:var(--text-3)}
+.pm-row .lock{display:inline-flex;align-items:center;gap:5px;color:var(--text-2);margin-right:4px}
+.pm-row .lock .ic{color:var(--ok)}
+.pm{display:inline-block;padding:3px 7px;border-radius:5px;background:#F3F1FA;color:#1C1A33;font-size:10.5px;font-weight:700;letter-spacing:.01em}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;border:0;cursor:pointer;font-weight:600;text-decoration:none}
+.btn:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.btn .pill{padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.22);font-size:14px;font-weight:700}
+.btn .go{position:absolute;right:12px;top:50%;translate:0 -50%;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(255,255,255,.45);font-size:16px}
+
+/* benefits (secondary) */
+.perk-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
+.perk-head h3{margin:0;font-size:14.5px;font-weight:600;color:var(--text)}
+.perk-head .count{font-size:12.5px;color:var(--text-3);white-space:nowrap}
+.perk-head .count b{color:var(--text-2)}
+.meter{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;margin-bottom:16px}
+.meter i{height:3px;border-radius:2px;background:rgba(255,255,255,.08)}
+.meter i.on{background:linear-gradient(90deg,#B54BEA,#E14FAE)}
+.perks-list{list-style:none;margin:0;padding:0;column-gap:28px}
+.perks-list li{break-inside:avoid;display:flex;align-items:flex-start;gap:9px;padding:6px 0;font-size:13.5px;line-height:1.4;color:var(--text-2)}
+.perks-list li .mk{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:11px;flex:none;margin-top:0;
+  background:rgba(225,79,174,.16);color:#F07CC6}
+.perks-list li.off{color:var(--text-3)}
+.perks-list li.off .mk{background:transparent;color:var(--text-3);border:1px solid rgba(255,255,255,.1)}
+.perks-list li em{font-style:normal;font-size:11.5px;color:var(--text-3);white-space:nowrap;margin-left:auto;padding-left:8px}
+.perks-list li .t{min-width:0}
+.perk-groups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 28px}
+.pg{grid-column:span var(--span);min-width:0}
+.pg .perks-list{columns:var(--span)}
+.pg h4{display:flex;align-items:center;gap:6px;margin:0 0 4px;font-size:12px;font-weight:600;color:var(--text-3)}
+.pg h4 .ic{font-size:12px}
+.b-side .perk-groups{display:flex;flex-direction:column;gap:12px}
+.b-side .pg .perks-list{columns:2}
+.all-in{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:#FFD567}
+
+/* ---------- Direction A ---------- */
+.frame-a{
+  max-width:1400px;margin:0 auto;border-radius:28px;padding:clamp(16px,2.4vw,34px);
+  background:linear-gradient(180deg,#17122F 0%,#100C24 100%);
+  border:1px solid rgba(126,92,192,.3);
+  box-shadow:0 40px 80px -40px rgba(0,0,0,.8);
+}
+.a-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 24px;margin-bottom:24px}
+.a-head h2,.hero h2{margin:0;font-family:"Inter Tight","Inter",sans-serif;font-weight:800;letter-spacing:-.035em;line-height:1}
+.a-head h2{font-size:clamp(32px,4vw,48px)}
+.a-head h2 em,.hero h2 em{font-style:normal;background:linear-gradient(90deg,#B44BEA,#E04EAB);-webkit-background-clip:text;background-clip:text;color:transparent}
+.a-head .sub{margin:8px 0 0;color:var(--text-2);font-size:15.5px}
+
+.a-plans{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));gap:14px;margin:0 0 16px;padding:14px 0 0}
+.pcard{position:relative;display:flex;flex-direction:column;gap:2px;padding:18px 18px 16px;border-radius:20px;
+  background:var(--surface);border:1px solid var(--line-2);min-width:0}
+.pcard .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pcard .name{font-size:18px;font-weight:650;letter-spacing:-.01em}
+.pcard .bill{font-size:13px;color:var(--text-3)}
+.pcard .price{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;margin:14px 0 14px}
+.pcard .price strong{font-family:"Inter Tight","Inter",sans-serif;font-size:clamp(32px,3vw,42px);font-weight:800;letter-spacing:-.03em;line-height:1}
+.pcard .price span{font-size:12.5px;color:var(--text-3)}
+.pcard .foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 10px;padding-top:12px;border-top:1px dashed rgba(255,255,255,.12);font-size:13px;color:var(--text-2)}
+.pcard .foot .coins{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:var(--text)}
+.pcard .foot .coins .coin{font-size:15px}
+.pcard .ribbon{position:absolute;top:-12px;right:16px}
+.pcard .top .save{margin-left:auto;margin-right:10px}
+.pcard .foot{margin-top:auto}
+.pcard.is-selected{
+  border:2px solid var(--acc);padding:17px 17px 15px;
+  background:
+    radial-gradient(120% 80% at 0% 0%,color-mix(in srgb,var(--acc) 30%,transparent),transparent 65%),
+    linear-gradient(180deg,#241C46,#1A1533);
+  box-shadow:0 22px 44px -22px color-mix(in srgb,var(--acc) 85%,transparent),0 0 0 4px color-mix(in srgb,var(--acc) 14%,transparent);
+}
+.pcard.is-selected .name::after{content:"Selected";margin-left:8px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;vertical-align:3px;
+  background:color-mix(in srgb,var(--acc) 22%,transparent);color:color-mix(in srgb,var(--acc) 55%,#fff)}
+
+.checkout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:20px 32px;align-items:center;
+  padding:22px 24px;border-radius:22px;margin-bottom:28px;
+  background:linear-gradient(180deg,#221A3E,#1A1432);
+  border:1px solid rgba(240,85,180,.32);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 24px 50px -30px rgba(240,85,180,.55)}
+.co-plan{display:flex;align-items:center;gap:10px;margin:0 0 10px;font-size:15px;font-weight:600}
+.co-plan .ptile{width:30px;height:30px;border-radius:9px;font-size:15px}
+.co-plan small{display:block;font-size:12.5px;font-weight:400;color:var(--text-3)}
+.co-total{display:flex;align-items:baseline;gap:10px;margin:0 0 12px}
+.co-total span{font-size:13px;color:var(--text-2)}
+.co-total strong{font-family:"Inter Tight","Inter",sans-serif;font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.allow{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.allow li{display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border-radius:10px;background:rgba(255,255,255,.05);font-size:13px;color:var(--text-2)}
+.allow li b{color:var(--text);font-weight:700}
+.allow li .ic{font-size:15px;color:#C9A8FF}
+.allow li .coin{font-size:15px}
+.co-pay{display:flex;flex-direction:column;gap:10px}
+.btn-card{position:relative;height:62px;border-radius:16px;font-size:17px;color:#fff;
+  background:linear-gradient(90deg,#F35BB8,#D63E9E);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 14px 30px -12px rgba(240,85,180,.8)}
+.alt{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-alt{height:46px;border-radius:13px;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--line-2)}
+.btn-alt .ic{font-size:16px}
+.btn-tg .ic{color:#5BB8F5}
+.btn-crypto .ic{color:var(--gold)}
+
+.a-perks{padding:4px 4px 0}
+.a-perks .note{margin:10px 0 0;font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:6px}
+
+.tg-strip{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;margin-top:22px;padding:12px 14px;border-radius:14px;
+  background:rgba(255,255,255,.03);border:1px solid var(--line)}
+.tg-strip .tg-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:16px;color:#fff;background:linear-gradient(145deg,#5B8CFF,#7B4BEA);flex:none}
+.tg-strip p{margin:0;flex:1 1 280px;font-size:13px;color:var(--text-2)}
+.tg-strip p b{color:var(--text);font-weight:600}
+.tg-strip .new{display:inline-block;padding:1px 7px;margin-right:6px;border-radius:5px;background:#CC3EE3;color:#fff;font-size:11px;font-weight:700;vertical-align:1px}
+.tg-strip .btn{height:36px;padding:0 14px;border-radius:999px;font-size:13px;background:rgba(103,94,255,.16);color:#B9B4FF;border:1px solid rgba(103,94,255,.4)}
+
+/* ---------- Direction B ---------- */
+.frame-b{
+  max-width:1360px;margin:0 auto;border-radius:30px;padding:clamp(14px,1.8vw,22px);
+  display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:22px;
+  background:linear-gradient(180deg,#151846 0%,#0F1136 100%);
+  border:1px solid rgba(112,118,255,.45);
+  box-shadow:0 40px 90px -40px rgba(0,0,0,.85),0 0 60px -30px rgba(112,118,255,.6);
+}
+.b-main{display:flex;flex-direction:column;gap:14px;min-width:0}
+.hero{position:relative;overflow:hidden;border-radius:22px;min-height:168px;padding:20px 22px;display:flex;flex-direction:column;justify-content:flex-end}
+.hero-media{position:absolute;inset:0;
+  background:
+    radial-gradient(55% 90% at 82% 26%,rgba(204,62,227,.7),transparent 62%),
+    radial-gradient(50% 80% at 30% 0%,rgba(114,79,246,.75),transparent 65%),
+    radial-gradient(40% 70% at 100% 100%,rgba(79,155,255,.5),transparent 70%),
+    linear-gradient(135deg,#2B1E61,#15103A)}
+.hero-media i{position:absolute;border-radius:14px;border:1px solid rgba(255,255,255,.28);
+  background:linear-gradient(160deg,rgba(255,255,255,.22),rgba(255,255,255,.04));backdrop-filter:blur(2px)}
+.hero-media i::after{content:"";position:absolute;left:50%;top:50%;translate:-40% -50%;border-style:solid;border-width:9px 0 9px 15px;border-color:transparent transparent transparent rgba(255,255,255,.75)}
+.hero-media i:nth-child(1){width:120px;height:150px;right:40px;top:-14px;rotate:10deg}
+.hero-media i:nth-child(2){width:96px;height:120px;right:170px;top:30px;rotate:-8deg;opacity:.8}
+.hero-media i:nth-child(3){width:78px;height:96px;right:270px;top:-20px;rotate:6deg;opacity:.55}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(10,9,32,.9) 0%,rgba(10,9,32,.2) 70%,transparent)}
+.hero > *:not(.hero-media){position:relative;z-index:1}
+.hero h2{font-size:clamp(30px,3.4vw,44px)}
+.hero p{margin:6px 0 0;color:#D6D1F0;font-size:14.5px}
+.b-trust{gap:12px;padding:2px 2px 0}
+
+.plist{display:flex;flex-direction:column;gap:10px;margin:2px 0 0;padding:10px 0 0}
+.prow{position:relative;display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;align-items:center;gap:14px;
+  padding:14px 18px 14px 16px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.12)}
+.prow .who{min-width:0}
+.prow .name{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:17px;font-weight:650;letter-spacing:-.01em}
+.prow .meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;margin-top:3px;font-size:13px;color:var(--text-3)}
+.prow .meta .coins{display:inline-flex;align-items:center;gap:6px;color:var(--text);font-weight:600}
+.prow .meta .coins .coin{font-size:14px}
+.prow .cost{text-align:right}
+.prow .cost strong{display:block;font-family:"Inter Tight","Inter",sans-serif;font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.prow .cost span{font-size:12px;color:var(--text-3)}
+.prow .ptile{width:42px;height:42px}
+.prow .ribbon{position:absolute;top:-11px;left:72px}
+.prow.is-selected{
+  border:2px solid var(--acc);padding:13px 17px 13px 15px;
+  background:
+    radial-gradient(90% 140% at 0% 50%,color-mix(in srgb,var(--acc) 30%,transparent),transparent 60%),
+    #1D1C52;
+  box-shadow:0 18px 40px -22px color-mix(in srgb,var(--acc) 90%,transparent),0 0 0 4px color-mix(in srgb,var(--acc) 14%,transparent)}
+.prow.is-selected .meta{color:var(--text-2)}
+
+.btn-continue{position:relative;height:64px;border-radius:18px;font-size:18px;color:#fff;margin-top:4px;
+  background:linear-gradient(90deg,#724FF6,#AC51E8);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 1px rgba(201,160,255,.35),0 16px 36px -12px rgba(150,90,240,.85)}
+.btn-continue .ic{font-size:18px}
+.b-main .pm-row{margin-top:2px}
+
+.b-side{min-width:0;border-radius:22px;padding:20px;background:rgba(7,8,32,.45);border:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column}
+.b-side > h3{margin:0 0 14px;font-size:15px;font-weight:600;color:var(--text-2)}
+.b-side > h3 b{color:var(--text)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 20px;padding:0;list-style:none}
+.stats li{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);min-width:0}
+.stats b{display:flex;align-items:center;gap:6px;font-family:"Inter Tight","Inter",sans-serif;font-size:20px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.stats b .ic{font-size:16px;color:#A9A2FF}
+.stats b .coin{font-size:16px}
+.stats span{font-size:12px;color:var(--text-3)}
+.b-side .perks-list{column-gap:20px}
+.b-side .perks-list li{font-size:13px}
+.b-side .note{margin:auto 0 0;padding-top:16px;font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:6px}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width:1100px){
+  .a-plans[style*="--cols:4"]{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:22px}
+}
+@media (max-width:1000px){
+  .frame-b{grid-template-columns:1fr}
+  .checkout{grid-template-columns:1fr}
+  .perk-groups{grid-template-columns:1fr 1fr}
+  .pg{grid-column:auto}
+  .pg.inc{grid-column:1/-1}
+  .pg.inc .perks-list{columns:2}
+  .pg:not(.inc) .perks-list{columns:1}
+}
+@media (max-width:760px){
+  .a-plans{grid-template-columns:1fr !important;row-gap:14px}
+  .pcard{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"top top" "name price" "bill price" "foot foot";column-gap:12px;padding:16px}
+  .pcard.is-selected{padding:15px}
+  .pcard .top{grid-area:top;margin-bottom:10px}
+  .pcard .top .ptile{width:34px;height:34px;font-size:17px;border-radius:10px}
+  .pcard .name{grid-area:name;align-self:end}
+  .pcard .bill{grid-area:bill}
+  .pcard .price{grid-area:price;flex-direction:column;align-items:flex-end;gap:2px;margin:0;align-self:center}
+  .pcard .price strong{font-size:30px}
+  .pcard .foot{grid-area:foot;margin-top:12px}
+  .stage{border-radius:16px}
+  .frame-a,.frame-b{border-radius:20px}
+}
+@media (max-width:560px){
+  .perk-groups{grid-template-columns:1fr}
+  .pg .perks-list,.pg.inc .perks-list,.b-side .pg .perks-list{columns:1}
+  .alt{grid-template-columns:1fr}
+  .prow{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;padding:12px 14px}
+  .prow.is-selected{padding:11px 13px}
+  .prow .ptile{display:none}
+  .prow .ribbon{left:48px}
+  .prow.has-ribbon{padding-top:20px}
+  .prow.has-ribbon.is-selected{padding-top:19px}
+  .prow .cost strong{font-size:24px}
+  .prow .meta .per{display:none}
+  .btn-card,.btn-continue{font-size:16px}
+  .btn .go{display:none}
+  .hero-media i:nth-child(3){display:none}
+  .stats b{font-size:17px}
+  .co-total strong{font-size:30px}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2.5 4.5 13.5H11l-1 8 8.5-11H12l1-8z"/></symbol><symbol id="i-flame" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8c.6 2.6 2.7 4.1 3.7 6.2A5.5 5.5 0 1 1 6.5 12.6c0-1.7.8-3 1.9-4 .1 1.5.8 2.5 1.9 2.8-.4-2.9.4-6.1 1.7-8.6z"/></symbol><symbol id="i-crown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5 7.8 12 12 5.5l4.2 6.5 4.3-3.5-1.8 10H5.3l-1.8-10z"/><path d="M5.5 21h13"/></symbol><symbol id="i-gem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h11l4 5.5L12 20.5 2.5 9l4-5.5z"/><path d="M2.5 9h19M9 3.5 7.8 9 12 20.5 16.2 9 15 3.5"/></symbol><symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="3"/><path d="m10 9 5 3-5 3z"/></symbol><symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3.5"/><circle cx="9" cy="9" r="1.8"/><path d="m21 15.5-4.8-4.8L5.5 21"/></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5.5 12.5 4.2 4.2L18.5 8"/></symbol><symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></symbol><symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13.5 6.5 19 12l-5.5 5.5"/></symbol><symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2.5 10.8 13.2"/><path d="M21.5 2.5 15 21l-4.2-7.8L3 9l18.5-6.5z"/></symbol><symbol id="i-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 13.9 9 19.5 11 13.9 13 12 18.5 10.1 13 4.5 11 10.1 9 12 3.5z"/><path d="M19 3v3M17.5 4.5h3"/></symbol><symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></symbol><symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.2"/></symbol><symbol id="i-btc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5.5h5.5a3 3 0 0 1 0 6H8zM8 11.5h6.5a3 3 0 0 1 0 6H8zM8 4v16M10.5 3.5v2M13 3.5v2M10.5 17.5v2M13 17.5v2"/></symbol><symbol id="i-star" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2.8 2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9L12 2.8z"/></symbol></svg>
+<main class="board">
+  <header class="board-head">
+    <h1>Payment page redesign</h1>
+    <p>Each screen now leads with the plans and the payment button. Plans are bigger, each one has its own color, billing period and savings, and the selected plan is outlined in its color. Benefits moved into a quieter checklist that supports the choice instead of competing with it.</p>
+    <blockquote><span>Client feedback</span>“The plan list items are too small to tell them apart. The plan list and payment button are the main elements, while membership benefits are secondary.”</blockquote>
+    <ul class="jump"><li><a href="#a-monthly">A, Monthly Pro</a></li><li><a href="#a-quarterly">A, Quarterly Pro</a></li><li><a href="#a-ultimate">A, Ultimate Pro</a></li><li><a href="#b-monthly">B, Monthly Pro</a></li><li><a href="#b-quarterly">B, Quarterly Pro</a></li><li><a href="#b-ultimate">B, Ultimate Pro</a></li></ul>
+  </header>
+
+  <section class="dir" aria-labelledby="dir-a">
+    <div class="dir-head"><h2 id="dir-a">Direction A</h2><p>Plan cards across the top, checkout right below them, benefits underneath.</p></div>
+    
+<figure class="shot" id="a-monthly">
+  <figcaption>Monthly Pro selected<span>3 plans</span></figcaption>
+  
+  <div class="stage stage-a">
+    <article class="ui frame-a" aria-label="Payment page, Monthly Pro selected">
+      <header class="a-head">
+        <div><h2>Choose your <em>plan</em></h2><p class="sub">Unlock unlimited creativity with the plan that fits you.</p></div>
+        <div class="trust "><div class="avatars" aria-hidden="true"><span style="background:#8B5CF6"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#EC4FAF"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#F4A62A"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#4F9BFF"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span></div>
+      <p>Trusted by <b>1M+</b> creators worldwide<br><span class="stars" aria-label="5 stars"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg></span><b>1000+</b> ratings</p></div>
+      </header>
+
+      <div class="a-plans" role="radiogroup" aria-label="Plans" style="--cols:3">
+        <div class="pcard acc-violet is-selected" role="radio" aria-checked="true">
+          
+          <div class="top"><span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span></div>
+          <div class="name">Monthly Pro</div>
+          <div class="bill">Billed monthly</div>
+          <div class="price"><strong>$4.33</strong><span>per 100 coins</span></div>
+          <div class="foot"><span class="coins"><i class="coin"></i>300 coins</span><span>$12.99 / month</span></div>
+        </div>
+        <div class="pcard acc-pink" role="radio" aria-checked="false">
+          
+          <div class="top"><span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-flame"/></svg></span><span class="save">38% less per coin</span><span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span></div>
+          <div class="name">Quarterly Pro</div>
+          <div class="bill">Billed every 3 months</div>
+          <div class="price"><strong>$2.67</strong><span>per 100 coins</span></div>
+          <div class="foot"><span class="coins"><i class="coin"></i>1,500 coins</span><span>$13.33 / month</span></div>
+        </div>
+        <div class="pcard acc-gold" role="radio" aria-checked="false">
+          <span class="ribbon"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg>Best value</span>
+          <div class="top"><span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg></span><span class="save">69% less per coin</span><span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span></div>
+          <div class="name">Annual Pro</div>
+          <div class="bill">Billed yearly</div>
+          <div class="price"><strong>$1.35</strong><span>per 100 coins</span></div>
+          <div class="foot"><span class="coins"><i class="coin"></i>5,200 coins</span><span>$5.83 / month</span></div>
+        </div>
+      </div>
+
+      <section class="checkout acc-violet" aria-label="Payment">
+        <div class="co-sum">
+          <p class="co-plan"><span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span><span>Monthly Pro<small>Billed monthly</small></span></p>
+          <p class="co-total"><span>Total today</span><strong>$12.99</strong></p>
+          <ul class="allow">
+            <li><i class="coin"></i><b>300</b> coins</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg><b>≈7</b> videos</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg><b>≈23</b> images</li>
+          </ul>
+        </div>
+        <div class="co-pay">
+          <button class="btn btn-card" type="button">Pay with card <span class="pill">$12.99</span><span class="go"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>
+          <div class="alt">
+            <button class="btn btn-alt btn-tg" type="button"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg>Pay with Telegram</button>
+            <button class="btn btn-alt btn-crypto" type="button"><svg class="ic" aria-hidden="true"><use href="#i-btc"/></svg>Pay with crypto</button>
+          </div>
+          <p class="pm-row"><span class="lock"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Secure payment</span>
+      <span class="pm">Visa</span><span class="pm">Mastercard</span><span class="pm">Apple Pay</span><span class="pm">PayPal</span></p>
+        </div>
+      </section>
+
+      <section class="a-perks" aria-label="Benefits">
+        <div class="perk-head"><h3>Membership benefits</h3><span class="count"><b>6</b> of 14 included</span></div>
+        <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div>
+        <div class="perk-groups"><div class="pg inc" style="--span:2"><h4>Included</h4><ul class="perks-list"><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate videos with custom prompts</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Train your own AI model</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Image face swap</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Video quality up to 720p HD</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate 2 tasks simultaneously</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Standard processing</span></li></ul></div><div class="pg" style="--span:1"><h4><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Unlocks with Quarterly Pro</h4><ul class="perks-list"><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Upload face or pose references</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Generate videos with sound</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Video compilation generation</span></li></ul></div><div class="pg" style="--span:1"><h4><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Unlocks with Annual Pro</h4><ul class="perks-list"><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Enhanced adult content generation</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Exclusive templates</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Early access to new templates</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Video generation up to 60 FPS</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Storyline branching</span></li></ul></div></div>
+        <p class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>Video and image counts are estimates. Actual results may vary.</p>
+      </section>
+
+      <div class="tg-strip">
+        <span class="tg-ic"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg></span>
+        <p><span class="new">New</span><b>Prefer to pay with Telegram?</b> Follow our step-by-step guide to buy coins there and unlock more AI creations.</p>
+        <button class="btn" type="button">Read the guide</button>
+      </div>
+    </article>
+  </div>
+</figure>
+<figure class="shot" id="a-quarterly">
+  <figcaption>Quarterly Pro selected<span>3 plans</span></figcaption>
+  
+  <div class="stage stage-a">
+    <article class="ui frame-a" aria-label="Payment page, Quarterly Pro selected">
+      <header class="a-head">
+        <div><h2>Choose your <em>plan</em></h2><p class="sub">Unlock unlimited creativity with the plan that fits you.</p></div>
+        <div class="trust "><div class="avatars" aria-hidden="true"><span style="background:#8B5CF6"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#EC4FAF"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#F4A62A"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#4F9BFF"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span></div>
+      <p>Trusted by <b>1M+</b> creators worldwide<br><span class="stars" aria-label="5 stars"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg></span><b>1000+</b> ratings</p></div>
+      </header>
+
+      <div class="a-plans" role="radiogroup" aria-label="Plans" style="--cols:3">
+        <div class="pcard acc-violet" role="radio" aria-checked="false">
+          
+          <div class="top"><span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span></div>
+          <div class="name">Monthly Pro</div>
+          <div class="bill">Billed monthly</div>
+          <div class="price"><strong>$4.33</strong><span>per 100 coins</span></div>
+          <div class="foot"><span class="coins"><i class="coin"></i>300 coins</span><span>$12.99 / month</span></div>
+        </div>
+        <div class="pcard acc-pink is-selected" role="radio" aria-checked="true">
+          
+          <div class="top"><span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-flame"/></svg></span><span class="save">38% less per coin</span><span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span></div>
+          <div class="name">Quarterly Pro</div>
+          <div class="bill">Billed every 3 months</div>
+          <div class="price"><strong>$2.67</strong><span>per 100 coins</span></div>
+          <div class="foot"><span class="coins"><i class="coin"></i>1,500 coins</span><span>$13.33 / month</span></div>
+        </div>
+        <div class="pcard acc-gold" role="radio" aria-checked="false">
+          <span class="ribbon"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg>Best value</span>
+          <div class="top"><span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg></span><span class="save">69% less per coin</span><span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span></div>
+          <div class="name">Annual Pro</div>
+          <div class="bill">Billed yearly</div>
+          <div class="price"><strong>$1.35</strong><span>per 100 coins</span></div>
+          <div class="foot"><span class="coins"><i class="coin"></i>5,200 coins</span><span>$5.83 / month</span></div>
+        </div>
+      </div>
+
+      <section class="checkout acc-pink" aria-label="Payment">
+        <div class="co-sum">
+          <p class="co-plan"><span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-flame"/></svg></span><span>Quarterly Pro<small>Billed every 3 months</small></span></p>
+          <p class="co-total"><span>Total today</span><strong>$39.99</strong></p>
+          <ul class="allow">
+            <li><i class="coin"></i><b>1,500</b> coins</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg><b>≈30</b> videos</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg><b>≈100</b> images</li>
+          </ul>
+        </div>
+        <div class="co-pay">
+          <button class="btn btn-card" type="button">Pay with card <span class="pill">$39.99</span><span class="go"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>
+          <div class="alt">
+            <button class="btn btn-alt btn-tg" type="button"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg>Pay with Telegram</button>
+            <button class="btn btn-alt btn-crypto" type="button"><svg class="ic" aria-hidden="true"><use href="#i-btc"/></svg>Pay with crypto</button>
+          </div>
+          <p class="pm-row"><span class="lock"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Secure payment</span>
+      <span class="pm">Visa</span><span class="pm">Mastercard</span><span class="pm">Apple Pay</span><span class="pm">PayPal</span></p>
+        </div>
+      </section>
+
+      <section class="a-perks" aria-label="Benefits">
+        <div class="perk-head"><h3>Membership benefits</h3><span class="count"><b>9</b> of 14 included</span></div>
+        <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div>
+        <div class="perk-groups"><div class="pg inc" style="--span:3"><h4>Included</h4><ul class="perks-list"><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate videos with custom prompts</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Train your own AI model</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Image face swap</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Video quality up to 1080p Full HD</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate 5 tasks simultaneously</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Priority processing</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Upload face or pose references</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate videos with sound</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Video compilation generation</span></li></ul></div><div class="pg" style="--span:1"><h4><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Unlocks with Annual Pro</h4><ul class="perks-list"><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Enhanced adult content generation</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Exclusive templates</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Early access to new templates</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Video generation up to 60 FPS</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Storyline branching</span></li></ul></div></div>
+        <p class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>Video and image counts are estimates. Actual results may vary.</p>
+      </section>
+
+      <div class="tg-strip">
+        <span class="tg-ic"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg></span>
+        <p><span class="new">New</span><b>Prefer to pay with Telegram?</b> Follow our step-by-step guide to buy coins there and unlock more AI creations.</p>
+        <button class="btn" type="button">Read the guide</button>
+      </div>
+    </article>
+  </div>
+</figure>
+<figure class="shot" id="a-ultimate">
+  <figcaption>Ultimate Pro selected<span>4 plans</span></figcaption>
+  
+  <div class="stage stage-a">
+    <article class="ui frame-a" aria-label="Payment page, Ultimate Pro selected">
+      <header class="a-head">
+        <div><h2>Choose your <em>plan</em></h2><p class="sub">Unlock unlimited creativity with the plan that fits you.</p></div>
+        <div class="trust "><div class="avatars" aria-hidden="true"><span style="background:#8B5CF6"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#EC4FAF"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#F4A62A"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#4F9BFF"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span></div>
+      <p>Trusted by <b>1M+</b> creators worldwide<br><span class="stars" aria-label="5 stars"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg></span><b>1000+</b> ratings</p></div>
+      </header>
+
+      <div class="a-plans" role="radiogroup" aria-label="Plans" style="--cols:4">
+        <div class="pcard acc-violet" role="radio" aria-checked="false">
+          
+          <div class="top"><span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span></div>
+          <div class="name">Monthly Pro</div>
+          <div class="bill">Billed monthly</div>
+          <div class="price"><strong>$4.33</strong><span>per 100 coins</span></div>
+          <div class="foot"><span class="coins"><i class="coin"></i>300 coins</span><span>$12.99 / month</span></div>
+        </div>
+        <div class="pcard acc-pink" role="radio" aria-checked="false">
+          
+          <div class="top"><span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-flame"/></svg></span><span class="save">38% less per coin</span><span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span></div>
+          <div class="name">Quarterly Pro</div>
+          <div class="bill">Billed every 3 months</div>
+          <div class="price"><strong>$2.67</strong><span>per 100 coins</span></div>
+          <div class="foot"><span class="coins"><i class="coin"></i>1,500 coins</span><span>$13.33 / month</span></div>
+        </div>
+        <div class="pcard acc-gold" role="radio" aria-checked="false">
+          
+          <div class="top"><span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg></span><span class="save">69% less per coin</span><span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span></div>
+          <div class="name">Annual Pro</div>
+          <div class="bill">Billed yearly</div>
+          <div class="price"><strong>$1.35</strong><span>per 100 coins</span></div>
+          <div class="foot"><span class="coins"><i class="coin"></i>5,200 coins</span><span>$5.83 / month</span></div>
+        </div>
+        <div class="pcard acc-blue is-selected" role="radio" aria-checked="true">
+          <span class="ribbon"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg>Best value</span>
+          <div class="top"><span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-gem"/></svg></span><span class="save">71% less per coin</span><span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span></div>
+          <div class="name">Ultimate Pro</div>
+          <div class="bill">Billed yearly</div>
+          <div class="price"><strong>$1.24</strong><span>per 100 coins</span></div>
+          <div class="foot"><span class="coins"><i class="coin"></i>12,000 coins</span><span>$12.42 / month</span></div>
+        </div>
+      </div>
+
+      <section class="checkout acc-blue" aria-label="Payment">
+        <div class="co-sum">
+          <p class="co-plan"><span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-gem"/></svg></span><span>Ultimate Pro<small>Billed yearly</small></span></p>
+          <p class="co-total"><span>Total today</span><strong>$148.99</strong></p>
+          <ul class="allow">
+            <li><i class="coin"></i><b>12,000</b> coins</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg><b>≈276</b> videos</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg><b>≈923</b> images</li>
+          </ul>
+        </div>
+        <div class="co-pay">
+          <button class="btn btn-card" type="button">Pay with card <span class="pill">$148.99</span><span class="go"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>
+          <div class="alt">
+            <button class="btn btn-alt btn-tg" type="button"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg>Pay with Telegram</button>
+            <button class="btn btn-alt btn-crypto" type="button"><svg class="ic" aria-hidden="true"><use href="#i-btc"/></svg>Pay with crypto</button>
+          </div>
+          <p class="pm-row"><span class="lock"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Secure payment</span>
+      <span class="pm">Visa</span><span class="pm">Mastercard</span><span class="pm">Apple Pay</span><span class="pm">PayPal</span></p>
+        </div>
+      </section>
+
+      <section class="a-perks" aria-label="Benefits">
+        <div class="perk-head"><h3>Membership benefits</h3><span class="all-in"><svg class="ic" aria-hidden="true"><use href="#i-sparkle"/></svg>Every benefit included</span></div>
+        <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+        <div class="perk-groups"><div class="pg inc" style="--span:4"><h4>Included</h4><ul class="perks-list"><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate videos with custom prompts</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Train your own AI model</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Image face swap</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Video quality up to 4K Ultra HD</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate 10 tasks simultaneously</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Highest-priority processing</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Upload face or pose references</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate videos with sound</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Video compilation generation</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Enhanced adult content generation</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Exclusive templates</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Early access to new templates</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Video generation up to 60 FPS</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Storyline branching</span></li></ul></div></div>
+        <p class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>Video and image counts are estimates. Actual results may vary.</p>
+      </section>
+
+      <div class="tg-strip">
+        <span class="tg-ic"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg></span>
+        <p><span class="new">New</span><b>Prefer to pay with Telegram?</b> Follow our step-by-step guide to buy coins there and unlock more AI creations.</p>
+        <button class="btn" type="button">Read the guide</button>
+      </div>
+    </article>
+  </div>
+</figure>
+  </section>
+
+  <section class="dir" aria-labelledby="dir-b">
+    <div class="dir-head"><h2 id="dir-b">Direction B</h2><p>Plans as a full-width list with Continue directly under it; benefits sit in a side panel.</p></div>
+    
+<figure class="shot" id="b-monthly">
+  <figcaption>Monthly Pro selected<span>3 plans</span></figcaption>
+  
+  <div class="stage stage-b">
+    <article class="ui frame-b" aria-label="Payment page, Monthly Pro selected">
+      <div class="b-main">
+        <div class="trust b-trust"><div class="avatars" aria-hidden="true"><span style="background:#8B5CF6"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#EC4FAF"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#F4A62A"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#4F9BFF"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span></div>
+      <p>Trusted by <b>1M+</b> creators worldwide<br><span class="stars" aria-label="5 stars"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg></span><b>1000+</b> ratings</p></div>
+        <div class="hero">
+          <div class="hero-media" aria-hidden="true"><i></i><i></i><i></i></div>
+          <h2>Choose your <em>plan</em></h2>
+          <p>Unlock unlimited creativity with the plan that fits you.</p>
+        </div>
+        <div class="plist" role="radiogroup" aria-label="Plans">
+          <div class="prow acc-violet is-selected" role="radio" aria-checked="true">
+            
+            <span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span>
+            <span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span>
+            <div class="who">
+              <div class="name">Monthly Pro</div>
+              <div class="meta"><span class="coins"><i class="coin"></i>350 coins</span><span class="per">$19.99 billed monthly</span></div>
+            </div>
+            <div class="cost"><strong>$5.71</strong><span>per 100 coins</span></div>
+          </div>
+          <div class="prow acc-pink" role="radio" aria-checked="false">
+            
+            <span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span>
+            <span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-flame"/></svg></span>
+            <div class="who">
+              <div class="name">Quarterly Pro<span class="save">53% less per coin</span></div>
+              <div class="meta"><span class="coins"><i class="coin"></i>1,500 coins</span><span class="per">$39.99 billed every 3 months</span></div>
+            </div>
+            <div class="cost"><strong>$2.67</strong><span>per 100 coins</span></div>
+          </div>
+          <div class="prow acc-gold has-ribbon" role="radio" aria-checked="false">
+            <span class="ribbon"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg>Best value</span>
+            <span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span>
+            <span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg></span>
+            <div class="who">
+              <div class="name">Annual Pro<span class="save">77% less per coin</span></div>
+              <div class="meta"><span class="coins"><i class="coin"></i>6,000 coins</span><span class="per">$79.99 billed yearly</span></div>
+            </div>
+            <div class="cost"><strong>$1.33</strong><span>per 100 coins</span></div>
+          </div>
+        </div>
+        <button class="btn btn-continue" type="button"><svg class="ic" aria-hidden="true"><use href="#i-sparkle"/></svg>Continue <span class="pill">$19.99</span><span class="go"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>
+        <p class="pm-row"><span class="lock"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Secure payment</span>
+      <span class="pm">Visa</span><span class="pm">Mastercard</span><span class="pm">Apple Pay</span><span class="pm">PayPal</span></p>
+      </div>
+
+      <aside class="b-side" aria-label="Benefits">
+        <h3>What you get with <b>Monthly Pro</b></h3>
+        <ul class="stats">
+          <li><b><i class="coin"></i>350</b><span>Coins included</span></li>
+          <li><b><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg>≈7</b><span>Videos</span></li>
+          <li><b><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg>≈23</b><span>Images</span></li>
+        </ul>
+        <div class="perk-head"><h3>Plan benefits</h3><span class="count"><b>6</b> of 14</span></div>
+        <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div>
+        <div class="perk-groups"><div class="pg inc" style="--span:2"><h4>Included</h4><ul class="perks-list"><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate videos with custom prompts</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Train your own AI model</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Image face swap</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Video quality up to 720p HD</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate 2 tasks simultaneously</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Standard processing</span></li></ul></div><div class="pg" style="--span:1"><h4><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Unlocks with Quarterly Pro</h4><ul class="perks-list"><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Upload face or pose references</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Generate videos with sound</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Video compilation generation</span></li></ul></div><div class="pg" style="--span:1"><h4><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Unlocks with Annual Pro</h4><ul class="perks-list"><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Enhanced adult content generation</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Exclusive templates</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Early access to new templates</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Video generation up to 60 FPS</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Storyline branching</span></li></ul></div></div>
+        <p class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>Video and image counts are estimates. Actual results may vary.</p>
+      </aside>
+    </article>
+  </div>
+</figure>
+<figure class="shot" id="b-quarterly">
+  <figcaption>Quarterly Pro selected<span>3 plans</span></figcaption>
+  
+  <div class="stage stage-b">
+    <article class="ui frame-b" aria-label="Payment page, Quarterly Pro selected">
+      <div class="b-main">
+        <div class="trust b-trust"><div class="avatars" aria-hidden="true"><span style="background:#8B5CF6"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#EC4FAF"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#F4A62A"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#4F9BFF"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span></div>
+      <p>Trusted by <b>1M+</b> creators worldwide<br><span class="stars" aria-label="5 stars"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg></span><b>1000+</b> ratings</p></div>
+        <div class="hero">
+          <div class="hero-media" aria-hidden="true"><i></i><i></i><i></i></div>
+          <h2>Choose your <em>plan</em></h2>
+          <p>Unlock unlimited creativity with the plan that fits you.</p>
+        </div>
+        <div class="plist" role="radiogroup" aria-label="Plans">
+          <div class="prow acc-violet" role="radio" aria-checked="false">
+            
+            <span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span>
+            <span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span>
+            <div class="who">
+              <div class="name">Monthly Pro</div>
+              <div class="meta"><span class="coins"><i class="coin"></i>350 coins</span><span class="per">$19.99 billed monthly</span></div>
+            </div>
+            <div class="cost"><strong>$5.71</strong><span>per 100 coins</span></div>
+          </div>
+          <div class="prow acc-pink is-selected" role="radio" aria-checked="true">
+            
+            <span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span>
+            <span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-flame"/></svg></span>
+            <div class="who">
+              <div class="name">Quarterly Pro<span class="save">53% less per coin</span></div>
+              <div class="meta"><span class="coins"><i class="coin"></i>1,500 coins</span><span class="per">$39.99 billed every 3 months</span></div>
+            </div>
+            <div class="cost"><strong>$2.67</strong><span>per 100 coins</span></div>
+          </div>
+          <div class="prow acc-gold has-ribbon" role="radio" aria-checked="false">
+            <span class="ribbon"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg>Best value</span>
+            <span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span>
+            <span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg></span>
+            <div class="who">
+              <div class="name">Annual Pro<span class="save">77% less per coin</span></div>
+              <div class="meta"><span class="coins"><i class="coin"></i>6,000 coins</span><span class="per">$79.99 billed yearly</span></div>
+            </div>
+            <div class="cost"><strong>$1.33</strong><span>per 100 coins</span></div>
+          </div>
+        </div>
+        <button class="btn btn-continue" type="button"><svg class="ic" aria-hidden="true"><use href="#i-sparkle"/></svg>Continue <span class="pill">$39.99</span><span class="go"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>
+        <p class="pm-row"><span class="lock"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Secure payment</span>
+      <span class="pm">Visa</span><span class="pm">Mastercard</span><span class="pm">Apple Pay</span><span class="pm">PayPal</span></p>
+      </div>
+
+      <aside class="b-side" aria-label="Benefits">
+        <h3>What you get with <b>Quarterly Pro</b></h3>
+        <ul class="stats">
+          <li><b><i class="coin"></i>1,500</b><span>Coins included</span></li>
+          <li><b><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg>≈30</b><span>Videos</span></li>
+          <li><b><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg>≈100</b><span>Images</span></li>
+        </ul>
+        <div class="perk-head"><h3>Plan benefits</h3><span class="count"><b>9</b> of 14</span></div>
+        <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i><i class=""></i></div>
+        <div class="perk-groups"><div class="pg inc" style="--span:3"><h4>Included</h4><ul class="perks-list"><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate videos with custom prompts</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Train your own AI model</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Image face swap</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Video quality up to 1080p Full HD</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate 5 tasks simultaneously</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Priority processing</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Upload face or pose references</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate videos with sound</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Video compilation generation</span></li></ul></div><div class="pg" style="--span:1"><h4><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Unlocks with Annual Pro</h4><ul class="perks-list"><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Enhanced adult content generation</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Exclusive templates</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Early access to new templates</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Video generation up to 60 FPS</span></li><li class="off"><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></span><span class="t">Storyline branching</span></li></ul></div></div>
+        <p class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>Video and image counts are estimates. Actual results may vary.</p>
+      </aside>
+    </article>
+  </div>
+</figure>
+<figure class="shot" id="b-ultimate">
+  <figcaption>Ultimate Pro selected<span>4 plans</span></figcaption>
+  
+  <div class="stage stage-b">
+    <article class="ui frame-b" aria-label="Payment page, Ultimate Pro selected">
+      <div class="b-main">
+        <div class="trust b-trust"><div class="avatars" aria-hidden="true"><span style="background:#8B5CF6"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#EC4FAF"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#F4A62A"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span><span style="background:#4F9BFF"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></span></div>
+      <p>Trusted by <b>1M+</b> creators worldwide<br><span class="stars" aria-label="5 stars"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg></span><b>1000+</b> ratings</p></div>
+        <div class="hero">
+          <div class="hero-media" aria-hidden="true"><i></i><i></i><i></i></div>
+          <h2>Choose your <em>plan</em></h2>
+          <p>Unlock unlimited creativity with the plan that fits you.</p>
+        </div>
+        <div class="plist" role="radiogroup" aria-label="Plans">
+          <div class="prow acc-violet" role="radio" aria-checked="false">
+            
+            <span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span>
+            <span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span>
+            <div class="who">
+              <div class="name">Monthly Pro</div>
+              <div class="meta"><span class="coins"><i class="coin"></i>350 coins</span><span class="per">$19.99 billed monthly</span></div>
+            </div>
+            <div class="cost"><strong>$5.71</strong><span>per 100 coins</span></div>
+          </div>
+          <div class="prow acc-pink" role="radio" aria-checked="false">
+            
+            <span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span>
+            <span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-flame"/></svg></span>
+            <div class="who">
+              <div class="name">Quarterly Pro<span class="save">53% less per coin</span></div>
+              <div class="meta"><span class="coins"><i class="coin"></i>1,500 coins</span><span class="per">$39.99 billed every 3 months</span></div>
+            </div>
+            <div class="cost"><strong>$2.67</strong><span>per 100 coins</span></div>
+          </div>
+          <div class="prow acc-gold" role="radio" aria-checked="false">
+            
+            <span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span>
+            <span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg></span>
+            <div class="who">
+              <div class="name">Annual Pro<span class="save">77% less per coin</span></div>
+              <div class="meta"><span class="coins"><i class="coin"></i>6,000 coins</span><span class="per">$79.99 billed yearly</span></div>
+            </div>
+            <div class="cost"><strong>$1.33</strong><span>per 100 coins</span></div>
+          </div>
+          <div class="prow acc-blue is-selected has-ribbon" role="radio" aria-checked="true">
+            <span class="ribbon"><svg class="ic" aria-hidden="true"><use href="#i-crown"/></svg>Best value</span>
+            <span class="radio"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span>
+            <span class="ptile"><svg class="ic" aria-hidden="true"><use href="#i-gem"/></svg></span>
+            <div class="who">
+              <div class="name">Ultimate Pro<span class="save">78% less per coin</span></div>
+              <div class="meta"><span class="coins"><i class="coin"></i>12,000 coins</span><span class="per">$148.99 billed yearly</span></div>
+            </div>
+            <div class="cost"><strong>$1.24</strong><span>per 100 coins</span></div>
+          </div>
+        </div>
+        <button class="btn btn-continue" type="button"><svg class="ic" aria-hidden="true"><use href="#i-sparkle"/></svg>Continue <span class="pill">$148.99</span><span class="go"><svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></span></button>
+        <p class="pm-row"><span class="lock"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Secure payment</span>
+      <span class="pm">Visa</span><span class="pm">Mastercard</span><span class="pm">Apple Pay</span><span class="pm">PayPal</span></p>
+      </div>
+
+      <aside class="b-side" aria-label="Benefits">
+        <h3>What you get with <b>Ultimate Pro</b></h3>
+        <ul class="stats">
+          <li><b><i class="coin"></i>12,000</b><span>Coins included</span></li>
+          <li><b><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg>≈276</b><span>Videos</span></li>
+          <li><b><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg>≈923</b><span>Images</span></li>
+        </ul>
+        <div class="perk-head"><h3>Plan benefits</h3><span class="all-in"><svg class="ic" aria-hidden="true"><use href="#i-sparkle"/></svg>Every benefit included</span></div>
+        <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+        <div class="perk-groups"><div class="pg inc" style="--span:4"><h4>Included</h4><ul class="perks-list"><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate videos with custom prompts</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Train your own AI model</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Image face swap</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Video quality up to 4K Ultra HD</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate 10 tasks simultaneously</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Highest-priority processing</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Upload face or pose references</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Generate videos with sound</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Video compilation generation</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Enhanced adult content generation</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Exclusive templates</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Early access to new templates</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Video generation up to 60 FPS</span></li><li><span class="mk"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></span><span class="t">Storyline branching</span></li></ul></div></div>
+        <p class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg>Video and image counts are estimates. Actual results may vary.</p>
+      </aside>
+    </article>
+  </div>
+</figure>
+  </section>
+</main>
+</body>
+</html>
