@@ -1,0 +1,1947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spicylab API sign in and sign up screens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..600;1,6..96,400..600&family=Inter:wght@500..700&family=JetBrains+Mono:wght@400..600&family=Jost:wght@400..600&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   Spicylab API · Sign in + Sign up · Version 2 (static board)
+   Theme from the Spicylab API homepage: wine-black ground, hot pink,
+   champagne gold, lilac, Bodoni Moda + Jost, stitched pink ribbon,
+   the API request card and the outline step numerals.
+   ========================================================================== */
+
+/* ---------- Tokens ---------- */
+:root,
+:root[data-theme="dark"],
+:root[data-theme="light"] {
+  color-scheme: dark;
+
+  --noir: #0e0609;
+  --night: #0a0407;
+  --plum: #24101b;
+  --plum-2: #1a0b13;
+
+  --pink: #fa5eaa;
+  --pink-deep: #da3e97;
+  --blush: #ffc6df;
+  --gold: #e9c38a;
+  --lilac: #b89cff;
+  --ok: #3ddc84;
+  --error: #ff6b78;
+
+  --text: #ffffff;
+  --text-2: #dccbd3;
+  --text-3: #a7919c;
+  --line: rgba(255, 150, 200, .16);
+
+  --serif: "Bodoni Moda", "Bodoni 72", Didot, "Playfair Display", Georgia, serif;
+  --sans: Jost, Futura, "Century Gothic", "Avenir Next", system-ui, sans-serif;
+  --ui: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* board scale for the frames */
+  --sd: .7;   /* desktop */
+  --sm: .9;   /* mobile */
+  --pad: 32px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { color-scheme: dark; }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+html { scroll-padding-top: env(safe-area-inset-top, 0px); -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  overflow-x: clip;
+  background:
+    radial-gradient(1100px 600px at 0% 0%, rgba(122, 26, 68, .35), transparent 70%),
+    var(--night);
+  background-repeat: no-repeat;
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+svg { display: block; }
+a { color: inherit; }
+
+:focus-visible { outline: 2px solid var(--blush); outline-offset: 3px; }
+
+/* ==========================================================================
+   Board
+   ========================================================================== */
+.b-head,
+.b-section,
+.b-foot {
+  width: min(1760px, 100% - 2 * var(--pad));
+  margin-inline: auto;
+}
+
+.b-head { padding: 56px 0 8px; }
+
+.b-kicker {
+  margin: 0;
+  color: var(--pink);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.b-title {
+  margin: 6px 0 0;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(36px, 2.4rem + 1.6vw, 60px);
+  line-height: 1.05;
+  letter-spacing: -.01em;
+}
+
+.b-sub {
+  margin: 14px 0 0;
+  max-width: 72ch;
+  color: var(--text-2);
+  font-size: 17px;
+}
+
+.b-index {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 26px;
+}
+.b-index a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 16px 0 6px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(36, 16, 27, .6);
+  color: var(--text-2);
+  font-size: 14.5px;
+  text-decoration: none;
+  transition: border-color .15s, color .15s;
+}
+.b-index a:hover { border-color: rgba(250, 94, 170, .6); color: #fff; }
+.b-index a span {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(250, 94, 170, .16);
+  color: var(--blush);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+}
+
+.b-section { padding: 56px 0 8px; }
+
+.b-section__title {
+  margin: 0;
+  padding-top: 40px;
+  border-top: 1px solid var(--line);
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(30px, 1.6rem + 1vw, 44px);
+  line-height: 1.1;
+}
+
+.b-section__intro {
+  margin: 8px 0 0;
+  color: var(--text-3);
+  font-size: 16px;
+}
+
+.b-shot { margin: 44px 0 0; }
+
+.b-shot__cap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  margin-bottom: 18px;
+}
+.b-shot__num {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 34px;
+  line-height: 1;
+  color: var(--pink);
+}
+.b-shot__name { font-size: 20px; font-weight: 500; }
+.b-shot__desc { color: var(--text-3); font-size: 15px; }
+
+.b-frames {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.b-device { display: grid; gap: 10px; flex: none; }
+.b-device__label { color: var(--text-3); font-size: 13px; }
+
+.b-foot {
+  margin-top: 64px;
+  padding: 22px 0 34px;
+  border-top: 1px solid var(--line);
+  color: var(--text-3);
+  font-size: 14px;
+}
+
+/* board scale steps */
+@media (max-width: 1799px) { :root { --sd: .57; --sm: .76; } }
+@media (max-width: 1499px) { :root { --sd: .51; --sm: .66; } }
+@media (max-width: 1339px) { :root { --sd: .45; --sm: .6; } }
+@media (max-width: 1199px) { :root { --sd: .35; --sm: .48; } }
+@media (max-width: 959px)  { :root { --sd: .34; --sm: .7; } .b-frames { flex-wrap: wrap; } }
+@media (max-width: 719px)  { :root { --sd: .26; --sm: .8; --pad: 20px; } }
+@media (max-width: 539px)  { :root { --sd: .17; --sm: .8; } }
+@media (max-width: 365px)  { :root { --sd: .155; --sm: .74; } }
+
+/* ==========================================================================
+   Frames (each one is a real 1920 or 390 wide screen, zoomed to fit)
+   ========================================================================== */
+.frame {
+  --z: 1;
+  position: relative;
+  flex: none;
+  overflow: hidden;
+  zoom: var(--z);
+  border-radius: 22px;
+  background: var(--noir);
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.5;
+  box-shadow: 0 0 0 1px rgba(255, 150, 200, .16), 0 40px 80px -40px rgba(0, 0, 0, .9);
+}
+.frame--desktop { --z: var(--sd); width: 1920px; height: 1080px; }
+.frame--mobile  { --z: var(--sm); width: 390px; min-height: 844px; border-radius: 46px; }
+
+/* ---------- Screen ---------- */
+.scr {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1024px;
+  height: 100%;
+  background:
+    radial-gradient(900px 620px at 0% 0%, rgba(122, 26, 68, .5), transparent 70%),
+    var(--noir);
+}
+.frame--mobile .scr {
+  display: block;
+  min-height: 844px;
+  background:
+    radial-gradient(520px 380px at 0% 0%, rgba(122, 26, 68, .55), transparent 72%),
+    var(--noir);
+}
+
+.scr__main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 40px 64px 38px;
+}
+.frame--mobile .scr__main { min-height: 844px; padding: 20px 16px 22px; overflow: hidden; }
+
+/* hero ring pattern, faded towards the form */
+.scr__main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52' viewBox='0 0 52 52'%3E%3Cg fill='none' stroke='%23ff8fc4' stroke-opacity='.11'%3E%3Ccircle cx='26' cy='26' r='16'/%3E%3Ccircle cx='26' cy='26' r='9'/%3E%3C/g%3E%3C/svg%3E");
+  -webkit-mask-image: radial-gradient(70% 55% at 0% 0%, #000 0%, transparent 80%);
+  mask-image: radial-gradient(70% 55% at 0% 0%, #000 0%, transparent 80%);
+}
+
+/* ---------- Top bar ---------- */
+.bar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand,
+.utils {
+  display: inline-flex;
+  align-items: center;
+  height: 56px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 150, 200, .14);
+  background: rgba(36, 16, 27, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05);
+}
+.brand { gap: 12px; padding: 0 24px 0 16px; }
+.brand__mark { width: 30px; height: 30px; flex: none; }
+.brand__name { font-family: var(--ui); font-weight: 600; font-size: 17px; letter-spacing: -.01em; white-space: nowrap; }
+
+.utils { gap: 4px; padding: 0 10px; }
+.age {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-right: 4px;
+  border-radius: 50%;
+  border: 1.5px solid var(--pink);
+  color: var(--pink);
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 12px;
+}
+.icon-btn { display: grid; place-items: center; width: 38px; height: 38px; color: var(--text-2); }
+.icon-btn svg { width: 19px; height: 19px; }
+
+.frame--mobile .brand,
+.frame--mobile .utils { height: 48px; }
+.frame--mobile .brand { padding: 0 18px 0 12px; gap: 10px; }
+.frame--mobile .brand__mark { width: 26px; height: 26px; }
+.frame--mobile .brand__name { font-size: 15.5px; }
+.frame--mobile .utils { padding: 0 6px 0 8px; gap: 0; }
+.frame--mobile .age { width: 30px; height: 30px; font-size: 11px; }
+.frame--mobile .icon-btn { width: 34px; height: 34px; }
+
+/* ---------- Body + pane ---------- */
+.scr__body {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 20px 0;
+}
+.frame--mobile .scr__body { display: block; padding: 34px 6px 30px; }
+
+.pane { width: 500px; }
+.pane--wide { width: 580px; }
+.frame--mobile .pane { width: auto; }
+
+.title {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 66px;
+  line-height: 1.04;
+  letter-spacing: -.012em;
+}
+.frame--mobile .title { font-size: 44px; }
+
+.note {
+  margin: 14px 0 0;
+  max-width: 42ch;
+  color: var(--text-2);
+  font-size: 18px;
+  line-height: 1.5;
+}
+.note strong { color: #fff; font-weight: 500; }
+.frame--mobile .note { font-size: 16px; margin-top: 10px; }
+
+/* ---------- Banners ---------- */
+.banner {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 12px;
+  margin-top: 28px;
+  padding: 15px 18px;
+  border-radius: 16px;
+  font-size: 15.5px;
+  line-height: 1.45;
+}
+.banner svg { width: 22px; height: 22px; }
+.banner p { margin: 0; }
+.banner strong { color: #fff; font-weight: 500; }
+.banner--error { background: rgba(255, 107, 120, .1); border: 1px solid rgba(255, 107, 120, .4); color: #ffd3d8; }
+.banner--error svg { color: var(--error); }
+.banner--ok { background: rgba(61, 220, 132, .08); border: 1px solid rgba(61, 220, 132, .38); color: #cdf5dc; }
+.banner--ok svg { color: var(--ok); }
+.frame--mobile .banner { margin-top: 22px; font-size: 14.5px; padding: 13px 15px; }
+
+/* ---------- Form ---------- */
+.form { display: grid; gap: 20px; margin-top: 34px; }
+.form--stack { gap: 12px; margin-top: 30px; }
+.frame--mobile .form { gap: 16px; margin-top: 26px; }
+.frame--mobile .form--stack { gap: 10px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 16px; align-items: start; }
+.frame--mobile .grid-2 { grid-template-columns: 1fr; gap: 16px; }
+
+.field { display: grid; gap: 9px; min-width: 0; }
+.field__top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.label { font-size: 16px; font-weight: 500; }
+.frame--mobile .label { font-size: 15px; }
+
+.control { position: relative; display: block; }
+.control__icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  color: var(--text-3);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.input {
+  width: 100%;
+  height: 58px;
+  margin: 0;
+  padding: 0 20px 0 52px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 160, 205, .2);
+  background: linear-gradient(180deg, rgba(36, 16, 27, .92), rgba(24, 10, 18, .92));
+  color: var(--text);
+  font: 400 17px/1 var(--sans);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+.input::placeholder { color: var(--text-3); opacity: 1; }
+.has-toggle .input { padding-right: 58px; }
+.has-action .input { padding-right: 160px; }
+.frame--mobile .input { height: 54px; font-size: 16px; padding-left: 48px; border-radius: 15px; }
+.frame--mobile .control__icon { left: 16px; width: 19px; height: 19px; }
+.frame--mobile .has-action .input { padding-right: 140px; }
+
+.is-filled .control__icon { color: var(--text-2); }
+.is-focus .input {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 4px rgba(250, 94, 170, .2), inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+.is-focus .control__icon { color: var(--pink); }
+.is-error .input {
+  border-color: var(--error);
+  box-shadow: 0 0 0 4px rgba(255, 107, 120, .13);
+}
+.is-error .control__icon { color: var(--error); }
+
+/* caret on focused empty fields */
+.is-focus .control::after {
+  content: "";
+  position: absolute;
+  left: 52px;
+  top: 50%;
+  width: 1.5px;
+  height: 22px;
+  background: var(--blush);
+  transform: translateY(-50%);
+}
+.frame--mobile .is-focus .control::after { left: 48px; }
+.is-focus .control:has(.input:not(:placeholder-shown))::after { display: none; }
+
+.toggle {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  color: var(--text-3);
+  transform: translateY(-50%);
+}
+.toggle svg { width: 20px; height: 20px; }
+
+.inline-btn {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  height: 42px;
+  padding: 0 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(250, 94, 170, .55);
+  background: rgba(250, 94, 170, .13);
+  color: var(--blush);
+  font: 500 15px/1 var(--sans);
+  white-space: nowrap;
+  transform: translateY(-50%);
+}
+.inline-btn[aria-disabled="true"] {
+  border-color: rgba(255, 255, 255, .1);
+  background: rgba(255, 255, 255, .04);
+  color: var(--text-3);
+}
+.frame--mobile .inline-btn { height: 40px; padding: 0 14px; font-size: 14px; right: 7px; }
+
+.help {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0;
+  color: var(--text-3);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.help svg { width: 16px; height: 16px; flex: none; margin-top: 1px; }
+.help--error { color: var(--error); }
+.help--ok { color: var(--ok); }
+.frame--mobile .help { font-size: 13.5px; }
+
+/* links */
+.link {
+  color: var(--blush);
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 198, 223, .45);
+  text-underline-offset: 4px;
+}
+.link--quiet { font-size: 15px; text-decoration-color: transparent; }
+.frame--mobile .link--quiet { font-size: 14px; }
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 26px;
+  color: var(--blush);
+  font-size: 16px;
+  text-decoration: none;
+}
+.back svg { width: 18px; height: 18px; }
+.frame--mobile .back { margin-bottom: 20px; font-size: 15px; }
+
+/* icon badge on confirmation screens */
+.badge {
+  display: grid;
+  place-items: center;
+  width: 78px;
+  height: 78px;
+  margin-bottom: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff74ba, #dd3f98);
+  color: #fff;
+  box-shadow: 0 0 0 10px rgba(250, 94, 170, .1), 0 20px 40px -12px rgba(250, 94, 170, .8);
+}
+.badge svg { width: 34px; height: 34px; }
+.frame--mobile .badge { width: 66px; height: 66px; margin: 6px 0 24px 8px; }
+.frame--mobile .badge svg { width: 29px; height: 29px; }
+
+/* checkbox */
+.check {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 12px;
+  align-items: start;
+  color: var(--text-2);
+  font-size: 15.5px;
+  line-height: 1.5;
+}
+.check input { position: absolute; opacity: 0; width: 22px; height: 22px; margin: 0; }
+.check__box {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 160, 205, .4);
+  background: rgba(14, 6, 9, .72);
+}
+.check__box svg { width: 14px; height: 14px; color: #fff; opacity: 0; }
+.check input:checked + .check__box {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--pink), var(--pink-deep));
+  box-shadow: 0 6px 16px -6px rgba(250, 94, 170, .8);
+}
+.check input:checked + .check__box svg { opacity: 1; }
+.frame--mobile .check { font-size: 14.5px; }
+
+/* Turnstile placeholder (real widget: theme "dark", size "flexible") */
+.verify {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 65px;
+  padding: 0 14px 0 12px;
+  border-radius: 12px;
+  border: 1px solid #5d5d5d;
+  background: #232323;
+  color: #fff;
+  font: 400 14px/1.2 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.verify__check { display: grid; place-items: center; width: 30px; height: 30px; flex: none; border-radius: 50%; background: #2db35d; }
+.verify__check svg { width: 18px; height: 18px; color: #fff; }
+.verify__brand { margin-left: auto; text-align: right; color: #d9d9d9; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; }
+.verify__brand small { display: block; margin-top: 4px; color: #b5b5b5; font-size: 10px; font-weight: 400; letter-spacing: 0; }
+
+/* buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 58px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fb62ac 0%, #e94ca1 55%, #da3e97 100%);
+  color: #fff;
+  font: 500 18px/1 var(--sans);
+  box-shadow: 0 16px 36px -12px rgba(250, 94, 170, .8), inset 0 1px 0 rgba(255, 255, 255, .38);
+}
+.btn svg { width: 20px; height: 20px; }
+.btn--ghost {
+  border: 1px solid rgba(255, 160, 205, .3);
+  background: transparent;
+  box-shadow: none;
+}
+.btn--ghost:disabled { color: var(--text-3); border-color: rgba(255, 255, 255, .1); }
+.frame--mobile .btn { height: 56px; font-size: 17px; }
+
+.switch { margin: 26px 0 0; color: var(--text-2); font-size: 16px; }
+.frame--mobile .switch { margin-top: 22px; font-size: 15.5px; }
+
+/* ---------- Footer ---------- */
+.foot {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--text-3);
+  font-size: 14px;
+}
+.foot p { margin: 0; }
+.foot__tag { font-family: var(--serif); font-style: italic; font-size: 17px; color: var(--text-2); }
+.frame--mobile .foot { justify-content: center; text-align: center; font-size: 13px; margin-top: auto; }
+
+/* ==========================================================================
+   Ribbon (stitched pink band from the homepage)
+   ========================================================================== */
+.ribbon {
+  position: absolute;
+  z-index: 1;
+  left: -90px;
+  right: -90px;
+  display: flex;
+  align-items: center;
+  height: 80px;
+  overflow: hidden;
+  background: linear-gradient(90deg, #e9479e 0%, #ff6db6 45%, #f2529f 100%);
+  box-shadow: 0 24px 44px -18px rgba(250, 94, 170, .75), inset 0 1px 0 rgba(255, 255, 255, .35);
+  transform: rotate(-5deg);
+}
+.ribbon::before,
+.ribbon::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 2px dashed rgba(255, 255, 255, .6);
+}
+.ribbon::before { top: 8px; }
+.ribbon::after { bottom: 8px; }
+
+.ribbon__track {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding-left: 60px;
+  white-space: nowrap;
+  font: 700 36px/1 var(--ui);
+  letter-spacing: -.025em;
+}
+.ribbon .w { color: #fff; }
+.ribbon .d { color: #2a0614; }
+.rb-sep { width: 22px; height: 22px; flex: none; fill: #fff; }
+
+.ribbon--api { top: 404px; }
+.ribbon--steps { top: 880px; transform: rotate(-4deg); }
+
+.ribbon--strip {
+  position: relative;
+  left: auto;
+  right: auto;
+  height: 46px;
+  margin: 22px -40px 0;
+  transform: rotate(-3deg);
+}
+.ribbon--strip::before { top: 5px; }
+.ribbon--strip::after { bottom: 5px; }
+.ribbon--strip .ribbon__track { gap: 16px; padding-left: 30px; font-size: 20px; }
+.ribbon--strip .rb-sep { width: 13px; height: 13px; }
+.ribbon--strip::before,
+.ribbon--strip::after { border-top-width: 1.5px; }
+
+/* ==========================================================================
+   Showcase panel (desktop only)
+   ========================================================================== */
+.show {
+  position: relative;
+  isolation: isolate;
+  margin: 24px 24px 24px 0;
+  overflow: hidden;
+  border-radius: 40px;
+  border: 1px solid rgba(255, 150, 200, .2);
+  background:
+    radial-gradient(720px 520px at 15% 0%, rgba(150, 32, 86, .55), transparent 70%),
+    radial-gradient(640px 520px at 100% 100%, rgba(214, 44, 120, .3), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M15 21.5s-5-3-6.3-6.1c-.9-2.1.5-4.5 2.8-4.5 1.3 0 2.4.7 3.5 2 1.1-1.3 2.1-2 3.5-2 2.3 0 3.7 2.4 2.8 4.5C20 18.5 15 21.5 15 21.5z' fill='none' stroke='%23ff8fc4' stroke-opacity='.12'/%3E%3Ccircle cx='45' cy='45' r='4' fill='none' stroke='%23ff8fc4' stroke-opacity='.12'/%3E%3Ccircle cx='45' cy='45' r='1' fill='%23ff8fc4' fill-opacity='.16'/%3E%3C/svg%3E"),
+    linear-gradient(160deg, #200a16 0%, #13060d 100%);
+}
+
+.show__head { position: relative; z-index: 2; padding: 72px 72px 0; }
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 36px;
+  padding: 0 16px 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 150, 200, .28);
+  background: rgba(54, 27, 41, .6);
+  color: var(--text-2);
+  font-size: 15px;
+}
+.tag i { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); box-shadow: 0 0 10px var(--pink); }
+
+.show__title {
+  margin: 26px 0 0;
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 60px;
+  line-height: 1.06;
+  letter-spacing: -.012em;
+}
+.show__title em {
+  display: block;
+  padding-bottom: .12em;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 82px;
+  line-height: 1.02;
+  letter-spacing: -.02em;
+  background: linear-gradient(90deg, #ffd6e8 0%, #ff97c8 42%, #fa5eaa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* stats */
+.stats {
+  position: absolute;
+  z-index: 2;
+  left: 72px;
+  bottom: 70px;
+  display: grid;
+  gap: 34px;
+  width: 230px;
+}
+.stat { display: grid; gap: 8px; }
+.stat__num {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 96px;
+  line-height: .9;
+  letter-spacing: -.03em;
+}
+.stat__num sup { font-size: .36em; font-style: normal; font-weight: 400; vertical-align: top; position: relative; top: .14em; margin-left: 4px; color: var(--text-2); }
+.stat__num--gold { color: var(--gold); }
+.stat__num--blush { color: var(--blush); }
+.stat__label { color: var(--text-2); font-size: 17px; line-height: 1.35; }
+
+/* API request card */
+.api {
+  position: absolute;
+  z-index: 3;
+  right: 64px;
+  bottom: 64px;
+  width: 610px;
+  overflow: hidden;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 150, 200, .24);
+  background: linear-gradient(180deg, rgba(42, 17, 30, .96), rgba(24, 9, 17, .97));
+  box-shadow: 0 50px 90px -30px rgba(0, 0, 0, .85), 0 0 90px -24px rgba(250, 94, 170, .4);
+}
+.api__chrome {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 66px;
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(255, 150, 200, .12);
+}
+.api__dots { display: flex; gap: 8px; }
+.api__dots i { width: 12px; height: 12px; border-radius: 50%; background: #ff5f6d; }
+.api__dots i:nth-child(2) { background: #ffbd4a; }
+.api__dots i:nth-child(3) { background: #3ddc84; }
+.api__path {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 150, 200, .12);
+  background: rgba(10, 4, 7, .7);
+  color: #f3e6ec;
+  font: 500 15px/1 var(--mono);
+}
+.api__path b { color: var(--pink); font-weight: 600; }
+.api__ok { display: flex; align-items: center; gap: 7px; color: var(--ok); font: 500 14px/1 var(--mono); }
+.api__ok i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+
+.api__tabs {
+  display: flex;
+  gap: 4px;
+  height: 54px;
+  padding: 0 14px;
+  border-bottom: 1px solid rgba(255, 150, 200, .12);
+}
+.tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  color: var(--text-3);
+  font-size: 15.5px;
+  font-weight: 500;
+}
+.tab i { width: 7px; height: 7px; border-radius: 50%; }
+.tab .c1 { background: var(--pink); }
+.tab .c2 { background: #9b7bff; }
+.tab .c3 { background: #c98a6a; }
+.tab .c4 { background: #6aa3ff; }
+.tab.is-on { color: #fff; }
+.tab.is-on::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--pink);
+}
+
+.api__body { padding: 20px 22px 18px; }
+.seg {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 150, 200, .12);
+  background: rgba(10, 4, 7, .6);
+}
+.seg span { padding: 6px 15px; border-radius: 999px; color: var(--text-3); font-size: 14px; }
+.seg .is-on { background: rgba(250, 94, 170, .2); color: var(--blush); }
+
+.code {
+  margin: 16px 0 0;
+  color: #e9dce3;
+  font: 400 15.5px/1.72 var(--mono);
+  white-space: pre;
+}
+.code .k { color: #f3c8dc; }
+.code .s { color: #ff86bf; }
+.code .n { color: var(--gold); }
+.code .p { color: var(--text-3); }
+
+.api__foot {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 14px 22px;
+  border-top: 1px solid rgba(255, 150, 200, .12);
+  color: var(--text-3);
+  font: 500 13px/1 var(--mono);
+  letter-spacing: .04em;
+}
+.api__foot .ms { color: var(--gold); }
+.api__foot .stream { margin-left: auto; color: var(--pink); }
+
+/* steps */
+.steps {
+  position: absolute;
+  z-index: 2;
+  left: 72px;
+  right: 72px;
+  top: 334px;
+  display: grid;
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.steps::before {
+  content: "";
+  position: absolute;
+  left: 107px;
+  top: 111px;
+  height: 344px;
+  border-left: 2px dashed rgba(250, 94, 170, .38);
+}
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  align-items: center;
+  gap: 30px;
+  min-height: 150px;
+}
+.step__num { position: relative; height: 150px; }
+.step__num > span:first-child {
+  position: absolute;
+  left: 4px;
+  top: -16px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 158px;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--pink);
+}
+.step__icon {
+  position: absolute;
+  right: 14px;
+  bottom: 10px;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff70b8, #e0409a);
+  color: #fff;
+  box-shadow: 0 0 0 7px #170710, 0 14px 30px -8px rgba(250, 94, 170, .75);
+}
+.step__icon svg { width: 25px; height: 25px; }
+.step__title { display: block; font-family: var(--serif); font-weight: 500; font-size: 40px; line-height: 1.1; }
+.step__text { display: block; max-width: 36ch; margin-top: 8px; color: var(--text-2); font-size: 18px; line-height: 1.5; }
+
+/* ---------- Sign up on desktop: tighter rhythm so the longer form fits 1080 ---------- */
+.frame--desktop .scr__body { padding: 12px 0; }
+.frame--desktop .pane--wide .title { font-size: 58px; }
+.frame--desktop .pane--wide .note { max-width: none; font-size: 17px; margin-top: 10px; }
+.frame--desktop .pane--wide .form { gap: 16px; margin-top: 26px; }
+.frame--desktop .pane--wide .grid-2 { gap: 16px; }
+.frame--desktop .pane--wide .field { gap: 8px; }
+.frame--desktop .pane--wide .input { height: 54px; }
+.frame--desktop .pane--wide .btn { height: 56px; }
+.frame--desktop .pane--wide .switch { margin-top: 20px; }
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="lgCool" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3fdcff"/><stop offset="1" stop-color="#a47bff"/></linearGradient>
+    <linearGradient id="lgWarm" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff8ac6"/><stop offset="1" stop-color="#e070f2"/></linearGradient>
+  </defs>
+</svg>
+
+<header class="b-head">
+  <p class="b-kicker">Spicylab API, version 2</p>
+  <h1 class="b-title">Sign in and sign up screens</h1>
+  <p class="b-sub">Eight screens. Each desktop screen (1920 × 1080) sits beside its mobile version (390 wide). The form stays on the left; the right side shows the product, using the API card, ribbon and steps from the homepage.</p>
+  <nav class="b-index" aria-label="Screens">
+    <a href="#screen-1"><span>1</span>Sign in</a><a href="#screen-2"><span>2</span>Wrong username or password</a><a href="#screen-3"><span>3</span>Forgot password</a><a href="#screen-4"><span>4</span>Reset link sent</a><a href="#screen-5"><span>5</span>Sign up</a><a href="#screen-6"><span>6</span>Verification code sent</a><a href="#screen-7"><span>7</span>Sign up with errors</a><a href="#screen-8"><span>8</span>Account created</a>
+  </nav>
+</header>
+
+<section class="b-section" aria-labelledby="sec-in">
+  <h2 class="b-section__title" id="sec-in">Sign in</h2>
+  <p class="b-section__intro">Screens 1 to 4 cover signing in and resetting a password.</p>
+  <figure class="b-shot" id="screen-1">
+  <figcaption class="b-shot__cap"><span class="b-shot__num">1</span><span class="b-shot__name">Sign in</span><span class="b-shot__desc">Default state. Verification has passed.</span></figcaption>
+  <div class="b-frames">
+    <div class="b-device"><span class="b-device__label">Desktop · 1920 × 1080</span><div class="frame frame--desktop" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span></span>
+</header>
+
+<main class="scr__body"><div class="pane">
+<h1 class="title">Sign in</h1>
+<p class="note">Your SpicyLab API account is separate from your SpicyLab app account.</p>
+
+<form class="form">
+  <div class="field">
+  <label class="label" for="s1d-u">Username or Email</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input class="input" id="s1d-u" type="text" placeholder="Enter your username or email" autocomplete="username"></span>
+  
+</div>
+  <div class="field has-toggle">
+  <span class="field__top"><label class="label" for="s1d-p">Password</label><a class="link link--quiet" href="#">Forgot password?</a></span>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s1d-p" type="password" placeholder="Enter password" autocomplete="current-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  
+</div>
+  <div class="verify">
+  <span class="verify__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Success!</span>
+  <span class="verify__brand">CLOUDFLARE<small>Privacy · Help</small></span>
+</div>
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>Sign in</button>
+</form>
+<p class="switch">Don’t have an account? <a class="link" href="#">Sign up</a></p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p><p class="foot__tag">Powerful API Management Platform</p></footer>
+</div>
+<aside class="show show--api" aria-hidden="true">
+  <div class="show__head">
+    <span class="tag"><i></i>AI Application Infrastructure Foundation</span>
+    <p class="show__title">Unified API Gateway for <em>Vast Range of AI Models</em></p>
+  </div>
+  <div class="ribbon ribbon--api" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+  <div class="stats">
+    <div class="stat"><span class="stat__num stat__num--gold">50<sup>+</sup></span><span class="stat__label">upstream services integrated</span></div>
+    <div class="stat"><span class="stat__num stat__num--blush">100<sup>+</sup></span><span class="stat__label">model billing support</span></div>
+  </div>
+  <div class="api">
+    <div class="api__chrome">
+      <span class="api__dots"><i></i><i></i><i></i></span>
+      <span class="api__path"><b>POST</b>/v1/chat/completions</span>
+      <span class="api__ok"><i></i>200 OK</span>
+    </div>
+    <div class="api__tabs">
+      <span class="tab is-on"><i class="c1"></i>Chat</span>
+      <span class="tab"><i class="c2"></i>Responses</span>
+      <span class="tab"><i class="c3"></i>Claude</span>
+      <span class="tab"><i class="c4"></i>Gemini</span>
+    </div>
+    <div class="api__body">
+      <span class="seg"><span>Request</span><span class="is-on">Response</span></span>
+      <pre class="code"><span class="p">{</span>
+  <span class="k">"choices"</span><span class="p">: [{</span>
+    <span class="k">"message"</span><span class="p">: {</span>
+      <span class="k">"content"</span><span class="p">:</span> <span class="s">"Chat request routed."</span>
+    <span class="p">}</span>
+  <span class="p">}],</span>
+  <span class="k">"usage"</span><span class="p">: {</span> <span class="k">"total_tokens"</span><span class="p">:</span> <span class="n">27</span> <span class="p">}</span>
+<span class="p">}</span></pre>
+    </div>
+    <div class="api__foot"><span class="ms">142 MS</span><span>27 TOKENS</span><span>COST $0.00081</span><span class="stream">STREAM · SSE</span></div>
+  </div>
+</aside>
+</div>
+</div></div>
+    <div class="b-device"><span class="b-device__label">Mobile · 390</span><div class="frame frame--mobile" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span></span>
+</header>
+<div class="ribbon ribbon--strip" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+<main class="scr__body"><div class="pane">
+<h1 class="title">Sign in</h1>
+<p class="note">Your SpicyLab API account is separate from your SpicyLab app account.</p>
+
+<form class="form">
+  <div class="field">
+  <label class="label" for="s1m-u">Username or Email</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input class="input" id="s1m-u" type="text" placeholder="Enter your username or email" autocomplete="username"></span>
+  
+</div>
+  <div class="field has-toggle">
+  <span class="field__top"><label class="label" for="s1m-p">Password</label><a class="link link--quiet" href="#">Forgot password?</a></span>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s1m-p" type="password" placeholder="Enter password" autocomplete="current-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  
+</div>
+  <div class="verify">
+  <span class="verify__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Success!</span>
+  <span class="verify__brand">CLOUDFLARE<small>Privacy · Help</small></span>
+</div>
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>Sign in</button>
+</form>
+<p class="switch">Don’t have an account? <a class="link" href="#">Sign up</a></p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p></footer>
+</div>
+
+</div>
+</div></div>
+  </div>
+</figure>
+<figure class="b-shot" id="screen-2">
+  <figcaption class="b-shot__cap"><span class="b-shot__num">2</span><span class="b-shot__name">Wrong username or password</span><span class="b-shot__desc">After a failed sign in. The password is cleared and focused.</span></figcaption>
+  <div class="b-frames">
+    <div class="b-device"><span class="b-device__label">Desktop · 1920 × 1080</span><div class="frame frame--desktop" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span></span>
+</header>
+
+<main class="scr__body"><div class="pane">
+<h1 class="title">Sign in</h1>
+<p class="note">Your SpicyLab API account is separate from your SpicyLab app account.</p>
+<div class="banner banner--error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg><p><strong>Incorrect username or password.</strong> Check both and try again, or <a class="link" href="#">reset your password</a>.</p></div>
+<form class="form">
+  <div class="field is-filled">
+  <label class="label" for="s2d-u">Username or Email</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input class="input" id="s2d-u" type="text" placeholder="Enter your username or email" value="maya" autocomplete="username"></span>
+  
+</div>
+  <div class="field is-focus has-toggle">
+  <span class="field__top"><label class="label" for="s2d-p">Password</label><a class="link link--quiet" href="#">Forgot password?</a></span>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s2d-p" type="password" placeholder="Enter password" autocomplete="current-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  
+</div>
+  <div class="verify">
+  <span class="verify__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Success!</span>
+  <span class="verify__brand">CLOUDFLARE<small>Privacy · Help</small></span>
+</div>
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>Sign in</button>
+</form>
+<p class="switch">Don’t have an account? <a class="link" href="#">Sign up</a></p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p><p class="foot__tag">Powerful API Management Platform</p></footer>
+</div>
+<aside class="show show--api" aria-hidden="true">
+  <div class="show__head">
+    <span class="tag"><i></i>AI Application Infrastructure Foundation</span>
+    <p class="show__title">Unified API Gateway for <em>Vast Range of AI Models</em></p>
+  </div>
+  <div class="ribbon ribbon--api" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+  <div class="stats">
+    <div class="stat"><span class="stat__num stat__num--gold">50<sup>+</sup></span><span class="stat__label">upstream services integrated</span></div>
+    <div class="stat"><span class="stat__num stat__num--blush">100<sup>+</sup></span><span class="stat__label">model billing support</span></div>
+  </div>
+  <div class="api">
+    <div class="api__chrome">
+      <span class="api__dots"><i></i><i></i><i></i></span>
+      <span class="api__path"><b>POST</b>/v1/chat/completions</span>
+      <span class="api__ok"><i></i>200 OK</span>
+    </div>
+    <div class="api__tabs">
+      <span class="tab is-on"><i class="c1"></i>Chat</span>
+      <span class="tab"><i class="c2"></i>Responses</span>
+      <span class="tab"><i class="c3"></i>Claude</span>
+      <span class="tab"><i class="c4"></i>Gemini</span>
+    </div>
+    <div class="api__body">
+      <span class="seg"><span>Request</span><span class="is-on">Response</span></span>
+      <pre class="code"><span class="p">{</span>
+  <span class="k">"choices"</span><span class="p">: [{</span>
+    <span class="k">"message"</span><span class="p">: {</span>
+      <span class="k">"content"</span><span class="p">:</span> <span class="s">"Chat request routed."</span>
+    <span class="p">}</span>
+  <span class="p">}],</span>
+  <span class="k">"usage"</span><span class="p">: {</span> <span class="k">"total_tokens"</span><span class="p">:</span> <span class="n">27</span> <span class="p">}</span>
+<span class="p">}</span></pre>
+    </div>
+    <div class="api__foot"><span class="ms">142 MS</span><span>27 TOKENS</span><span>COST $0.00081</span><span class="stream">STREAM · SSE</span></div>
+  </div>
+</aside>
+</div>
+</div></div>
+    <div class="b-device"><span class="b-device__label">Mobile · 390</span><div class="frame frame--mobile" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span></span>
+</header>
+<div class="ribbon ribbon--strip" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+<main class="scr__body"><div class="pane">
+<h1 class="title">Sign in</h1>
+<p class="note">Your SpicyLab API account is separate from your SpicyLab app account.</p>
+<div class="banner banner--error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg><p><strong>Incorrect username or password.</strong> Check both and try again, or <a class="link" href="#">reset your password</a>.</p></div>
+<form class="form">
+  <div class="field is-filled">
+  <label class="label" for="s2m-u">Username or Email</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input class="input" id="s2m-u" type="text" placeholder="Enter your username or email" value="maya" autocomplete="username"></span>
+  
+</div>
+  <div class="field is-focus has-toggle">
+  <span class="field__top"><label class="label" for="s2m-p">Password</label><a class="link link--quiet" href="#">Forgot password?</a></span>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s2m-p" type="password" placeholder="Enter password" autocomplete="current-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  
+</div>
+  <div class="verify">
+  <span class="verify__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Success!</span>
+  <span class="verify__brand">CLOUDFLARE<small>Privacy · Help</small></span>
+</div>
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>Sign in</button>
+</form>
+<p class="switch">Don’t have an account? <a class="link" href="#">Sign up</a></p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p></footer>
+</div>
+
+</div>
+</div></div>
+  </div>
+</figure>
+<figure class="b-shot" id="screen-3">
+  <figcaption class="b-shot__cap"><span class="b-shot__num">3</span><span class="b-shot__name">Forgot password</span><span class="b-shot__desc">Opened from “Forgot password?”.</span></figcaption>
+  <div class="b-frames">
+    <div class="b-device"><span class="b-device__label">Desktop · 1920 × 1080</span><div class="frame frame--desktop" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span></span>
+</header>
+
+<main class="scr__body"><div class="pane">
+<a class="back" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Back to sign in</a>
+<h1 class="title">Reset your password</h1>
+<p class="note">Enter the email on your Spicylab API account and we’ll send you a link to reset your password.</p>
+<form class="form">
+  <div class="field">
+  <label class="label" for="s3d-e">Email</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><input class="input" id="s3d-e" type="email" placeholder="Enter your email" autocomplete="email"></span>
+  
+</div>
+  <div class="verify">
+  <span class="verify__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Success!</span>
+  <span class="verify__brand">CLOUDFLARE<small>Privacy · Help</small></span>
+</div>
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>Send reset link</button>
+</form>
+<p class="switch">Remembered it? <a class="link" href="#">Sign in</a></p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p><p class="foot__tag">Powerful API Management Platform</p></footer>
+</div>
+<aside class="show show--api" aria-hidden="true">
+  <div class="show__head">
+    <span class="tag"><i></i>AI Application Infrastructure Foundation</span>
+    <p class="show__title">Unified API Gateway for <em>Vast Range of AI Models</em></p>
+  </div>
+  <div class="ribbon ribbon--api" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+  <div class="stats">
+    <div class="stat"><span class="stat__num stat__num--gold">50<sup>+</sup></span><span class="stat__label">upstream services integrated</span></div>
+    <div class="stat"><span class="stat__num stat__num--blush">100<sup>+</sup></span><span class="stat__label">model billing support</span></div>
+  </div>
+  <div class="api">
+    <div class="api__chrome">
+      <span class="api__dots"><i></i><i></i><i></i></span>
+      <span class="api__path"><b>POST</b>/v1/chat/completions</span>
+      <span class="api__ok"><i></i>200 OK</span>
+    </div>
+    <div class="api__tabs">
+      <span class="tab is-on"><i class="c1"></i>Chat</span>
+      <span class="tab"><i class="c2"></i>Responses</span>
+      <span class="tab"><i class="c3"></i>Claude</span>
+      <span class="tab"><i class="c4"></i>Gemini</span>
+    </div>
+    <div class="api__body">
+      <span class="seg"><span>Request</span><span class="is-on">Response</span></span>
+      <pre class="code"><span class="p">{</span>
+  <span class="k">"choices"</span><span class="p">: [{</span>
+    <span class="k">"message"</span><span class="p">: {</span>
+      <span class="k">"content"</span><span class="p">:</span> <span class="s">"Chat request routed."</span>
+    <span class="p">}</span>
+  <span class="p">}],</span>
+  <span class="k">"usage"</span><span class="p">: {</span> <span class="k">"total_tokens"</span><span class="p">:</span> <span class="n">27</span> <span class="p">}</span>
+<span class="p">}</span></pre>
+    </div>
+    <div class="api__foot"><span class="ms">142 MS</span><span>27 TOKENS</span><span>COST $0.00081</span><span class="stream">STREAM · SSE</span></div>
+  </div>
+</aside>
+</div>
+</div></div>
+    <div class="b-device"><span class="b-device__label">Mobile · 390</span><div class="frame frame--mobile" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span></span>
+</header>
+<div class="ribbon ribbon--strip" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+<main class="scr__body"><div class="pane">
+<a class="back" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Back to sign in</a>
+<h1 class="title">Reset your password</h1>
+<p class="note">Enter the email on your Spicylab API account and we’ll send you a link to reset your password.</p>
+<form class="form">
+  <div class="field">
+  <label class="label" for="s3m-e">Email</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><input class="input" id="s3m-e" type="email" placeholder="Enter your email" autocomplete="email"></span>
+  
+</div>
+  <div class="verify">
+  <span class="verify__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Success!</span>
+  <span class="verify__brand">CLOUDFLARE<small>Privacy · Help</small></span>
+</div>
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>Send reset link</button>
+</form>
+<p class="switch">Remembered it? <a class="link" href="#">Sign in</a></p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p></footer>
+</div>
+
+</div>
+</div></div>
+  </div>
+</figure>
+<figure class="b-shot" id="screen-4">
+  <figcaption class="b-shot__cap"><span class="b-shot__num">4</span><span class="b-shot__name">Reset link sent</span><span class="b-shot__desc">After “Send reset link”. Resend unlocks when the timer ends.</span></figcaption>
+  <div class="b-frames">
+    <div class="b-device"><span class="b-device__label">Desktop · 1920 × 1080</span><div class="frame frame--desktop" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span></span>
+</header>
+
+<main class="scr__body"><div class="pane">
+<span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><path d="m16 19 2 2 4-4"/></svg></span>
+<h1 class="title">Check your email</h1>
+<p class="note">We sent a password reset link to <strong>maya@example.com</strong>. Open the link in that email to set a new password.</p>
+<div class="form form--stack">
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Back to sign in</button>
+  <button class="btn btn--ghost" type="button" disabled>Resend in 52s</button>
+</div>
+<p class="switch">Not in your inbox? Check your spam folder, or <a class="link" href="#">use a different email</a>.</p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p><p class="foot__tag">Powerful API Management Platform</p></footer>
+</div>
+<aside class="show show--api" aria-hidden="true">
+  <div class="show__head">
+    <span class="tag"><i></i>AI Application Infrastructure Foundation</span>
+    <p class="show__title">Unified API Gateway for <em>Vast Range of AI Models</em></p>
+  </div>
+  <div class="ribbon ribbon--api" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+  <div class="stats">
+    <div class="stat"><span class="stat__num stat__num--gold">50<sup>+</sup></span><span class="stat__label">upstream services integrated</span></div>
+    <div class="stat"><span class="stat__num stat__num--blush">100<sup>+</sup></span><span class="stat__label">model billing support</span></div>
+  </div>
+  <div class="api">
+    <div class="api__chrome">
+      <span class="api__dots"><i></i><i></i><i></i></span>
+      <span class="api__path"><b>POST</b>/v1/chat/completions</span>
+      <span class="api__ok"><i></i>200 OK</span>
+    </div>
+    <div class="api__tabs">
+      <span class="tab is-on"><i class="c1"></i>Chat</span>
+      <span class="tab"><i class="c2"></i>Responses</span>
+      <span class="tab"><i class="c3"></i>Claude</span>
+      <span class="tab"><i class="c4"></i>Gemini</span>
+    </div>
+    <div class="api__body">
+      <span class="seg"><span>Request</span><span class="is-on">Response</span></span>
+      <pre class="code"><span class="p">{</span>
+  <span class="k">"choices"</span><span class="p">: [{</span>
+    <span class="k">"message"</span><span class="p">: {</span>
+      <span class="k">"content"</span><span class="p">:</span> <span class="s">"Chat request routed."</span>
+    <span class="p">}</span>
+  <span class="p">}],</span>
+  <span class="k">"usage"</span><span class="p">: {</span> <span class="k">"total_tokens"</span><span class="p">:</span> <span class="n">27</span> <span class="p">}</span>
+<span class="p">}</span></pre>
+    </div>
+    <div class="api__foot"><span class="ms">142 MS</span><span>27 TOKENS</span><span>COST $0.00081</span><span class="stream">STREAM · SSE</span></div>
+  </div>
+</aside>
+</div>
+</div></div>
+    <div class="b-device"><span class="b-device__label">Mobile · 390</span><div class="frame frame--mobile" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span></span>
+</header>
+<div class="ribbon ribbon--strip" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+<main class="scr__body"><div class="pane">
+<span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><path d="m16 19 2 2 4-4"/></svg></span>
+<h1 class="title">Check your email</h1>
+<p class="note">We sent a password reset link to <strong>maya@example.com</strong>. Open the link in that email to set a new password.</p>
+<div class="form form--stack">
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>Back to sign in</button>
+  <button class="btn btn--ghost" type="button" disabled>Resend in 52s</button>
+</div>
+<p class="switch">Not in your inbox? Check your spam folder, or <a class="link" href="#">use a different email</a>.</p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p></footer>
+</div>
+
+</div>
+</div></div>
+  </div>
+</figure>
+</section>
+<section class="b-section" aria-labelledby="sec-up">
+  <h2 class="b-section__title" id="sec-up">Sign up</h2>
+  <p class="b-section__intro">Screens 5 to 8 cover creating an account, from the empty form to the first sign in.</p>
+  <figure class="b-shot" id="screen-5">
+  <figcaption class="b-shot__cap"><span class="b-shot__num">5</span><span class="b-shot__name">Sign up</span><span class="b-shot__desc">Default state.</span></figcaption>
+  <div class="b-frames">
+    <div class="b-device"><span class="b-device__label">Desktop · 1920 × 1080</span><div class="frame frame--desktop" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span></span>
+</header>
+
+<main class="scr__body"><div class="pane pane--wide">
+<h1 class="title">Sign up</h1>
+<p class="note">Your SpicyLab API account is separate from your SpicyLab app account.</p>
+<form class="form">
+  <div class="field">
+  <label class="label" for="s5d-u">Username</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input class="input" id="s5d-u" type="text" placeholder="Choose a username" autocomplete="username"></span>
+  
+</div>
+  <div class="field has-action">
+  <label class="label" for="s5d-e">Email</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><input class="input" id="s5d-e" type="email" placeholder="Enter your email" autocomplete="email"><span class="inline-btn">Send code</span></span>
+  
+</div>
+  <div class="field">
+  <label class="label" for="s5d-c">Verification code</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><input class="input" id="s5d-c" type="text" placeholder="Enter verification code" autocomplete="one-time-code"></span>
+  
+</div>
+  <div class="grid-2">
+    <div class="field has-toggle">
+  <label class="label" for="s5d-p">Password</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s5d-p" type="password" placeholder="Create a password" autocomplete="new-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  <p class="help">8–20 characters</p>
+</div>
+    <div class="field has-toggle">
+  <label class="label" for="s5d-r">Confirm password</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s5d-r" type="password" placeholder="Re-enter password" autocomplete="new-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  
+</div>
+  </div>
+  <label class="check"><input type="checkbox"><span class="check__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+  <span>I’m 18 or older and agree to the <a class="link" href="#">Terms of Service</a> and <a class="link" href="#">Privacy Policy</a>.</span></label>
+  <div class="verify">
+  <span class="verify__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Success!</span>
+  <span class="verify__brand">CLOUDFLARE<small>Privacy · Help</small></span>
+</div>
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>Sign up</button>
+</form>
+<p class="switch">Already have an account? <a class="link" href="#">Sign in</a></p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p><p class="foot__tag">Powerful API Management Platform</p></footer>
+</div>
+<aside class="show show--steps" aria-hidden="true">
+  <div class="show__head">
+    <span class="tag"><i></i>How it works</span>
+    <p class="show__title">Three steps <em>to get started</em></p>
+  </div>
+  <ol class="steps">
+    <li class="step"><span class="step__num"><span>1</span><span class="step__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span></span>
+      <span><span class="step__title">Configure</span><span class="step__text">Add your API keys, set up channels and configure access permissions</span></span></li>
+    <li class="step"><span class="step__num"><span>2</span><span class="step__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg></span></span>
+      <span><span class="step__title">Connect</span><span class="step__text">Connect through OpenAI, Claude, Gemini, and other compatible API routes</span></span></li>
+    <li class="step"><span class="step__num"><span>3</span><span class="step__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></span></span>
+      <span><span class="step__title">Monitor</span><span class="step__text">Track usage, costs and performance with real-time analytics</span></span></li>
+  </ol>
+  <div class="ribbon ribbon--steps" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+</aside>
+</div>
+</div></div>
+    <div class="b-device"><span class="b-device__label">Mobile · 390</span><div class="frame frame--mobile" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span></span>
+</header>
+<div class="ribbon ribbon--strip" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+<main class="scr__body"><div class="pane pane--wide">
+<h1 class="title">Sign up</h1>
+<p class="note">Your SpicyLab API account is separate from your SpicyLab app account.</p>
+<form class="form">
+  <div class="field">
+  <label class="label" for="s5m-u">Username</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input class="input" id="s5m-u" type="text" placeholder="Choose a username" autocomplete="username"></span>
+  
+</div>
+  <div class="field has-action">
+  <label class="label" for="s5m-e">Email</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><input class="input" id="s5m-e" type="email" placeholder="Enter your email" autocomplete="email"><span class="inline-btn">Send code</span></span>
+  
+</div>
+  <div class="field">
+  <label class="label" for="s5m-c">Verification code</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><input class="input" id="s5m-c" type="text" placeholder="Enter verification code" autocomplete="one-time-code"></span>
+  
+</div>
+  <div class="grid-2">
+    <div class="field has-toggle">
+  <label class="label" for="s5m-p">Password</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s5m-p" type="password" placeholder="Create a password" autocomplete="new-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  <p class="help">8–20 characters</p>
+</div>
+    <div class="field has-toggle">
+  <label class="label" for="s5m-r">Confirm password</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s5m-r" type="password" placeholder="Re-enter password" autocomplete="new-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  
+</div>
+  </div>
+  <label class="check"><input type="checkbox"><span class="check__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+  <span>I’m 18 or older and agree to the <a class="link" href="#">Terms of Service</a> and <a class="link" href="#">Privacy Policy</a>.</span></label>
+  <div class="verify">
+  <span class="verify__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Success!</span>
+  <span class="verify__brand">CLOUDFLARE<small>Privacy · Help</small></span>
+</div>
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>Sign up</button>
+</form>
+<p class="switch">Already have an account? <a class="link" href="#">Sign in</a></p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p></footer>
+</div>
+
+</div>
+</div></div>
+  </div>
+</figure>
+<figure class="b-shot" id="screen-6">
+  <figcaption class="b-shot__cap"><span class="b-shot__num">6</span><span class="b-shot__name">Verification code sent</span><span class="b-shot__desc">After “Send code”. The code field is focused.</span></figcaption>
+  <div class="b-frames">
+    <div class="b-device"><span class="b-device__label">Desktop · 1920 × 1080</span><div class="frame frame--desktop" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span></span>
+</header>
+
+<main class="scr__body"><div class="pane pane--wide">
+<h1 class="title">Sign up</h1>
+<p class="note">Your SpicyLab API account is separate from your SpicyLab app account.</p>
+<form class="form">
+  <div class="field is-filled">
+  <label class="label" for="s6d-u">Username</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input class="input" id="s6d-u" type="text" placeholder="Choose a username" value="maya" autocomplete="username"></span>
+  
+</div>
+  <div class="field is-filled has-action">
+  <label class="label" for="s6d-e">Email</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><input class="input" id="s6d-e" type="email" placeholder="Enter your email" value="maya@example.com" autocomplete="email"><span class="inline-btn" aria-disabled="true">Resend in 52s</span></span>
+  <p class="help help--ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg><span>Code sent to maya@example.com</span></p>
+</div>
+  <div class="field is-focus">
+  <label class="label" for="s6d-c">Verification code</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><input class="input" id="s6d-c" type="text" placeholder="Enter verification code" autocomplete="one-time-code"></span>
+  
+</div>
+  <div class="grid-2">
+    <div class="field has-toggle">
+  <label class="label" for="s6d-p">Password</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s6d-p" type="password" placeholder="Create a password" autocomplete="new-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  <p class="help">8–20 characters</p>
+</div>
+    <div class="field has-toggle">
+  <label class="label" for="s6d-r">Confirm password</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s6d-r" type="password" placeholder="Re-enter password" autocomplete="new-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  
+</div>
+  </div>
+  <label class="check"><input type="checkbox"><span class="check__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+  <span>I’m 18 or older and agree to the <a class="link" href="#">Terms of Service</a> and <a class="link" href="#">Privacy Policy</a>.</span></label>
+  <div class="verify">
+  <span class="verify__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Success!</span>
+  <span class="verify__brand">CLOUDFLARE<small>Privacy · Help</small></span>
+</div>
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>Sign up</button>
+</form>
+<p class="switch">Already have an account? <a class="link" href="#">Sign in</a></p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p><p class="foot__tag">Powerful API Management Platform</p></footer>
+</div>
+<aside class="show show--steps" aria-hidden="true">
+  <div class="show__head">
+    <span class="tag"><i></i>How it works</span>
+    <p class="show__title">Three steps <em>to get started</em></p>
+  </div>
+  <ol class="steps">
+    <li class="step"><span class="step__num"><span>1</span><span class="step__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span></span>
+      <span><span class="step__title">Configure</span><span class="step__text">Add your API keys, set up channels and configure access permissions</span></span></li>
+    <li class="step"><span class="step__num"><span>2</span><span class="step__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg></span></span>
+      <span><span class="step__title">Connect</span><span class="step__text">Connect through OpenAI, Claude, Gemini, and other compatible API routes</span></span></li>
+    <li class="step"><span class="step__num"><span>3</span><span class="step__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></span></span>
+      <span><span class="step__title">Monitor</span><span class="step__text">Track usage, costs and performance with real-time analytics</span></span></li>
+  </ol>
+  <div class="ribbon ribbon--steps" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+</aside>
+</div>
+</div></div>
+    <div class="b-device"><span class="b-device__label">Mobile · 390</span><div class="frame frame--mobile" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span></span>
+</header>
+<div class="ribbon ribbon--strip" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+<main class="scr__body"><div class="pane pane--wide">
+<h1 class="title">Sign up</h1>
+<p class="note">Your SpicyLab API account is separate from your SpicyLab app account.</p>
+<form class="form">
+  <div class="field is-filled">
+  <label class="label" for="s6m-u">Username</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input class="input" id="s6m-u" type="text" placeholder="Choose a username" value="maya" autocomplete="username"></span>
+  
+</div>
+  <div class="field is-filled has-action">
+  <label class="label" for="s6m-e">Email</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><input class="input" id="s6m-e" type="email" placeholder="Enter your email" value="maya@example.com" autocomplete="email"><span class="inline-btn" aria-disabled="true">Resend in 52s</span></span>
+  <p class="help help--ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg><span>Code sent to maya@example.com</span></p>
+</div>
+  <div class="field is-focus">
+  <label class="label" for="s6m-c">Verification code</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><input class="input" id="s6m-c" type="text" placeholder="Enter verification code" autocomplete="one-time-code"></span>
+  
+</div>
+  <div class="grid-2">
+    <div class="field has-toggle">
+  <label class="label" for="s6m-p">Password</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s6m-p" type="password" placeholder="Create a password" autocomplete="new-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  <p class="help">8–20 characters</p>
+</div>
+    <div class="field has-toggle">
+  <label class="label" for="s6m-r">Confirm password</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s6m-r" type="password" placeholder="Re-enter password" autocomplete="new-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  
+</div>
+  </div>
+  <label class="check"><input type="checkbox"><span class="check__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+  <span>I’m 18 or older and agree to the <a class="link" href="#">Terms of Service</a> and <a class="link" href="#">Privacy Policy</a>.</span></label>
+  <div class="verify">
+  <span class="verify__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Success!</span>
+  <span class="verify__brand">CLOUDFLARE<small>Privacy · Help</small></span>
+</div>
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>Sign up</button>
+</form>
+<p class="switch">Already have an account? <a class="link" href="#">Sign in</a></p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p></footer>
+</div>
+
+</div>
+</div></div>
+  </div>
+</figure>
+<figure class="b-shot" id="screen-7">
+  <figcaption class="b-shot__cap"><span class="b-shot__num">7</span><span class="b-shot__name">Sign up with errors</span><span class="b-shot__desc">Field errors returned after “Sign up”.</span></figcaption>
+  <div class="b-frames">
+    <div class="b-device"><span class="b-device__label">Desktop · 1920 × 1080</span><div class="frame frame--desktop" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span></span>
+</header>
+
+<main class="scr__body"><div class="pane pane--wide">
+<h1 class="title">Sign up</h1>
+<p class="note">Your SpicyLab API account is separate from your SpicyLab app account.</p>
+<form class="form">
+  <div class="field is-error">
+  <label class="label" for="s7d-u">Username</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input class="input" id="s7d-u" type="text" placeholder="Choose a username" value="maya" autocomplete="username"></span>
+  <p class="help help--error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg><span>That username is taken. Try another one.</span></p>
+</div>
+  <div class="field is-filled has-action">
+  <label class="label" for="s7d-e">Email</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><input class="input" id="s7d-e" type="email" placeholder="Enter your email" value="maya@example.com" autocomplete="email"><span class="inline-btn" aria-disabled="true">Resend in 52s</span></span>
+  
+</div>
+  <div class="field is-filled">
+  <label class="label" for="s7d-c">Verification code</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><input class="input" id="s7d-c" type="text" placeholder="Enter verification code" value="482913" autocomplete="one-time-code"></span>
+  
+</div>
+  <div class="grid-2">
+    <div class="field is-filled has-toggle">
+  <label class="label" for="s7d-p">Password</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s7d-p" type="password" placeholder="Create a password" value="velvet-night-27" autocomplete="new-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  <p class="help">8–20 characters</p>
+</div>
+    <div class="field is-error has-toggle">
+  <label class="label" for="s7d-r">Confirm password</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s7d-r" type="password" placeholder="Re-enter password" value="velvet-night-72" autocomplete="new-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  <p class="help help--error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg><span>Passwords don’t match.</span></p>
+</div>
+  </div>
+  <label class="check"><input type="checkbox" checked><span class="check__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+  <span>I’m 18 or older and agree to the <a class="link" href="#">Terms of Service</a> and <a class="link" href="#">Privacy Policy</a>.</span></label>
+  <div class="verify">
+  <span class="verify__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Success!</span>
+  <span class="verify__brand">CLOUDFLARE<small>Privacy · Help</small></span>
+</div>
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>Sign up</button>
+</form>
+<p class="switch">Already have an account? <a class="link" href="#">Sign in</a></p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p><p class="foot__tag">Powerful API Management Platform</p></footer>
+</div>
+<aside class="show show--steps" aria-hidden="true">
+  <div class="show__head">
+    <span class="tag"><i></i>How it works</span>
+    <p class="show__title">Three steps <em>to get started</em></p>
+  </div>
+  <ol class="steps">
+    <li class="step"><span class="step__num"><span>1</span><span class="step__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></span></span>
+      <span><span class="step__title">Configure</span><span class="step__text">Add your API keys, set up channels and configure access permissions</span></span></li>
+    <li class="step"><span class="step__num"><span>2</span><span class="step__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg></span></span>
+      <span><span class="step__title">Connect</span><span class="step__text">Connect through OpenAI, Claude, Gemini, and other compatible API routes</span></span></li>
+    <li class="step"><span class="step__num"><span>3</span><span class="step__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></span></span>
+      <span><span class="step__title">Monitor</span><span class="step__text">Track usage, costs and performance with real-time analytics</span></span></li>
+  </ol>
+  <div class="ribbon ribbon--steps" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+</aside>
+</div>
+</div></div>
+    <div class="b-device"><span class="b-device__label">Mobile · 390</span><div class="frame frame--mobile" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span></span>
+</header>
+<div class="ribbon ribbon--strip" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+<main class="scr__body"><div class="pane pane--wide">
+<h1 class="title">Sign up</h1>
+<p class="note">Your SpicyLab API account is separate from your SpicyLab app account.</p>
+<form class="form">
+  <div class="field is-error">
+  <label class="label" for="s7m-u">Username</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input class="input" id="s7m-u" type="text" placeholder="Choose a username" value="maya" autocomplete="username"></span>
+  <p class="help help--error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg><span>That username is taken. Try another one.</span></p>
+</div>
+  <div class="field is-filled has-action">
+  <label class="label" for="s7m-e">Email</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><input class="input" id="s7m-e" type="email" placeholder="Enter your email" value="maya@example.com" autocomplete="email"><span class="inline-btn" aria-disabled="true">Resend in 52s</span></span>
+  
+</div>
+  <div class="field is-filled">
+  <label class="label" for="s7m-c">Verification code</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><input class="input" id="s7m-c" type="text" placeholder="Enter verification code" value="482913" autocomplete="one-time-code"></span>
+  
+</div>
+  <div class="grid-2">
+    <div class="field is-filled has-toggle">
+  <label class="label" for="s7m-p">Password</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s7m-p" type="password" placeholder="Create a password" value="velvet-night-27" autocomplete="new-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  <p class="help">8–20 characters</p>
+</div>
+    <div class="field is-error has-toggle">
+  <label class="label" for="s7m-r">Confirm password</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s7m-r" type="password" placeholder="Re-enter password" value="velvet-night-72" autocomplete="new-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  <p class="help help--error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg><span>Passwords don’t match.</span></p>
+</div>
+  </div>
+  <label class="check"><input type="checkbox" checked><span class="check__box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+  <span>I’m 18 or older and agree to the <a class="link" href="#">Terms of Service</a> and <a class="link" href="#">Privacy Policy</a>.</span></label>
+  <div class="verify">
+  <span class="verify__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Success!</span>
+  <span class="verify__brand">CLOUDFLARE<small>Privacy · Help</small></span>
+</div>
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>Sign up</button>
+</form>
+<p class="switch">Already have an account? <a class="link" href="#">Sign in</a></p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p></footer>
+</div>
+
+</div>
+</div></div>
+  </div>
+</figure>
+<figure class="b-shot" id="screen-8">
+  <figcaption class="b-shot__cap"><span class="b-shot__num">8</span><span class="b-shot__name">Account created</span><span class="b-shot__desc">Sign in after a successful sign up, with the new username filled in.</span></figcaption>
+  <div class="b-frames">
+    <div class="b-device"><span class="b-device__label">Desktop · 1920 × 1080</span><div class="frame frame--desktop" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span></span>
+</header>
+
+<main class="scr__body"><div class="pane">
+<h1 class="title">Sign in</h1>
+<p class="note">Your SpicyLab API account is separate from your SpicyLab app account.</p>
+<div class="banner banner--ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg><p><strong>Account created.</strong> Sign in with your new username and password.</p></div>
+<form class="form">
+  <div class="field is-filled">
+  <label class="label" for="s8d-u">Username or Email</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input class="input" id="s8d-u" type="text" placeholder="Enter your username or email" value="maya" autocomplete="username"></span>
+  
+</div>
+  <div class="field is-focus has-toggle">
+  <span class="field__top"><label class="label" for="s8d-p">Password</label><a class="link link--quiet" href="#">Forgot password?</a></span>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s8d-p" type="password" placeholder="Enter password" autocomplete="current-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  
+</div>
+  <div class="verify">
+  <span class="verify__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Success!</span>
+  <span class="verify__brand">CLOUDFLARE<small>Privacy · Help</small></span>
+</div>
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>Sign in</button>
+</form>
+<p class="switch">Don’t have an account? <a class="link" href="#">Sign up</a></p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p><p class="foot__tag">Powerful API Management Platform</p></footer>
+</div>
+<aside class="show show--api" aria-hidden="true">
+  <div class="show__head">
+    <span class="tag"><i></i>AI Application Infrastructure Foundation</span>
+    <p class="show__title">Unified API Gateway for <em>Vast Range of AI Models</em></p>
+  </div>
+  <div class="ribbon ribbon--api" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+  <div class="stats">
+    <div class="stat"><span class="stat__num stat__num--gold">50<sup>+</sup></span><span class="stat__label">upstream services integrated</span></div>
+    <div class="stat"><span class="stat__num stat__num--blush">100<sup>+</sup></span><span class="stat__label">model billing support</span></div>
+  </div>
+  <div class="api">
+    <div class="api__chrome">
+      <span class="api__dots"><i></i><i></i><i></i></span>
+      <span class="api__path"><b>POST</b>/v1/chat/completions</span>
+      <span class="api__ok"><i></i>200 OK</span>
+    </div>
+    <div class="api__tabs">
+      <span class="tab is-on"><i class="c1"></i>Chat</span>
+      <span class="tab"><i class="c2"></i>Responses</span>
+      <span class="tab"><i class="c3"></i>Claude</span>
+      <span class="tab"><i class="c4"></i>Gemini</span>
+    </div>
+    <div class="api__body">
+      <span class="seg"><span>Request</span><span class="is-on">Response</span></span>
+      <pre class="code"><span class="p">{</span>
+  <span class="k">"choices"</span><span class="p">: [{</span>
+    <span class="k">"message"</span><span class="p">: {</span>
+      <span class="k">"content"</span><span class="p">:</span> <span class="s">"Chat request routed."</span>
+    <span class="p">}</span>
+  <span class="p">}],</span>
+  <span class="k">"usage"</span><span class="p">: {</span> <span class="k">"total_tokens"</span><span class="p">:</span> <span class="n">27</span> <span class="p">}</span>
+<span class="p">}</span></pre>
+    </div>
+    <div class="api__foot"><span class="ms">142 MS</span><span>27 TOKENS</span><span>COST $0.00081</span><span class="stream">STREAM · SSE</span></div>
+  </div>
+</aside>
+</div>
+</div></div>
+    <div class="b-device"><span class="b-device__label">Mobile · 390</span><div class="frame frame--mobile" inert>
+<div class="scr">
+<div class="scr__main">
+<header class="bar">
+  <span class="brand"><svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+  <path fill="url(#lgCool)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="url(#lgWarm)" transform="rotate(180 16 16)" d="M18.5 3.2A13 13 0 0 0 8.54 26.65c1.86 1.75 5.16.45 4.76-2.05-.5-2.8-3.1-5-3.2-9-.1-5 3.5-9.6 8.4-12.4z"/>
+  <path fill="#8fb4ff" d="M16 12.2c.35 2.4 1.4 3.45 3.8 3.8-2.4.35-3.45 1.4-3.8 3.8-.35-2.4-1.4-3.45-3.8-3.8 2.4-.35 3.45-1.4 3.8-3.8z"/>
+</svg><span class="brand__name">Spicylab API</span></span>
+  <span class="utils"><span class="age">18+</span><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg></span></span>
+</header>
+<div class="ribbon ribbon--strip" aria-hidden="true"><div class="ribbon__track"><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg><span class="w">Spicy Verse ImagEdit 3.0</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.6 1.1 5.2 3 1.6-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg><span class="d">Spicy Verse ImagEdit 2.2</span><svg class="rb-sep" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 7.4 4.6 11.1 12 12-7.4.9-11.1 4.6-12 12-.9-7.4-4.6-11.1-12-12 7.4-.9 11.1-4.6 12-12z"/></svg></div></div>
+<main class="scr__body"><div class="pane">
+<h1 class="title">Sign in</h1>
+<p class="note">Your SpicyLab API account is separate from your SpicyLab app account.</p>
+<div class="banner banner--ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg><p><strong>Account created.</strong> Sign in with your new username and password.</p></div>
+<form class="form">
+  <div class="field is-filled">
+  <label class="label" for="s8m-u">Username or Email</label>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input class="input" id="s8m-u" type="text" placeholder="Enter your username or email" value="maya" autocomplete="username"></span>
+  
+</div>
+  <div class="field is-focus has-toggle">
+  <span class="field__top"><label class="label" for="s8m-p">Password</label><a class="link link--quiet" href="#">Forgot password?</a></span>
+  <span class="control"><svg class="control__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input class="input" id="s8m-p" type="password" placeholder="Enter password" autocomplete="current-password"><span class="toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.73 5.08a10.74 10.74 0 0 1 11.2 6.57 1 1 0 0 1 0 .7 10.8 10.8 0 0 1-1.44 2.49"/><path d="M14.08 14.16a3 3 0 0 1-4.24-4.24"/><path d="M17.48 17.5a10.75 10.75 0 0 1-15.42-5.15 1 1 0 0 1 0-.7 10.75 10.75 0 0 1 4.45-5.14"/><path d="m2 2 20 20"/></svg></span></span>
+  
+</div>
+  <div class="verify">
+  <span class="verify__check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Success!</span>
+  <span class="verify__brand">CLOUDFLARE<small>Privacy · Help</small></span>
+</div>
+  <button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>Sign in</button>
+</form>
+<p class="switch">Don’t have an account? <a class="link" href="#">Sign up</a></p>
+</div></main>
+<footer class="foot"><p>© 2026 Spicylab API. All rights reserved.</p></footer>
+</div>
+
+</div>
+</div></div>
+  </div>
+</figure>
+</section>
+
+<footer class="b-foot">Static design board. Logo is a stand-in and the Cloudflare box marks where the Turnstile widget goes.</footer>
+</body>
+</html>
