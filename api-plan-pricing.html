@@ -1,0 +1,1282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SpicyLab API billing page redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#07060e;
+  --surface-2:#0c0b16;
+  --surface-3:#16142a;
+  --line:#25223b;
+  --line-soft:#1a1830;
+  --text:#f4f3fa;
+  --text-2:#aaa8bf;
+  --text-3:#76748e;
+  --lilac:#c084fc;
+  --grad:linear-gradient(90deg,#8b5cf6 0%,#d946ef 100%);
+  --green:#34d399;
+  --amber:#f5b53d;
+  --red:#f87171;
+  --display:"Plus Jakarta Sans",Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,p{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+table{border-collapse:collapse}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--lilac);outline-offset:2px;border-radius:6px}
+.ic{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.num{font-variant-numeric:tabular-nums}
+
+/* Board */
+.board{max-width:1240px;margin:0 auto;padding:40px 24px 96px}
+.board-head{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-end;padding-bottom:28px;border-bottom:1px solid var(--line)}
+.board-kicker{display:flex;align-items:center;gap:8px;color:var(--text-2);font-size:13px;font-weight:500}
+.board-kicker .ic{color:var(--lilac)}
+.board-head h1{font:800 30px/1.15 var(--display);letter-spacing:-.02em;margin-top:8px}
+.board-head p{color:var(--text-2);max-width:64ch;margin-top:10px}
+.index{display:flex;flex-wrap:wrap;gap:8px}
+.index a{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--text-2);text-decoration:none;font-size:13px}
+.index a:hover{color:var(--text);border-color:#3a3658}
+.index b{font:700 12px var(--display);color:var(--lilac)}
+
+.screen{margin-top:56px;scroll-margin-top:16px}
+.screen-label{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+.screen-no{width:30px;height:30px;flex:none;display:grid;place-items:center;border-radius:9px;background:rgba(168,85,247,.14);border:1px solid rgba(168,85,247,.35);color:#e9d5ff;font:700 13px var(--display)}
+.screen-label h2{font:700 19px/1.3 var(--display);letter-spacing:-.01em}
+.screen-label p{color:var(--text-2);font-size:13.5px;margin-top:2px;max-width:80ch}
+.frame{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:radial-gradient(900px 420px at 50% -120px,rgba(139,92,246,.16),transparent 70%),var(--bg)}
+
+/* Site chrome */
+.topnav{display:flex;align-items:center;gap:28px;margin:12px 16px 0;padding:9px 12px 9px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(14,12,26,.85)}
+.logo{display:flex;align-items:center;gap:9px;font:700 15px var(--display);white-space:nowrap}
+.links{display:flex;gap:26px;color:#cfcde0;font-size:13px;font-weight:500;white-space:nowrap}
+.links span{display:inline-flex;align-items:center;gap:5px}
+.links .ic{width:13px;height:13px}
+.new{font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;background:linear-gradient(90deg,#a855f7,#ec4899);color:#fff}
+.nav-right{margin-left:auto;display:flex;gap:10px;align-items:center}
+.lang,.dl{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 12px;border-radius:10px;font-size:13px;white-space:nowrap}
+.lang{border:1px solid var(--line);color:#dcdaea;font-weight:500}
+.lang .ic{width:14px;height:14px}
+.dl{padding:0 14px;background:var(--grad);font-weight:600}
+.dl .ic{width:14px;height:14px}
+.avatar{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--line);background:var(--surface-3);font:700 13px var(--display);color:#e9d5ff}
+
+.subnav{margin-top:10px;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(139,92,246,.07),rgba(217,70,239,.05) 60%,rgba(139,92,246,.03))}
+.subnav-in{max-width:1040px;margin:0 auto;padding:0 24px;height:46px;display:flex;align-items:center;gap:24px;font-size:12.5px;color:var(--text-2);overflow-x:auto;white-space:nowrap}
+.subnav-in .api{display:flex;align-items:center;gap:6px;color:var(--text);font-weight:700;margin-right:6px}
+.subnav-in .api .ic{width:14px;height:14px}
+.subnav-in .on{height:100%;display:flex;align-items:center;color:var(--text);font-weight:600;box-shadow:inset 0 -2px 0 var(--lilac)}
+.subnav-in .ext{display:inline-flex;align-items:center;gap:4px}
+.subnav-in .ext .ic{width:12px;height:12px}
+.subnav-in .usd{margin-left:auto;color:var(--text-3)}
+
+.wrap{max-width:1040px;margin:0 auto;padding:48px 24px 64px}
+.hero{text-align:center}
+.hero h1{font:800 46px/1.1 var(--display);letter-spacing:-.035em}
+.grad{background:linear-gradient(90deg,#c084fc,#f0abfc);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--text-2);font-size:15px;margin-top:12px}
+
+/* Balance and tier */
+.balance{margin-top:32px;border:1px solid #2c2846;border-radius:18px;background:linear-gradient(180deg,#151229,#0e0c1b 70%)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr)}
+.stat{padding:22px 24px;border-right:1px solid var(--line-soft)}
+.stat:last-child{border-right:0}
+.stat-label{display:flex;align-items:center;gap:8px;color:var(--text-2);font-size:13px;font-weight:500}
+.stat-label .ic{color:var(--lilac)}
+.stat-value{font:800 32px/1.1 var(--display);letter-spacing:-.02em;margin-top:10px}
+.stat-note{color:var(--text-3);font-size:12.5px;margin-top:8px;max-width:36ch}
+.split{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;font-size:12.5px;color:var(--text-2)}
+.split b{color:var(--text);font-weight:600;margin-left:4px}
+.split .bonus b{color:var(--green)}
+
+.vb{display:inline-grid;place-items:center;min-width:36px;height:26px;padding:0 8px;border-radius:8px;background:#1a1730;border:1px solid #34304f;color:#cfcde0;font:800 12.5px var(--display)}
+.vb.v1{background:rgba(168,85,247,.16);border-color:rgba(192,132,252,.5);color:#ecdcff}
+.vb.v2{background:var(--grad);border-color:transparent;color:#fff}
+.chg{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.chg .ic{width:14px;height:14px;color:var(--text-3)}
+.chg i{font-style:normal;font-size:12px;color:var(--text-3)}
+
+/* Tier chart */
+.lvl{margin-top:16px;padding:22px 24px 20px;border:1px solid #2c2846;border-radius:18px;background:linear-gradient(180deg,#131026,#0d0c19 75%)}
+.lvl-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.lvl-head h3{font:600 14px var(--body);color:var(--text-2)}
+.lvl-more{color:var(--text);font-size:13.5px;font-weight:600;text-decoration:none}
+.lvl-more:hover{color:#e9d5ff;text-decoration:underline;text-underline-offset:3px}
+.lvl-row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px 24px;margin-top:12px}
+.lvl-stats{display:flex;flex-wrap:wrap;gap:16px 64px}
+.lvl-stat b{display:block;font:700 30px/1.1 var(--display);letter-spacing:-.02em}
+.lvl-stat b i{font-style:normal;color:var(--text-3)}
+.lvl-stat span{display:block;margin-top:6px;font-size:13px;color:var(--text-2)}
+.chart{margin-top:30px}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;align-items:end}
+.col{display:flex;flex-direction:column;justify-content:flex-end;gap:12px}
+.col-label{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.col.done .col-label{margin-bottom:14px}
+.lv{font:700 14px var(--display);color:var(--text-3)}
+.col.goal .lv{color:var(--text-2)}
+.lv-pill{display:inline-grid;place-items:center;min-width:46px;height:28px;padding:0 12px;border-radius:999px;background:var(--grad);color:#fff;font:800 13px var(--display);box-shadow:0 0 0 4px rgba(192,132,252,.14),0 8px 22px -6px rgba(217,70,239,.7)}
+.rw{font-size:12px;font-weight:600;color:#6ee7b7}
+.bar{border-radius:5px 5px 0 0;background:#191630}
+.col.now .bar{height:54px;background:linear-gradient(180deg,rgba(168,85,247,.4),rgba(168,85,247,.08));box-shadow:inset 0 2px 0 #c084fc}
+.col.goal .bar{height:116px;background:linear-gradient(180deg,#1f1b38,#171429)}
+.base{position:relative;height:4px;border-radius:0 0 4px 4px;background:#221f3a}
+.base-fill{position:absolute;top:0;bottom:0;left:0;width:calc((100% + 4px) / 3);border-radius:99px;background:var(--grad)}
+.base-gap{position:absolute;top:0;bottom:0;left:calc((100% + 4px) / 3);width:calc((100% + 4px) / 3);background:repeating-linear-gradient(90deg,rgba(192,132,252,.55) 0 6px,transparent 6px 12px)}
+.base-dot{position:absolute;top:50%;left:calc((100% + 4px) / 3);width:14px;height:14px;border-radius:50%;background:#f4ecff;border:3px solid #c084fc;transform:translate(-50%,-50%);box-shadow:0 0 0 5px rgba(192,132,252,.18)}
+.ticks{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:12px;font-size:12px;color:var(--text-3)}
+.ticks b{color:var(--text-2);font-weight:600}
+
+/* Tier details window */
+.tm{max-width:640px;margin:0 auto;padding:24px;border:1px solid #302c4c;border-radius:22px;background:linear-gradient(180deg,#17132c,#0f0d1d 60%);box-shadow:0 40px 80px -30px rgba(0,0,0,.8)}
+.tm .modal-head h3{font:700 22px var(--display);letter-spacing:-.01em}
+.tm-lead{margin-top:10px;font-size:14px;color:var(--text-2);max-width:62ch}
+.tt{display:grid;gap:4px;margin-top:20px;padding:4px;border:1px solid var(--line);border-radius:20px;background:rgba(7,6,14,.55)}
+.tt-r{display:grid;grid-template-columns:1.35fr .6fr 1.25fr;align-items:center;gap:14px;padding:16px 18px;border-radius:10px;background:#141127;font-size:14.5px}
+.tt-r:first-child{border-radius:16px 16px 10px 10px}
+.tt-r:last-child{border-radius:10px 10px 16px 16px}
+.tt-h{padding:13px 18px;background:#1b1734;font-size:12.5px;font-weight:600;color:var(--text-2)}
+.tt-h span{display:inline-flex;align-items:center;gap:8px}
+.tt-h .ic{width:15px;height:15px;color:var(--lilac)}
+.tt-r b{display:block;font-weight:600}
+.tt-r .vb{justify-self:start}
+.tt-r.here{background:linear-gradient(90deg,rgba(168,85,247,.2),#141127 85%)}
+.tt-r .none{color:var(--text-3)}
+.tt-r .gift{color:#6ee7b7;font-weight:600}
+.here-chip{display:inline-flex;margin-top:6px;padding:2px 7px;border-radius:6px;background:rgba(168,85,247,.2);color:#e9d5ff;font-size:11px;font-weight:600}
+.tm-notes{display:grid;gap:10px;margin-top:18px}
+.tm-notes li{display:flex;gap:10px;font-size:13.5px;color:#d7d5e6}
+.chk{width:18px;height:18px;flex:none;display:grid;place-items:center;margin-top:1px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#d946ef)}
+.chk .ic{width:11px;height:11px;stroke:#fff;stroke-width:3}
+.examples{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.ex{padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(7,6,14,.5)}
+.ex span{display:block;font-size:12px;color:var(--text-3)}
+.ex b{display:block;margin-top:4px;font:700 14px var(--display)}
+.ex em{font-style:normal;color:var(--green)}
+.tm-cta{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px 20px;margin-top:16px;padding:18px 20px;border:1px solid rgba(192,132,252,.28);border-radius:18px;background:linear-gradient(100deg,rgba(168,85,247,.2),rgba(217,70,239,.06))}
+.tm-cta b{display:block;font:700 16px var(--display)}
+.tm-cta span{display:block;margin-top:3px;font-size:13px;color:var(--text-2)}
+
+/* Sections */
+.sec{margin-top:64px}
+.sec-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px}
+.sec h2{font:800 28px/1.2 var(--display);letter-spacing:-.025em}
+.lead{color:var(--text-2);margin-top:6px;max-width:68ch}
+.pill{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border:1px solid #3a3658;border-radius:999px;color:#dcdaea;font-size:12px;font-weight:600;white-space:nowrap}
+.pill .ic{width:13px;height:13px}
+
+/* Top-up */
+.topup{margin-top:24px;border:1px solid #2c2846;border-radius:20px;background:linear-gradient(180deg,#141127,#0d0c19 70%);overflow:hidden}
+.tu-call{display:flex;align-items:center;gap:16px;padding:18px 22px;border-bottom:1px solid var(--line-soft);background:linear-gradient(90deg,rgba(168,85,247,.16),rgba(217,70,239,.05) 55%,transparent)}
+.tu-call-ic{width:44px;height:44px;flex:none;display:grid;place-items:center;border-radius:12px;background:var(--grad);color:#fff;box-shadow:0 10px 24px -10px rgba(217,70,239,.7)}
+.tu-call-ic .ic{width:21px;height:21px}
+.tu-call b{display:block;font:700 16px/1.3 var(--display)}
+.tu-call div > span{display:block;margin-top:3px;font-size:13.5px;color:var(--text-2);max-width:72ch}
+.tu-body{display:grid;grid-template-columns:minmax(0,1fr) 330px}
+.tu-pick{padding:22px}
+.tu-set{min-width:0;margin:0;padding:0;border:0}
+.tu-set + .tu-set{margin-top:24px}
+.tu-label{display:block;padding:0;margin-bottom:10px;font-size:13px;font-weight:600;color:var(--text-2)}
+.amts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.amt{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-height:98px;padding:16px 16px 14px;border:1px solid var(--line);border-radius:14px;background:#0e0c1a;cursor:pointer}
+.amt:hover{border-color:#3e3963}
+.amt input,.mth input{position:absolute;width:1px;height:1px;margin:0;opacity:0}
+.amt-v{font:800 30px/1 var(--display);letter-spacing:-.03em}
+.amt .bonus-chip,.amt-note{margin-top:auto}
+.amt-note{font-size:12px;color:var(--text-3)}
+.amt-tick{position:absolute;top:14px;right:14px;width:20px;height:20px;display:grid;place-items:center;border:1.5px solid #4a4668;border-radius:50%}
+.amt-tick .ic{width:11px;height:11px;stroke:#fff;stroke-width:3;opacity:0}
+.amt.on{border-color:#a855f7;background:linear-gradient(180deg,#2b1652 0%,#18112f 60%,#120f22 100%);box-shadow:0 0 0 1px rgba(168,85,247,.35),0 20px 50px -26px rgba(168,85,247,.6)}
+.amt.on .amt-tick{border-color:transparent;background:var(--grad)}
+.amt.on .amt-tick .ic{opacity:1}
+.amt:has(input:focus-visible),.mth:has(input:focus-visible){outline:2px solid var(--lilac);outline-offset:2px}
+.amt-own{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}
+.amount{flex:1 1 220px;display:flex;align-items:center;gap:6px;height:46px;padding:0 14px;border:1px solid #3a3658;border-radius:11px;background:#0a0914;font:700 19px var(--display)}
+.amount span{color:var(--text-3)}
+.amount input{width:100%;min-width:0;border:0;background:none;outline:0;font:inherit}
+.amount input::placeholder{color:var(--text-3);font:500 14px var(--body)}
+.amount:focus-within{border-color:var(--lilac)}
+.amount.on{border-color:#a855f7;background:rgba(168,85,247,.08)}
+.fill{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 11px;border:1px solid rgba(192,132,252,.4);border-radius:9px;background:rgba(168,85,247,.1);color:#e9d5ff;font-size:12.5px;font-weight:600}
+.fill:hover{background:rgba(168,85,247,.18)}
+.fill .ic{width:13px;height:13px}
+.bonus-chip{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:999px;border:1px solid rgba(52,211,153,.3);background:rgba(52,211,153,.1);color:#6ee7b7;font-size:11.5px;font-weight:600;white-space:nowrap}
+.mths{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mth{position:relative;display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#0e0c1a;cursor:pointer}
+.mth:hover{border-color:#3e3963}
+.mth.on{border-color:#a855f7;background:rgba(168,85,247,.1)}
+.mth-ic{width:36px;height:36px;flex:none;display:grid;place-items:center;border-radius:10px;background:#1b1734;color:#d8c4fb}
+.mth-ic .ic{width:18px;height:18px}
+.mth.on .mth-ic{background:var(--grad);color:#fff}
+.mth-t b{display:block;font-size:14px;font-weight:600}
+.mth-t small{display:block;margin-top:1px;font-size:12px;color:var(--text-3)}
+.mth.on .radio{border:5px solid var(--lilac)}
+.tu-guide{margin-top:14px;font-size:13px}
+.tu-sum{display:flex;flex-direction:column;padding:22px;border-left:1px solid var(--line-soft);background:rgba(7,6,14,.35)}
+.lg-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;border-bottom:1px dashed #2a2743;font-size:13.5px;color:var(--text-2)}
+.lg-row:first-child{padding-top:0}
+.lg-row b{color:var(--text);font-weight:600;white-space:nowrap}
+.lg-row .plus{color:#6ee7b7}
+.lg-row .zero{color:var(--text-3)}
+.lg-row small{display:block;margin-top:1px;font-size:11.5px;color:var(--text-3)}
+.lg-total{padding:16px 0 20px}
+.lg-total span{display:block;font-size:13px;color:var(--text-2)}
+.lg-total b{display:block;margin-top:6px;font:800 40px/1 var(--display);letter-spacing:-.035em}
+.tu-sum .btn{margin-top:auto}
+.btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none;filter:none}
+.tu-goal{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(240px,320px);align-items:center;gap:16px 20px;margin:0 22px 22px;padding:18px 22px;border-radius:16px;background:linear-gradient(100deg,#2a1159 0%,#5b21b6 48%,#a21caf 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
+.goal-ic{width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:#fff;color:#7c3aed}
+.goal-ic .ic{width:22px;height:22px;stroke-width:2}
+.goal-t b{display:block;font:800 17px/1.25 var(--display);letter-spacing:-.01em;color:#fff}
+.goal-t span{display:block;margin-top:3px;font-size:13px;color:rgba(255,255,255,.8)}
+.goal-labels{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:rgba(255,255,255,.78)}
+.goal-labels b{color:#fff;font-weight:700}
+.goal-track{position:relative;height:8px;margin-top:8px;border-radius:99px;background:rgba(12,6,30,.5);overflow:hidden}
+.goal-now{position:absolute;top:0;bottom:0;left:0;width:33.333%;border-radius:99px;background:#fff}
+.goal-add{position:absolute;top:0;bottom:0;left:33.333%;width:66.667%;background:repeating-linear-gradient(90deg,rgba(255,255,255,.6) 0 6px,rgba(255,255,255,.22) 6px 10px)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:42px;padding:0 18px;border:1px solid #403c62;border-radius:11px;background:#0b0a15;color:var(--text);font-size:14px;font-weight:600;white-space:nowrap}
+.btn:hover{border-color:#5a5488}
+.btn-primary{border-color:transparent;background:var(--grad);box-shadow:0 10px 28px -10px rgba(217,70,239,.6)}
+.btn-primary:hover{border-color:transparent;filter:brightness(1.08)}
+.btn-sm{height:36px;padding:0 14px;font-size:13px}
+.btn-block{width:100%}
+
+.pm{display:inline-flex;align-items:center;gap:7px;color:var(--text);font-weight:500}
+.pm i{width:20px;height:20px;display:grid;place-items:center;border-radius:6px;background:linear-gradient(135deg,#8b5cf6,#d946ef);font-style:normal;font-size:11px;font-weight:700;color:#fff}
+.pm i.round{border-radius:50%}
+.pm .ic{width:12px;height:12px;color:#fff}
+.pm-t{line-height:1.25}
+.pm-t small{display:block;font-size:11.5px;font-weight:400;color:var(--text-3)}
+.link{display:inline-flex;align-items:center;gap:6px;color:#e879f9;font-weight:600;text-decoration:none}
+.link .ic{width:14px;height:14px}
+
+.facts{display:grid;grid-template-columns:repeat(3,1fr);margin-top:20px;border:1px solid var(--line);border-radius:14px;background:rgba(13,11,24,.6)}
+.fact{display:flex;gap:12px;padding:16px 20px;border-right:1px solid var(--line-soft)}
+.fact:last-child{border-right:0}
+.fact .ic{color:var(--lilac);margin-top:2px}
+.fact b{display:block;font-size:13px;font-weight:600}
+.fact span{display:block;margin-top:2px;font-size:12.5px;color:var(--text-2)}
+
+.note{display:flex;gap:12px;margin-top:18px;padding:13px 16px;border:1px dashed rgba(245,181,61,.5);border-radius:12px;background:rgba(245,181,61,.05);color:#e9d3a6;font-size:13px;line-height:1.55}
+.note .ic{color:var(--amber);margin-top:2px}
+.note b{color:#f8c766;font-weight:600}
+
+/* Model pricing */
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:22px}
+.seg{display:inline-flex;gap:2px;padding:4px;border:1px solid var(--line);border-radius:11px;background:var(--surface-2);overflow-x:auto;max-width:100%}
+.seg button{height:30px;padding:0 12px;border:0;border-radius:8px;background:none;color:var(--text-2);font-size:13px;font-weight:500;white-space:nowrap}
+.seg .on{background:#241e42;color:var(--text)}
+.ctl{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--text-3);font-size:13px;white-space:nowrap}
+.ctl b{color:var(--text);font-weight:500}
+.ctl .ic{width:14px;height:14px}
+.search{flex:1 1 170px}
+.tbl{margin-top:14px;border:1px solid var(--line);border-radius:16px;overflow-x:auto;background:#0d0c18}
+.tbl table{width:100%;min-width:880px}
+.tbl th{padding:13px 14px;border-bottom:1px solid var(--line);background:#110f1f;text-align:left;font-size:12px;font-weight:600;color:var(--text-2);white-space:nowrap}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--line-soft);font-size:13.5px;vertical-align:middle;white-space:nowrap}
+.tbl td.wrap{white-space:normal;min-width:180px}
+.tbl tr:last-child td{border-bottom:0}
+.tbl .grp td{padding:9px 14px;background:#0a0913;color:var(--text-3);font-size:12px;font-weight:600}
+.tbl .sub{display:block;margin-top:2px;font-size:12px;color:var(--text-3)}
+.m{display:flex;align-items:center;gap:12px}
+.m-ic{width:30px;height:30px;flex:none;display:grid;place-items:center;border:1px solid #2c2946;border-radius:8px;background:#15132a;color:#cfcde0}
+.m-ic .ic{width:15px;height:15px}
+.m b{display:block;font-weight:600}
+.m small{display:block;font-size:12px;color:var(--text-3)}
+.tbc{display:inline-flex;align-items:center;height:24px;padding:0 9px;border:1px dashed #4a4668;border-radius:999px;color:var(--text-3);font-size:12px;white-space:nowrap}
+.chip-amber{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border:1px solid rgba(245,181,61,.5);border-radius:999px;background:rgba(245,181,61,.08);color:#f6c768;font-size:12px;font-weight:600;white-space:nowrap}
+.chip-amber .ic{width:12px;height:12px}
+.p{display:inline-flex;align-items:center;height:24px;padding:0 8px;border:1px solid #29263f;border-radius:6px;background:#17152b;color:#d9d7e8;font-size:12px;white-space:nowrap}
+.p.on{border-color:rgba(192,132,252,.45);background:rgba(168,85,247,.12);color:#f0d9ff}
+.na{color:var(--text-3)}
+.inline-link{display:inline-flex;align-items:center;gap:4px;margin-top:3px;color:#e879f9;font-size:12px;font-weight:600}
+.inline-link .ic{width:12px;height:12px}
+.plus-g{color:var(--green);font-weight:600}
+
+.estimator{display:grid;grid-template-columns:1fr 290px;margin-top:14px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#141127,#0e0c1b)}
+.est-form{padding:18px 20px}
+.est-form h3{font:700 16px var(--display)}
+.est-form > p{margin-top:2px;font-size:13px;color:var(--text-2)}
+.fields{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr .8fr;gap:10px;margin-top:14px}
+.field label{display:block;margin-bottom:6px;font-size:12px;color:var(--text-2)}
+.field .ctl{width:100%;justify-content:space-between}
+.est-out{display:flex;flex-direction:column;gap:10px;padding:18px 20px;border-left:1px solid var(--line-soft)}
+.kv{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--text-2)}
+.kv b{color:var(--text);font-weight:600}
+.est-total{margin-top:auto;padding-top:12px;border-top:1px solid var(--line-soft)}
+.est-total span{font-size:12px;color:var(--text-2)}
+.est-total b{display:block;font:800 26px/1.2 var(--display)}
+.est-total small{display:block;font-size:12px;color:var(--text-3)}
+.est-fine{grid-column:1/-1;display:flex;gap:8px;align-items:center;padding:12px 20px;border-top:1px solid var(--line-soft);font-size:12.5px;color:var(--text-3)}
+.est-fine .ic{width:14px;height:14px}
+
+/* History */
+.tabs{display:flex;gap:4px;margin-top:20px;border-bottom:1px solid var(--line)}
+.tab{margin-bottom:-1px;padding:10px 14px;border-bottom:2px solid transparent;color:var(--text-2);font-size:13.5px;font-weight:500;text-decoration:none}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--text);border-color:var(--lilac)}
+.st{display:inline-flex;align-items:center;gap:7px;height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.st::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.st.ok{color:#6ee7b7;background:rgba(52,211,153,.1)}
+.st.wait{color:#f6c768;background:rgba(245,181,61,.1)}
+.st.fail{color:#fca5a5;background:rgba(248,113,113,.1)}
+.st.hold{color:#e0c3ff;background:rgba(168,85,247,.14)}
+.st.rel{color:#5eead4;background:rgba(45,212,191,.1)}
+.tbl-foot{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:12.5px;color:var(--text-3)}
+.tbl-foot .ic{width:14px;height:14px}
+
+/* Modals and states */
+.stage{padding:36px 32px 40px;background:radial-gradient(700px 360px at 50% 0,rgba(139,92,246,.14),transparent 70%),rgba(4,3,9,.6)}
+.scenarios{display:grid;grid-template-columns:repeat(2,1fr);gap:32px 24px}
+.cap{max-width:420px;margin:0 auto 10px;font-size:13px;color:var(--text-2)}
+.cap b{display:block;color:var(--text);font-weight:600}
+.modal{max-width:420px;margin:0 auto;padding:22px;border:1px solid #302c4c;border-radius:20px;background:linear-gradient(180deg,#17132c,#0f0d1d 60%);box-shadow:0 40px 80px -30px rgba(0,0,0,.8)}
+.modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.modal-head h3{font:700 19px var(--display)}
+.modal-head p{margin-top:2px;font-size:13px;color:var(--text-2)}
+.x{width:32px;height:32px;flex:none;display:grid;place-items:center;border:1px solid var(--line);border-radius:9px;background:none;color:var(--text-2)}
+.sum{margin-top:18px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:rgba(7,6,14,.45)}
+.sum-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:11px 14px;font-size:13.5px;color:var(--text-2)}
+.sum-row + .sum-row{border-top:1px solid var(--line-soft)}
+.sum-row small{display:block;margin-top:1px;font-size:11.5px;color:var(--text-3)}
+.sum-row b{color:var(--text);font-weight:600;white-space:nowrap}
+.sum-row .plus{color:var(--green);font-weight:700}
+.sum-row .zero{color:var(--text-3);font-weight:600}
+.sum-row.total{background:rgba(52,211,153,.06)}
+.sum-row.total > span{color:var(--text);font-weight:600}
+.sum-row.total b{font:800 22px var(--display);color:#6ee7b7}
+.methods{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.method{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:rgba(7,6,14,.45);font-size:13px;font-weight:500}
+.method.on{border-color:#a855f7;background:rgba(168,85,247,.1)}
+.radio{width:16px;height:16px;flex:none;margin-left:auto;border:1.5px solid #4a4668;border-radius:50%}
+.method.on .radio{border:5px solid var(--lilac)}
+.modal .btn{margin-top:16px}
+.fine{display:flex;gap:8px;margin-top:12px;font-size:12px;line-height:1.5;color:var(--text-3)}
+.fine .ic{width:14px;height:14px;margin-top:1px}
+
+.results{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:start}
+.result{display:flex;flex-direction:column;padding:24px 22px;border:1px solid #302c4c;border-radius:20px;background:linear-gradient(180deg,#17132c,#0f0d1d 60%)}
+.state-ic{width:46px;height:46px;display:grid;place-items:center;border-radius:14px}
+.state-ic .ic{width:22px;height:22px}
+.state-ic.wait{border:1px solid rgba(245,181,61,.35);background:rgba(245,181,61,.1);color:var(--amber)}
+.state-ic.ok{border:1px solid rgba(52,211,153,.35);background:rgba(52,211,153,.12);color:var(--green)}
+.state-ic.fail{border:1px solid rgba(248,113,113,.35);background:rgba(248,113,113,.1);color:var(--red)}
+.result h3{margin-top:16px;font:700 19px var(--display)}
+.result > p{margin-top:6px;font-size:13.5px;color:var(--text-2)}
+.result .sum{margin-top:16px}
+.actions{display:flex;gap:8px;padding-top:18px}
+.actions .btn{flex:1;padding:0 12px}
+.results-wrap .cap{max-width:none;margin:0 0 10px}
+
+/* Task charges */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+.step{padding:18px;border:1px solid var(--line);border-radius:16px;background:#0e0d1a}
+.step-h{display:flex;align-items:center;gap:10px}
+.step-n{width:22px;height:22px;display:grid;place-items:center;border-radius:6px;font:700 12px var(--display)}
+.step:nth-child(1) .step-n{background:rgba(168,85,247,.18);color:#e0c3ff}
+.step:nth-child(2) .step-n{background:rgba(52,211,153,.14);color:#6ee7b7}
+.step:nth-child(3) .step-n{background:rgba(45,212,191,.14);color:#5eead4}
+.step:nth-child(4) .step-n{background:rgba(245,181,61,.14);color:#f6c768}
+.step h4{font:700 15px var(--display)}
+.step p{margin-top:8px;font-size:13px;color:var(--text-2)}
+.wrap.tight{padding-top:36px}
+.wrap.tight .sec:first-child{margin-top:0}
+
+/* Open items */
+.open{margin-top:56px;padding:24px 26px;border:1px dashed rgba(245,181,61,.5);border-radius:20px;background:rgba(245,181,61,.04);scroll-margin-top:16px}
+.open-h{display:flex;align-items:center;gap:12px}
+.open-h .ic{width:20px;height:20px;color:var(--amber)}
+.open h2{font:700 19px var(--display)}
+.open ol{display:grid;gap:10px;margin-top:14px;counter-reset:o}
+.open li{display:flex;gap:12px;font-size:14px;color:#e5e3f0;counter-increment:o}
+.open li::before{content:counter(o);width:22px;height:22px;flex:none;display:grid;place-items:center;border-radius:6px;background:rgba(245,181,61,.14);color:#f6c768;font:700 12px var(--display)}
+.open li span{color:var(--text-2)}
+
+@media (max-width:1000px){
+  .links{display:none}
+  .tu-body{grid-template-columns:1fr}
+  .tu-sum{border-left:0;border-top:1px solid var(--line-soft)}
+  .tu-goal{grid-template-columns:auto minmax(0,1fr)}
+  .goal-bar{grid-column:1/-1}
+  .estimator{grid-template-columns:1fr}
+  .est-out{border-left:0;border-top:1px solid var(--line-soft)}
+  .fields{grid-template-columns:repeat(3,1fr)}
+  .results{grid-template-columns:1fr;max-width:460px;margin:0 auto}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .scenarios{grid-template-columns:1fr}
+}
+@media (max-width:680px){
+  .board{padding:28px 14px 72px}
+  .topnav{margin:10px 10px 0}
+  .lang{display:none}
+  .wrap{padding:36px 16px 48px}
+  .hero h1{font-size:34px}
+  .stats,.facts{grid-template-columns:1fr}
+  .stat,.fact{border-right:0;border-bottom:1px solid var(--line-soft)}
+  .stat:last-child,.fact:last-child{border-bottom:0}
+  .steps,.examples{grid-template-columns:1fr}
+  .tu-call{align-items:flex-start;padding:16px}
+  .tu-pick,.tu-sum{padding:18px 16px}
+  .amts{grid-template-columns:1fr;gap:8px}
+  .amt{flex-direction:row;align-items:center;min-height:0;padding:14px 50px 14px 16px}
+  .amt-v{font-size:24px}
+  .amt .bonus-chip,.amt-note{margin-top:0;margin-left:auto}
+  .amt-tick{top:50%;transform:translateY(-50%)}
+  .mths{grid-template-columns:1fr}
+  .lg-total b{font-size:34px}
+  .tu-goal{margin:0 16px 16px;padding:16px}
+  .fields{grid-template-columns:1fr 1fr}
+  .search{margin-left:0;width:100%}
+  .stage{padding:24px 14px}
+  .lvl{padding:18px 16px 16px}
+  .lvl-stats{gap:14px 36px}
+  .lvl-stat b{font-size:26px}
+  .lvl-row .btn{width:100%}
+  .col.now .bar{height:44px}
+  .col.goal .bar{height:92px}
+  .tm{padding:18px}
+  .tt-r{grid-template-columns:1.3fr 50px 1.1fr;gap:10px;padding:14px 12px;font-size:13.5px}
+  .tt-h{padding:12px}
+  .tm-cta .btn{width:100%}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M8 16H3v5"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-coins" viewBox="0 0 24 24"><circle cx="8" cy="8" r="6"/><path d="M18.1 10.4A6 6 0 1 1 10.3 18"/><path d="M7 6h1v4"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><path d="M22 7l-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"/><rect x="2" y="6" width="14" height="12" rx="2"/></symbol>
+  <symbol id="i-layout" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></symbol>
+  <symbol id="i-face" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21v-1a7 7 0 0 1 11-5.7"/><path d="M17 13l3 3-3 3M20 16h-6"/></symbol>
+  <symbol id="i-shirt" viewBox="0 0 24 24"><path d="M20.4 5.6 16 3a4 4 0 0 1-8 0L3.6 5.6a2 2 0 0 0-1.3 2.2l.6 3.4a1 1 0 0 0 1 .8H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V12h2.1a1 1 0 0 0 1-.8l.6-3.4a2 2 0 0 0-1.3-2.2z"/></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-steps" viewBox="0 0 24 24"><path d="M3 20h5v-5h5v-5h5V5h3"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></symbol>
+  <symbol id="i-crypto" viewBox="0 0 24 24"><path d="M12 2.5 20.2 7.2v9.6L12 21.5l-8.2-4.7V7.2z"/><path d="M12 7.5 15.6 12 12 16.5 8.4 12z"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></symbol>
+</svg>
+
+<div class="board">
+
+  <header class="board-head">
+    <div>
+      <div class="board-kicker"><svg class="ic"><use href="#i-code"/></svg>SpicyLab API, Billing &amp; Pricing</div>
+      <h1>Payment page redesign</h1>
+      <p>Every screen of the new top-up flow on one page: the billing page, the tier details window, checkout confirmation, payment results and task charges. Account figures are sample data. Model unit prices stay as placeholders until they’re configured.</p>
+    </div>
+    <nav class="index" aria-label="Screens">
+      <a href="#billing"><b>1</b>Billing page</a>
+      <a href="#tier-details"><b>2</b>How tiers work</a>
+      <a href="#checkout"><b>3</b>Checkout</a>
+      <a href="#payment-result"><b>4</b>Payment result</a>
+      <a href="#task-charges"><b>5</b>Task charges</a>
+      <a href="#open-items">Open items</a>
+    </nav>
+  </header>
+
+  <!-- ===================== SCREEN 1 ===================== -->
+  <section class="screen" id="billing">
+    <div class="screen-label">
+      <span class="screen-no">1</span>
+      <div>
+        <h2>Billing page</h2>
+        <p>Signed-in account at V1, with $10 topped up so far. Top to bottom: balance, tier chart, top-up, model pricing, top-up history.</p>
+      </div>
+    </div>
+
+    <div class="frame">
+      <header class="topnav">
+        <span class="logo">
+          <svg width="22" height="22" viewBox="0 0 28 28" aria-hidden="true"><defs><linearGradient id="lgm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8a3d"/><stop offset="1" stop-color="#d9387a"/></linearGradient></defs><path d="M5 3l4.5 5.5h9L23 3v11a9 9 0 0 1-18 0z" fill="url(#lgm)"/><circle cx="10.5" cy="14" r="1.7" fill="#1a0f22"/><circle cx="17.5" cy="14" r="1.7" fill="#1a0f22"/><path d="M10.5 18.6c2 1.3 5 1.3 7 0" stroke="#1a0f22" stroke-width="1.7" fill="none" stroke-linecap="round"/></svg>
+          SpicyLab
+        </span>
+        <nav class="links" aria-label="Site">
+          <span>Explore</span>
+          <span>Public <span class="new">NEW</span></span>
+          <span>AI Generators <svg class="ic"><use href="#i-chev"/></svg></span>
+          <span>AI Tools</span>
+          <span>Training</span>
+          <span>Collection</span>
+          <span>Blog</span>
+        </nav>
+        <div class="nav-right">
+          <span class="lang"><svg class="ic"><use href="#i-globe"/></svg>English<svg class="ic"><use href="#i-chev"/></svg></span>
+          <span class="dl"><svg class="ic"><use href="#i-phone"/></svg>Download App</span>
+          <span class="avatar" aria-label="Account">A</span>
+        </div>
+      </header>
+
+      <div class="subnav">
+        <div class="subnav-in">
+          <span class="api"><svg class="ic"><use href="#i-code"/></svg>SpicyLab API</span>
+          <span>Overview</span>
+          <span class="on">Billing &amp; Pricing</span>
+          <span>Console</span>
+          <span class="ext">API Docs <svg class="ic"><use href="#i-ext"/></svg></span>
+          <span class="usd">All API prices in USD</span>
+        </div>
+      </div>
+
+      <main class="wrap">
+        <div class="hero">
+          <h1>API Balance &amp; <span class="grad">Pricing</span></h1>
+          <p>Top up your API balance, then pay per task in USD.</p>
+        </div>
+
+        <!-- Balance and tier progress -->
+        <div class="balance">
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-label"><svg class="ic"><use href="#i-wallet"/></svg>Available balance</div>
+              <div class="stat-value num">$6.40</div>
+              <div class="split">
+                <span>Purchased<b class="num">$6.40</b></span>
+                <span class="bonus">Bonus<b class="num">$0.00</b></span>
+              </div>
+            </div>
+            <div class="stat">
+              <div class="stat-label"><svg class="ic"><use href="#i-lock"/></svg>Reserved funds</div>
+              <div class="stat-value num">$1.00</div>
+              <p class="stat-note">Held for 2 tasks in progress. Charged if they succeed, returned if they fail.</p>
+            </div>
+            <div class="stat">
+              <div class="stat-label"><svg class="ic"><use href="#i-trend"/></svg>Cumulative top-ups</div>
+              <div class="stat-value num">$10.00</div>
+              <p class="stat-note">Confirmed top-ups minus refunds. Spending doesn’t lower it, and bonus balance isn’t counted.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tier chart -->
+        <section class="lvl" aria-labelledby="h-lvl">
+          <div class="lvl-head">
+            <h3 id="h-lvl">Tier rewards</h3>
+            <a class="lvl-more" href="#tier-details">How tiers work</a>
+          </div>
+          <div class="lvl-row">
+            <div class="lvl-stats">
+              <div class="lvl-stat"><b>V1</b><span>Your tier, from $10.00 topped up</span></div>
+              <div class="lvl-stat"><b class="num">$20<i>.00</i></b><span>More to reach V2 and its one-time $1 bonus</span></div>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm">Top up $20</button>
+          </div>
+          <div class="chart" role="img" aria-label="Tiers by total topped up: V0 from $0, V1 from $10, V2 from $30 with a one-time $1 bonus. You’re at $10.00, in V1.">
+            <div class="cols">
+              <div class="col done">
+                <div class="col-label"><span class="lv">V0</span></div>
+              </div>
+              <div class="col now">
+                <div class="col-label"><span class="lv-pill">V1</span></div>
+                <div class="bar"></div>
+              </div>
+              <div class="col goal">
+                <div class="col-label"><span class="lv">V2</span><span class="rw">+$1 bonus, once</span></div>
+                <div class="bar"></div>
+              </div>
+            </div>
+            <div class="base"><span class="base-fill"></span><span class="base-gap"></span><span class="base-dot"></span></div>
+            <div class="ticks"><span>$0</span><span><b>$10</b></span><span>$30</span></div>
+          </div>
+        </section>
+
+        <!-- Top-up -->
+        <section class="sec" id="topup" aria-labelledby="h-packs">
+          <div class="sec-head">
+            <div>
+              <h2 id="h-packs">Top up your API balance</h2>
+              <p class="lead">Pick an amount and how to pay. It’s added to your API balance once the payment is confirmed.</p>
+            </div>
+          </div>
+
+          <div class="topup">
+            <div class="tu-call">
+              <span class="tu-call-ic"><svg class="ic"><use href="#i-wallet"/></svg></span>
+              <div><b>Tasks are paid straight from your balance</b><span>Each task’s USD price is held when it starts and deducted when it succeeds. There are no credits to buy or convert.</span></div>
+            </div>
+
+            <div class="tu-body">
+              <div class="tu-pick">
+                <fieldset class="tu-set">
+                  <legend class="tu-label">Amount</legend>
+                  <div class="amts">
+                    <label class="amt"><input type="radio" name="tu-amt" value="10"><span class="amt-tick"><svg class="ic"><use href="#i-check"/></svg></span><span class="amt-v num">$10</span><span class="amt-note">Stays at V1</span></label>
+                    <label class="amt on"><input type="radio" name="tu-amt" value="30" checked><span class="amt-tick"><svg class="ic"><use href="#i-check"/></svg></span><span class="amt-v num">$30</span><span class="bonus-chip">+$1 V2 bonus</span></label>
+                    <label class="amt"><input type="radio" name="tu-amt" value="100"><span class="amt-tick"><svg class="ic"><use href="#i-check"/></svg></span><span class="amt-v num">$100</span><span class="bonus-chip">+$1 V2 bonus</span></label>
+                  </div>
+                  <div class="amt-own">
+                    <label class="amount"><span>$</span><input id="tu-own" type="text" inputmode="decimal" placeholder="Other amount" aria-label="Other top-up amount in USD"></label>
+                    <button type="button" class="fill" data-fill="20"><svg class="ic"><use href="#i-plus"/></svg>Fill the gap to V2: $20</button>
+                  </div>
+                </fieldset>
+
+                <fieldset class="tu-set">
+                  <legend class="tu-label">Pay with</legend>
+                  <div class="mths">
+                    <label class="mth on"><input type="radio" name="tu-pay" value="card" checked><span class="mth-ic"><svg class="ic"><use href="#i-card"/></svg></span><span class="mth-t"><b>Card</b><small>VoltPay</small></span><span class="radio"></span></label>
+                    <label class="mth"><input type="radio" name="tu-pay" value="crypto"><span class="mth-ic"><svg class="ic"><use href="#i-crypto"/></svg></span><span class="mth-t"><b>Crypto</b><small>MixPay</small></span><span class="radio"></span></label>
+                  </div>
+                  <a class="link tu-guide" href="#billing"><svg class="ic"><use href="#i-book"/></svg>How to pay for API top-ups</a>
+                </fieldset>
+              </div>
+
+              <div class="tu-sum" aria-live="polite">
+                <div class="ledger">
+                  <div class="lg-row"><span>Available balance</span><b class="num">$6.40</b></div>
+                  <div class="lg-row"><span>Top-up</span><b class="plus num" data-out="add">+$30.00</b></div>
+                  <div class="lg-row"><span>V2 bonus<small data-out="bonus-note">First time reaching V2</small></span><b class="plus num" data-out="bonus">+$1.00</b></div>
+                </div>
+                <div class="lg-total"><span>Available balance after top-up</span><b class="num" data-out="after">$37.40</b></div>
+                <button type="button" class="btn btn-primary btn-block" data-out="cta">Top up $30</button>
+                <p class="fine"><svg class="ic"><use href="#i-lock"/></svg><span data-out="fine">One-time card payment through VoltPay. Your balance updates once it’s confirmed.</span></p>
+              </div>
+            </div>
+
+            <div class="tu-goal">
+              <span class="goal-ic"><svg class="ic"><use href="#i-gift"/></svg></span>
+              <div class="goal-t"><b data-out="goal-h">This top-up unlocks the $1 V2 bonus</b><span data-out="goal-p">That brings your cumulative top-ups to $40.00, and V2 starts at $30. The $1 is added to your balance once.</span></div>
+              <div class="goal-bar" aria-hidden="true">
+                <div class="goal-labels"><span><b>$10</b> topped up so far</span><span>V2 at <b>$30</b></span></div>
+                <div class="goal-track"><span class="goal-now"></span><span class="goal-add" data-out="goal-add"></span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="facts">
+            <div class="fact"><svg class="ic"><use href="#i-refresh"/></svg><div><b>One-time top-up. No automatic renewal.</b><span>You pay once. Nothing renews or charges again.</span></div></div>
+            <div class="fact"><svg class="ic"><use href="#i-cal"/></svg><div><b>Balance valid for 12 months</b><span>Counted from the date funds are added.</span></div></div>
+            <div class="fact"><svg class="ic"><use href="#i-coins"/></svg><div><b>Separate from website coins</b><span>Coins can’t pay for API tasks, and API balance can’t be spent on the website.</span></div></div>
+          </div>
+
+          <div class="note"><svg class="ic"><use href="#i-note"/></svg><p><b>Review note.</b> The $100 preset is newly proposed. How the current $49, $199 and $499 plans are replaced, and how existing buyers keep their discounts and concurrency allowances, still needs to be confirmed.</p></div>
+        </section>
+
+        <!-- Model pricing -->
+        <section class="sec" aria-labelledby="h-pricing">
+          <div class="sec-head">
+            <div>
+              <h2 id="h-pricing">Model pricing</h2>
+              <p class="lead">Every model and parameter combination has its own price, charged from your API balance per billing unit. The amount you top up doesn’t change these prices.</p>
+            </div>
+            <span class="pill"><svg class="ic"><use href="#i-info"/></svg>Prices subject to change</span>
+          </div>
+
+          <div class="filters">
+            <div class="seg" role="tablist" aria-label="Model category">
+              <button type="button" class="on" role="tab" aria-selected="true">All models</button>
+              <button type="button" role="tab" aria-selected="false">Image</button>
+              <button type="button" role="tab" aria-selected="false">Video</button>
+              <button type="button" role="tab" aria-selected="false">Editing</button>
+              <button type="button" role="tab" aria-selected="false">Templates</button>
+            </div>
+            <span class="ctl">Resolution <b>Any</b><svg class="ic"><use href="#i-chev"/></svg></span>
+            <span class="ctl">Duration <b>Any</b><svg class="ic"><use href="#i-chev"/></svg></span>
+            <span class="ctl">Audio <b>Any</b><svg class="ic"><use href="#i-chev"/></svg></span>
+            <span class="ctl search"><svg class="ic"><use href="#i-search"/></svg>Search models</span>
+          </div>
+
+          <div class="tbl">
+            <table>
+              <thead>
+                <tr><th>Model</th><th>Version</th><th>Resolution</th><th>Duration</th><th>Audio</th><th>Billing unit</th><th>Unit price</th></tr>
+              </thead>
+              <tbody>
+                <tr class="grp"><td colspan="7">Image</td></tr>
+                <tr>
+                  <td><div class="m"><span class="m-ic"><svg class="ic"><use href="#i-image"/></svg></span><div><b>Image Generation</b><small>Model name to be configured</small></div></div></td>
+                  <td><span class="tbc">TBC</span></td><td><span class="na">—</span></td><td><span class="na">—</span></td><td><span class="na">—</span></td>
+                  <td class="na">Per image</td><td><span class="chip-amber">To be configured</span></td>
+                </tr>
+
+                <tr class="grp"><td colspan="7">Video</td></tr>
+                <tr>
+                  <td><div class="m"><span class="m-ic"><svg class="ic"><use href="#i-video"/></svg></span><div><b>Image-to-Video</b><small>Model name to be configured</small></div></div></td>
+                  <td><span class="tbc">TBC</span></td><td><span class="p">720p</span></td><td><span class="p">5 s</span></td><td><span class="p">Off</span></td>
+                  <td class="na">Per video</td><td><span class="chip-amber">To be configured</span></td>
+                </tr>
+                <tr>
+                  <td><div class="m"><span class="m-ic"><svg class="ic"><use href="#i-video"/></svg></span><div><b>Image-to-Video</b><small>Model name to be configured</small></div></div></td>
+                  <td><span class="tbc">TBC</span></td><td><span class="p">720p</span></td><td><span class="p">5 s</span></td><td><span class="p on">On</span></td>
+                  <td class="na">Per video</td><td><span class="chip-amber">To be configured</span></td>
+                </tr>
+                <tr>
+                  <td><div class="m"><span class="m-ic"><svg class="ic"><use href="#i-video"/></svg></span><div><b>Image-to-Video</b><small>Model name to be configured</small></div></div></td>
+                  <td><span class="tbc">TBC</span></td><td><span class="p">720p</span></td><td><span class="p">10 s</span></td><td><span class="p">Off</span></td>
+                  <td class="na">Per video</td><td><span class="chip-amber">To be configured</span></td>
+                </tr>
+                <tr>
+                  <td><div class="m"><span class="m-ic"><svg class="ic"><use href="#i-video"/></svg></span><div><b>Image-to-Video</b><small>Model name to be configured</small></div></div></td>
+                  <td><span class="tbc">TBC</span></td><td><span class="p">1080p</span></td><td><span class="p">5 s</span></td><td><span class="p">Off</span></td>
+                  <td class="na">Per video</td><td><span class="chip-amber">To be configured</span></td>
+                </tr>
+                <tr>
+                  <td><div class="m"><span class="m-ic"><svg class="ic"><use href="#i-video"/></svg></span><div><b>Image-to-Video</b><small>Model name to be configured</small></div></div></td>
+                  <td><span class="tbc">TBC</span></td><td><span class="p">1080p</span></td><td><span class="p">10 s</span></td><td><span class="p on">On</span></td>
+                  <td class="na">Per video</td><td><span class="chip-amber">To be configured</span></td>
+                </tr>
+
+                <tr class="grp"><td colspan="7">Editing</td></tr>
+                <tr>
+                  <td><div class="m"><span class="m-ic"><svg class="ic"><use href="#i-face"/></svg></span><div><b>Image Face Swap</b><small>Model name to be configured</small></div></div></td>
+                  <td><span class="tbc">TBC</span></td><td><span class="na">—</span></td><td><span class="na">—</span></td><td><span class="na">—</span></td>
+                  <td class="na">Per image</td><td><span class="chip-amber">To be configured</span></td>
+                </tr>
+                <tr>
+                  <td><div class="m"><span class="m-ic"><svg class="ic"><use href="#i-shirt"/></svg></span><div><b>Clothing Editing / Outfit Change</b><small>Model name to be configured</small></div></div></td>
+                  <td><span class="tbc">TBC</span></td><td><span class="na">—</span></td><td><span class="na">—</span></td><td><span class="na">—</span></td>
+                  <td class="na">Per image</td><td><span class="chip-amber">To be configured</span></td>
+                </tr>
+
+                <tr class="grp"><td colspan="7">Templates</td></tr>
+                <tr>
+                  <td><div class="m"><span class="m-ic"><svg class="ic"><use href="#i-layout"/></svg></span><div><b>Template Generation</b><span class="inline-link">How template pricing works <svg class="ic"><use href="#i-chev"/></svg></span></div></div></td>
+                  <td><span class="na">—</span></td><td><span class="na">—</span></td><td><span class="na">—</span></td><td><span class="na">—</span></td>
+                  <td class="na">Per task</td><td class="na wrap">Depends on the feature and parameters used</td>
+                </tr>
+
+                <tr class="grp"><td colspan="7">Coming soon</td></tr>
+                <tr>
+                  <td><div class="m"><span class="m-ic"><svg class="ic"><use href="#i-expand"/></svg></span><div><b>Image Upscaling</b></div></div></td>
+                  <td colspan="4"></td><td class="na">Per image</td>
+                  <td><span class="chip-amber"><svg class="ic"><use href="#i-clock"/></svg>Coming soon</span></td>
+                </tr>
+                <tr>
+                  <td><div class="m"><span class="m-ic"><svg class="ic"><use href="#i-face"/></svg></span><div><b>Video Face Swap</b></div></div></td>
+                  <td colspan="4"></td><td><span class="tbc">TBC</span></td>
+                  <td><span class="chip-amber"><svg class="ic"><use href="#i-clock"/></svg>Coming soon</span></td>
+                </tr>
+                <tr>
+                  <td><div class="m"><span class="m-ic"><svg class="ic"><use href="#i-expand"/></svg></span><div><b>Video Upscaling</b></div></div></td>
+                  <td colspan="4"></td><td><span class="tbc">TBC</span></td>
+                  <td><span class="chip-amber"><svg class="ic"><use href="#i-clock"/></svg>Coming soon</span></td>
+                </tr>
+                <tr>
+                  <td><div class="m"><span class="m-ic"><svg class="ic"><use href="#i-gear"/></svg></span><div><b>Model Training</b></div></div></td>
+                  <td colspan="4"></td><td><span class="tbc">TBC</span></td>
+                  <td><span class="chip-amber"><svg class="ic"><use href="#i-clock"/></svg>Coming soon</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="estimator">
+            <div class="est-form">
+              <h3>Estimate a cost</h3>
+              <p>Pick a model and its settings to see what a batch of tasks will cost.</p>
+              <div class="fields">
+                <div class="field"><label>Model</label><span class="ctl"><b>Image-to-Video</b><svg class="ic"><use href="#i-chev"/></svg></span></div>
+                <div class="field"><label>Resolution</label><span class="ctl"><b>720p</b><svg class="ic"><use href="#i-chev"/></svg></span></div>
+                <div class="field"><label>Duration</label><span class="ctl"><b>5 s</b><svg class="ic"><use href="#i-chev"/></svg></span></div>
+                <div class="field"><label>Audio</label><span class="ctl"><b>Off</b><svg class="ic"><use href="#i-chev"/></svg></span></div>
+                <div class="field"><label>Videos</label><span class="ctl"><b>20</b></span></div>
+              </div>
+            </div>
+            <div class="est-out">
+              <div class="kv"><span>Unit price</span><span class="chip-amber">To be configured</span></div>
+              <div class="kv"><span>Quantity</span><b class="num">20 videos</b></div>
+              <div class="kv"><span>Available balance</span><b class="num">$6.40</b></div>
+              <div class="est-total">
+                <span>Estimated cost</span>
+                <b>—</b>
+                <small>Shown once unit prices are configured</small>
+              </div>
+            </div>
+            <div class="est-fine"><svg class="ic"><use href="#i-lock"/></svg>Each task’s fee is held from your available balance when it starts and charged only if it succeeds.</div>
+          </div>
+
+          <div class="note"><svg class="ic"><use href="#i-note"/></svg><p><b>Review note.</b> Model names, versions, parameter combinations and unit prices are placeholders until the full model list is verified, and must be filled in before launch. The resolution and duration values only show how each combination gets its own row.</p></div>
+        </section>
+
+        <!-- Top-up history -->
+        <section class="sec" aria-labelledby="h-history">
+          <h2 id="h-history">History</h2>
+          <nav class="tabs" aria-label="History">
+            <a class="tab on" href="#billing" aria-current="page">Top-ups</a>
+            <a class="tab" href="#task-charges">Task charges</a>
+          </nav>
+          <div class="tbl">
+            <table>
+              <thead>
+                <tr><th>Date</th><th>Order</th><th>Paid with</th><th>Amount</th><th>Purchased</th><th>Bonus</th><th>Cumulative after</th><th>Tier</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Nov 16, 2026<span class="sub">10:42</span></td>
+                  <td>TU-20512</td>
+                  <td>Card<span class="sub">VoltPay</span></td>
+                  <td class="num">$30.00</td>
+                  <td class="na">—</td>
+                  <td class="na">—</td>
+                  <td class="num">$10.00</td>
+                  <td><span class="vb v1">V1</span></td>
+                  <td><span class="st wait">Verifying payment</span><span class="sub">Added once confirmed</span></td>
+                </tr>
+                <tr>
+                  <td>Nov 15, 2026<span class="sub">18:07</span></td>
+                  <td>TU-20488</td>
+                  <td>Crypto<span class="sub">MixPay</span></td>
+                  <td class="num">$20.00</td>
+                  <td class="na">—</td>
+                  <td class="na">—</td>
+                  <td class="num">$10.00</td>
+                  <td><span class="vb v1">V1</span></td>
+                  <td><span class="st fail">Not completed</span><span class="sub">Nothing added</span></td>
+                </tr>
+                <tr>
+                  <td>Nov 2, 2026<span class="sub">09:15</span></td>
+                  <td>TU-19877</td>
+                  <td>Card<span class="sub">VoltPay</span></td>
+                  <td class="num">$10.00</td>
+                  <td class="plus-g num">+$10.00</td>
+                  <td class="na">—</td>
+                  <td class="num">$10.00</td>
+                  <td><span class="chg"><span class="vb">V0</span><svg class="ic"><use href="#i-arrow"/></svg><span class="vb v1">V1</span></span></td>
+                  <td><span class="st ok">Added</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="tbl-foot"><svg class="ic"><use href="#i-info"/></svg>Balance, tier and bonus update only after a payment is confirmed. Each order is added once.</p>
+        </section>
+      </main>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN 2 ===================== -->
+  <section class="screen" id="tier-details">
+    <div class="screen-label">
+      <span class="screen-no">2</span>
+      <div>
+        <h2>How tiers work</h2>
+        <p>Opens from “How tiers work” on the billing page’s tier chart. Same account: V1, $10 topped up.</p>
+      </div>
+    </div>
+
+    <div class="frame stage">
+      <div class="tm" role="dialog" aria-labelledby="h-tm">
+        <div class="modal-head">
+          <h3 id="h-tm">How tiers work</h3>
+          <button type="button" class="x" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button>
+        </div>
+        <p class="tm-lead">Your tier follows the total you’ve topped up, not your remaining balance. $10 now and $20 later puts you at V2.</p>
+
+        <div class="tt" role="table" aria-label="Tiers and rewards">
+          <div class="tt-r tt-h" role="row">
+            <span role="columnheader"><svg class="ic"><use href="#i-trend"/></svg>Cumulative top-ups</span>
+            <span role="columnheader"><svg class="ic"><use href="#i-steps"/></svg>Tier</span>
+            <span role="columnheader"><svg class="ic"><use href="#i-spark"/></svg>Reward</span>
+          </div>
+          <div class="tt-r" role="row">
+            <span role="cell"><b>Below $10</b></span>
+            <span role="cell"><span class="vb">V0</span></span>
+            <span role="cell" class="none">None</span>
+          </div>
+          <div class="tt-r here" role="row">
+            <span role="cell"><b>$10 to under $30</b><span class="here-chip">You’re here</span></span>
+            <span role="cell"><span class="vb v1">V1</span></span>
+            <span role="cell" class="none">None</span>
+          </div>
+          <div class="tt-r" role="row">
+            <span role="cell"><b>$30 and above</b></span>
+            <span role="cell"><span class="vb v2">V2</span></span>
+            <span role="cell" class="gift">$1 API balance, once</span>
+          </div>
+        </div>
+
+        <ul class="tm-notes">
+          <li><span class="chk"><svg class="ic"><use href="#i-check"/></svg></span><span>The $1 bonus is added once, the first time you reach V2. Later top-ups don’t repeat it, even if a refund takes you below V2 and you reach it again.</span></li>
+          <li><span class="chk"><svg class="ic"><use href="#i-check"/></svg></span><span>Bonus balance pays for API tasks only. It can’t be withdrawn and doesn’t count toward your tier.</span></li>
+        </ul>
+
+        <div class="examples">
+          <div class="ex"><span>New account tops up $30</span><b>$30 + $1 bonus = <em>$31</em></b></div>
+          <div class="ex"><span>Account at $10 tops up $20</span><b>$20 + $1 bonus = <em>$21</em></b></div>
+        </div>
+
+        <div class="tm-cta">
+          <div><b>Reach V2 for a one-time $1 bonus</b><span>You’re at $10.00. Top up $20.00 more to get there.</span></div>
+          <button type="button" class="btn btn-primary">Top up $20</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN 3 ===================== -->
+  <section class="screen" id="checkout">
+    <div class="screen-label">
+      <span class="screen-no">3</span>
+      <div>
+        <h2>Checkout confirmation</h2>
+        <p>Shown before payment: what gets paid, what gets added to the balance and whether the tier changes. Four accounts show when the $1 V2 bonus applies.</p>
+      </div>
+    </div>
+
+    <div class="frame stage">
+      <div class="scenarios">
+
+        <div>
+          <p class="cap"><b>New account</b>$0 topped up, picks $30</p>
+          <div class="modal" role="dialog" aria-label="Confirm top-up, new account">
+            <div class="modal-head">
+              <div><h3>Confirm top-up</h3><p>$30 top-up, one-time payment</p></div>
+              <button type="button" class="x" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button>
+            </div>
+            <div class="sum">
+              <div class="sum-row"><span>Amount to pay</span><b class="num">$30.00</b></div>
+              <div class="sum-row"><span>Purchased balance</span><b class="plus num">+$30.00</b></div>
+              <div class="sum-row"><span>Tier reward<small>First time reaching V2</small></span><b class="plus num">+$1.00</b></div>
+              <div class="sum-row total"><span>Total added to your balance</span><b class="num">$31.00</b></div>
+              <div class="sum-row"><span>Tier</span><span class="chg"><span class="vb">V0</span><svg class="ic"><use href="#i-arrow"/></svg><span class="vb v2">V2</span></span></div>
+              <div class="sum-row"><span>Cumulative top-ups after</span><b class="num">$30.00</b></div>
+            </div>
+            <div class="methods">
+              <div class="method on"><span class="pm"><i><svg class="ic"><use href="#i-card"/></svg></i><span class="pm-t">Card<small>VoltPay</small></span></span><span class="radio"></span></div>
+              <div class="method"><span class="pm"><i><svg class="ic"><use href="#i-crypto"/></svg></i><span class="pm-t">Crypto<small>MixPay</small></span></span><span class="radio"></span></div>
+            </div>
+            <button type="button" class="btn btn-primary btn-block">Pay $30.00</button>
+            <p class="fine"><svg class="ic"><use href="#i-lock"/></svg>Your balance, tier and bonus update after the payment is confirmed.</p>
+          </div>
+        </div>
+
+        <div>
+          <p class="cap"><b>Account at V1</b>$10 topped up, enters a custom $20</p>
+          <div class="modal" role="dialog" aria-label="Confirm top-up, V1 account">
+            <div class="modal-head">
+              <div><h3>Confirm top-up</h3><p>Other amount, one-time payment</p></div>
+              <button type="button" class="x" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button>
+            </div>
+            <div class="sum">
+              <div class="sum-row"><span>Amount to pay</span><b class="num">$20.00</b></div>
+              <div class="sum-row"><span>Purchased balance</span><b class="plus num">+$20.00</b></div>
+              <div class="sum-row"><span>Tier reward<small>First time reaching V2</small></span><b class="plus num">+$1.00</b></div>
+              <div class="sum-row total"><span>Total added to your balance</span><b class="num">$21.00</b></div>
+              <div class="sum-row"><span>Tier</span><span class="chg"><span class="vb v1">V1</span><svg class="ic"><use href="#i-arrow"/></svg><span class="vb v2">V2</span></span></div>
+              <div class="sum-row"><span>Cumulative top-ups after</span><b class="num">$30.00</b></div>
+            </div>
+            <div class="methods">
+              <div class="method"><span class="pm"><i><svg class="ic"><use href="#i-card"/></svg></i><span class="pm-t">Card<small>VoltPay</small></span></span><span class="radio"></span></div>
+              <div class="method on"><span class="pm"><i><svg class="ic"><use href="#i-crypto"/></svg></i><span class="pm-t">Crypto<small>MixPay</small></span></span><span class="radio"></span></div>
+            </div>
+            <button type="button" class="btn btn-primary btn-block">Pay $20.00</button>
+            <p class="fine"><svg class="ic"><use href="#i-lock"/></svg>Your balance, tier and bonus update after the payment is confirmed.</p>
+          </div>
+        </div>
+
+        <div>
+          <p class="cap"><b>Account already at V2</b>$45 topped up, bonus received, picks $100</p>
+          <div class="modal" role="dialog" aria-label="Confirm top-up, V2 account">
+            <div class="modal-head">
+              <div><h3>Confirm top-up</h3><p>$100 top-up, one-time payment</p></div>
+              <button type="button" class="x" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button>
+            </div>
+            <div class="sum">
+              <div class="sum-row"><span>Amount to pay</span><b class="num">$100.00</b></div>
+              <div class="sum-row"><span>Purchased balance</span><b class="plus num">+$100.00</b></div>
+              <div class="sum-row"><span>Tier reward<small>Already received when you first reached V2</small></span><b class="zero num">$0.00</b></div>
+              <div class="sum-row total"><span>Total added to your balance</span><b class="num">$100.00</b></div>
+              <div class="sum-row"><span>Tier</span><span class="chg"><span class="vb v2">V2</span><i>no change</i></span></div>
+              <div class="sum-row"><span>Cumulative top-ups after</span><b class="num">$145.00</b></div>
+            </div>
+            <div class="methods">
+              <div class="method on"><span class="pm"><i><svg class="ic"><use href="#i-card"/></svg></i><span class="pm-t">Card<small>VoltPay</small></span></span><span class="radio"></span></div>
+              <div class="method"><span class="pm"><i><svg class="ic"><use href="#i-crypto"/></svg></i><span class="pm-t">Crypto<small>MixPay</small></span></span><span class="radio"></span></div>
+            </div>
+            <button type="button" class="btn btn-primary btn-block">Pay $100.00</button>
+            <p class="fine"><svg class="ic"><use href="#i-lock"/></svg>Your balance updates after the payment is confirmed.</p>
+          </div>
+        </div>
+
+        <div>
+          <p class="cap"><b>Back at V1 after a refund</b>Bonus received once, total now $10, picks $30</p>
+          <div class="modal" role="dialog" aria-label="Confirm top-up, account back at V1">
+            <div class="modal-head">
+              <div><h3>Confirm top-up</h3><p>$30 top-up, one-time payment</p></div>
+              <button type="button" class="x" aria-label="Close"><svg class="ic"><use href="#i-x"/></svg></button>
+            </div>
+            <div class="sum">
+              <div class="sum-row"><span>Amount to pay</span><b class="num">$30.00</b></div>
+              <div class="sum-row"><span>Purchased balance</span><b class="plus num">+$30.00</b></div>
+              <div class="sum-row"><span>Tier reward<small>The V2 bonus is only given once</small></span><b class="zero num">$0.00</b></div>
+              <div class="sum-row total"><span>Total added to your balance</span><b class="num">$30.00</b></div>
+              <div class="sum-row"><span>Tier</span><span class="chg"><span class="vb v1">V1</span><svg class="ic"><use href="#i-arrow"/></svg><span class="vb v2">V2</span></span></div>
+              <div class="sum-row"><span>Cumulative top-ups after</span><b class="num">$40.00</b></div>
+            </div>
+            <div class="methods">
+              <div class="method on"><span class="pm"><i><svg class="ic"><use href="#i-card"/></svg></i><span class="pm-t">Card<small>VoltPay</small></span></span><span class="radio"></span></div>
+              <div class="method"><span class="pm"><i><svg class="ic"><use href="#i-crypto"/></svg></i><span class="pm-t">Crypto<small>MixPay</small></span></span><span class="radio"></span></div>
+            </div>
+            <button type="button" class="btn btn-primary btn-block">Pay $30.00</button>
+            <p class="fine"><svg class="ic"><use href="#i-lock"/></svg>Your balance and tier update after the payment is confirmed.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN 4 ===================== -->
+  <section class="screen" id="payment-result">
+    <div class="screen-label">
+      <span class="screen-no">4</span>
+      <div>
+        <h2>Payment result</h2>
+        <p>The V1 account’s $30 order (TU-20512) in each possible state. Nothing is added to the balance until the server confirms the payment.</p>
+      </div>
+    </div>
+
+    <div class="frame stage">
+      <div class="results">
+
+        <div class="results-wrap">
+          <p class="cap"><b>While the payment is being checked</b></p>
+          <div class="result">
+            <span class="state-ic wait"><svg class="ic"><use href="#i-clock"/></svg></span>
+            <h3>Confirming your payment</h3>
+            <p>Your balance, tier and bonus update as soon as the payment is confirmed. This order can only be added once, so there’s no need to pay again.</p>
+            <div class="sum">
+              <div class="sum-row"><span>Order</span><b>TU-20512</b></div>
+              <div class="sum-row"><span>Amount</span><b class="num">$30.00</b></div>
+              <div class="sum-row"><span>Added to balance</span><span class="st wait">Pending</span></div>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn btn-sm">Refresh status</button>
+              <button type="button" class="btn btn-sm">Back to billing</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-wrap">
+          <p class="cap"><b>After the payment is confirmed</b></p>
+          <div class="result">
+            <span class="state-ic ok"><svg class="ic"><use href="#i-check"/></svg></span>
+            <h3>Top-up added</h3>
+            <p>$31.00 was added to your API balance and you’ve reached V2.</p>
+            <div class="sum">
+              <div class="sum-row"><span>Purchased balance</span><b class="plus num">+$30.00</b></div>
+              <div class="sum-row"><span>V2 bonus<small>One-time</small></span><b class="plus num">+$1.00</b></div>
+              <div class="sum-row"><span>Available balance<small>Purchased $36.40, bonus $1.00</small></span><b class="num">$37.40</b></div>
+              <div class="sum-row"><span>Cumulative top-ups</span><b class="num">$40.00</b></div>
+              <div class="sum-row"><span>Tier</span><span class="chg"><span class="vb v1">V1</span><svg class="ic"><use href="#i-arrow"/></svg><span class="vb v2">V2</span></span></div>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn btn-sm btn-primary">Open console</button>
+              <button type="button" class="btn btn-sm">View history</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-wrap">
+          <p class="cap"><b>If no payment is confirmed</b></p>
+          <div class="result">
+            <span class="state-ic fail"><svg class="ic"><use href="#i-x"/></svg></span>
+            <h3>Payment not confirmed</h3>
+            <p>We couldn’t confirm a payment for this order, so nothing was added to your balance. If you’ve already paid, contact support with the order number.</p>
+            <div class="sum">
+              <div class="sum-row"><span>Order</span><b>TU-20512</b></div>
+              <div class="sum-row"><span>Amount</span><b class="num">$30.00</b></div>
+              <div class="sum-row"><span>Added to balance</span><b class="zero num">$0.00</b></div>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn btn-sm btn-primary">Try again</button>
+              <button type="button" class="btn btn-sm">Contact support</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="note"><svg class="ic"><use href="#i-note"/></svg><p><b>Review note.</b> Balance, tier and bonus change only after the server verifies the payment and adds it to the balance. Repeat payment notifications for the same order are ignored, so one order can never be added twice.</p></div>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN 5 ===================== -->
+  <section class="screen" id="task-charges">
+    <div class="screen-label">
+      <span class="screen-no">5</span>
+      <div>
+        <h2>Task charges</h2>
+        <p>The second tab of the history section on the billing page. Every task holds its fee first, then charges or releases it.</p>
+      </div>
+    </div>
+
+    <div class="frame">
+      <div class="wrap tight">
+        <section class="sec" aria-labelledby="h-charges">
+          <h2 id="h-charges">How charges work</h2>
+          <div class="steps">
+            <div class="step"><div class="step-h"><span class="step-n">1</span><h4>Reserve</h4></div><p>When a task starts, its fee is held from your available balance.</p></div>
+            <div class="step"><div class="step-h"><span class="step-n">2</span><h4>Charge</h4></div><p>If the task succeeds, the held amount is charged.</p></div>
+            <div class="step"><div class="step-h"><span class="step-n">3</span><h4>Release</h4></div><p>If it fails or is rejected, the held amount goes back to your balance.</p></div>
+            <div class="step"><div class="step-h"><span class="step-n">4</span><h4>Check</h4></div><p>If a task times out and its result is unknown, we confirm what happened before charging or releasing.</p></div>
+          </div>
+        </section>
+
+        <section class="sec" aria-labelledby="h-history-2">
+          <h2 id="h-history-2">History</h2>
+          <nav class="tabs" aria-label="History">
+            <a class="tab" href="#billing">Top-ups</a>
+            <a class="tab on" href="#task-charges" aria-current="page">Task charges</a>
+          </nav>
+          <div class="tbl">
+            <table>
+              <thead>
+                <tr><th>Time</th><th>Task</th><th>Model</th><th>Amount</th><th>Status</th><th>What happened</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Nov 16, 11:04</td><td>task_9f3k2</td><td>Image-to-Video</td><td class="num">$0.50</td>
+                  <td><span class="st hold">Reserved</span></td><td class="na">Running. The fee is held from your balance.</td>
+                </tr>
+                <tr>
+                  <td>Nov 16, 10:58</td><td>task_9f1w7</td><td>Image-to-Video</td><td class="num">$0.50</td>
+                  <td><span class="st wait">Checking status</span></td><td class="na">Timed out. Still held while the result is confirmed.</td>
+                </tr>
+                <tr>
+                  <td>Nov 16, 10:41</td><td>task_9e8m4</td><td>Image Generation</td><td class="num">$0.20</td>
+                  <td><span class="st ok">Charged</span></td><td class="na">Succeeded.</td>
+                </tr>
+                <tr>
+                  <td>Nov 16, 10:36</td><td>task_9e7q1</td><td>Image Face Swap</td><td class="num">$0.15</td>
+                  <td><span class="st rel">Released</span></td><td class="na">Failed. $0.15 went back to your balance.</td>
+                </tr>
+                <tr>
+                  <td>Nov 16, 10:20</td><td>task_9e2b9</td><td>Image Generation</td><td class="num">$0.20</td>
+                  <td><span class="st ok">Charged</span></td><td class="na">Succeeded.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="tbl-foot"><svg class="ic"><use href="#i-info"/></svg>Reserved funds: $1.00 across 2 tasks. Available balance: $6.40.</p>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== OPEN ITEMS ===================== -->
+  <section class="open" id="open-items" aria-labelledby="h-open">
+    <div class="open-h"><svg class="ic"><use href="#i-note"/></svg><h2 id="h-open">Open items before launch</h2></div>
+    <ol>
+      <li><p><b>Model list and prices.</b> <span>Model names, versions, parameter combinations and unit prices in the pricing table are placeholders.</span></p></li>
+      <li><p><b>Existing $49, $199 and $499 plans.</b> <span>How they’re replaced, and how existing buyers keep their discounts and concurrency allowances.</span></p></li>
+      <li><p><b>$100 preset.</b> <span>Newly proposed, needs sign-off alongside the $10 and $30 presets.</span></p></li>
+      <li><p><b>Other amount limits.</b> <span>The smallest and largest amount someone can enter as their own top-up.</span></p></li>
+    </ol>
+  </section>
+
+</div>
+<script>
+(function () {
+  var root = document.getElementById('topup');
+  if (!root) return;
+  var BALANCE = 6.40, CUMULATIVE = 10, V2_AT = 30, BONUS = 1, BONUS_RECEIVED = false;
+  var tiles = Array.prototype.slice.call(root.querySelectorAll('.amt'));
+  var methods = Array.prototype.slice.call(root.querySelectorAll('.mth'));
+  var own = root.querySelector('#tu-own');
+  var ownBox = own.closest('.amount');
+  var fillBtn = root.querySelector('.fill');
+  var out = {};
+  Array.prototype.forEach.call(root.querySelectorAll('[data-out]'), function (el) { out[el.getAttribute('data-out')] = el; });
+  var amount = 30, method = 'card';
+
+  function money(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function short(n) { return Number.isInteger(n) ? '$' + n.toLocaleString('en-US') : money(n); }
+
+  function render() {
+    tiles.forEach(function (t) { t.classList.toggle('on', t.querySelector('input').checked); });
+    methods.forEach(function (m) { m.classList.toggle('on', m.querySelector('input').checked); });
+    ownBox.classList.toggle('on', own.value.trim() !== '' && amount > 0);
+
+    var gap = Math.max(V2_AT - CUMULATIVE, 0);
+    var reaches = !BONUS_RECEIVED && gap > 0 && amount >= gap;
+    var bonus = reaches ? BONUS : 0;
+    var after = Math.round((BALANCE + amount + bonus) * 100) / 100;
+
+    out.add.textContent = '+' + money(amount);
+    out.bonus.textContent = bonus ? '+' + money(bonus) : money(0);
+    out.bonus.className = (bonus ? 'plus' : 'zero') + ' num';
+    out['bonus-note'].textContent = bonus ? 'First time reaching V2' : 'Top up ' + short(gap) + ' or more to get it';
+    out.after.textContent = money(after);
+
+    var cta = out.cta;
+    if (amount > 0) { cta.disabled = false; cta.textContent = 'Top up ' + short(amount); }
+    else { cta.disabled = true; cta.textContent = 'Enter an amount'; }
+
+    out.fine.textContent = (method === 'card'
+      ? 'One-time card payment through VoltPay.'
+      : 'One-time crypto payment through MixPay.') + ' Your balance updates once it’s confirmed.';
+
+    var total = CUMULATIVE + amount;
+    if (reaches) {
+      out['goal-h'].textContent = 'This top-up unlocks the $1 V2 bonus';
+      out['goal-p'].textContent = 'That brings your cumulative top-ups to ' + money(total) + ', and V2 starts at ' + short(V2_AT) + '. The $1 is added to your balance once.';
+    } else {
+      out['goal-h'].textContent = 'Top up ' + short(gap) + ' or more to get a $1 V2 bonus';
+      out['goal-p'].textContent = amount > 0
+        ? 'This top-up brings your cumulative top-ups to ' + money(total) + '. V2 starts at ' + short(V2_AT) + '.'
+        : 'You’ve topped up ' + short(CUMULATIVE) + ' so far. V2 starts at ' + short(V2_AT) + '.';
+    }
+    var addPct = Math.min(amount, gap) / V2_AT * 100;
+    out['goal-add'].style.width = addPct + '%';
+  }
+
+  tiles.forEach(function (t) {
+    t.querySelector('input').addEventListener('change', function (e) {
+      amount = Number(e.target.value); own.value = ''; render();
+    });
+  });
+  methods.forEach(function (m) {
+    m.querySelector('input').addEventListener('change', function (e) { method = e.target.value; render(); });
+  });
+  own.addEventListener('input', function () {
+    var v = parseFloat(own.value.replace(/[^0-9.]/g, ''));
+    tiles.forEach(function (t) { t.querySelector('input').checked = false; });
+    amount = isFinite(v) && v > 0 ? Math.round(v * 100) / 100 : 0;
+    render();
+  });
+  fillBtn.addEventListener('click', function () {
+    own.value = Number(fillBtn.getAttribute('data-fill')).toFixed(2);
+    own.dispatchEvent(new Event('input'));
+    own.focus();
+  });
+  render();
+})();
+</script>
+</body>
+</html>
